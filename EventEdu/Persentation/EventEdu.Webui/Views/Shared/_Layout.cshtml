@@ -85,14 +85,20 @@
                 </a>
                 <ul class="dropdown-menu mt-4" aria-labelledby="Dropdown">
                     <li>
-                        <a class="dropdown-item" href="#"><img class="flag" src="~/assets/img/english.svg" alt="">English</a>
+                        <a class="dropdown-item" asp-controller="Language" asp-action="Change" asp-route-lang="en-US">
+                            <img class="flag" src="~/assets/img/english.svg" alt="">English
+                        </a>
                     </li>
                     <li><hr class="dropdown-divider" /></li>
                     <li>
-                        <a class="dropdown-item" href="#"><img class="flag" src="~/assets/img/Azerbaycan.png" alt="">Azərbaycan</a>
+                        <a class="dropdown-item" asp-controller="Language" asp-action="Change" asp-route-lang="az-AZ">
+                            <img class="flag" src="~/assets/img/Azerbaycan.png" alt="">Azərbaycan
+                        </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="#"><img class="flag" src="~/assets/img/Russian.webp" alt="">Русский</a>
+                        <a class="dropdown-item" asp-controller="Language" asp-action="Change" asp-route-lang="ru-RU">
+                            <img class="flag" src="~/assets/img/Russian.webp" alt="">Русский
+                        </a>
                     </li>
 
                 </ul>

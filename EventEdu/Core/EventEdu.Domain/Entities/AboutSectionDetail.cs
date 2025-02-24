@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Domain.Entities
 {
+
     public class AboutSectionDetail:BaseEntity
     {
 		public string Title { get; set; }

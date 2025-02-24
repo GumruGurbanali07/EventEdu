@@ -1,0 +1,65 @@
+﻿<div class="profile-container container">
+    <div class="profile-form">
+        <div class="participation-filters">
+            <button class="filter active" data-filter="all">All</button>
+            <button class="filter" data-filter="completed">Completed</button>
+            <button class="filter" data-filter="booked">Booked</button>
+            <button class="filter" data-filter="canceled">Canceled</button>
+        </div>
+
+        <div class="participation-list">
+            <div class="participation-item ">
+                <p class="participation-id">4653129</p>
+                <p class="status">Completed</p>
+                <p class="date">02 February 2025</p>
+            </div>
+
+            <div class="participation-item ">
+                <p class="participation-id">4357271</p>
+                <p class="status">Completed</p>
+                <p class="date">13 November 2024</p>
+            </div>
+
+            <div class="participation-item ">
+                <p class="participation-id">4225975</p>
+                <p class="status">Completed</p>
+                <p class="date">08 October 2024</p>
+            </div>
+
+            <div class="participation-item canceled">
+                <p class="participation-id">4225970</p>
+                <p class="status">Canceled</p>
+                <p class="date">08 October 2024</p>
+            </div>
+
+            <div class="participation-item ">
+                <p class="participation-id">3931923</p>
+                <p class="status">Completed</p>
+                <p class="date">11 July 2024</p>
+            </div>
+
+            <div class="participation-item ">
+                <p class="participation-id">3908520</p>
+                <p class="status">Completed</p>
+                <p class="date">02 July 2024</p>
+            </div>
+            <!-- Pagination Buttons -->
+            <div class="pagination">
+                <button id="prevBtn" disabled>Previous</button>
+                <button id="nextBtn">Next</button>
+            </div>
+
+        </div>
+    </div>
+
+   
+
+    <div class="sidebar">
+        <ul>
+            <a asp-controller="Home" asp-action="Profile">
+            <li >Profile</li></a>
+            <a asp-controller="Home" asp-action="ParticipationHistory">
+            <li class="active">Participation History</li></a>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,50 @@
+[
+  {
+    "Key": "CodeMinimumLengthError",
+    "LocalizedValue": {
+      "az-AZ": "Kodun minimum uzunluğu 3 olmalıdır",
+      "en-US": "The minimum length of the code should be 3",
+      "ru-RU": "Минимальная длина ФИН должна быть 3"
+    }
+  },
+  {
+    "Key": "PhoneNumberInvalidError",
+    "LocalizedValue": {
+      "az-AZ": "Nömrə yanlışdır",
+      "en-US": "Phone number is invalid",
+      "ru-RU": "Номер телефона недействителен"
+    }
+  },
+  {
+    "Key": "PhoneNumberLengthError",
+    "LocalizedValue": {
+      "az-AZ": "Nömrənin uzunluğu 9 olmalıdır",
+      "en-US": "The length of the phone number should be 9",
+      "ru-RU": "Длина номера телефона должна быть 9"
+    }
+  },
+  {
+    "Key": "PhoneNumberRequiredError",
+    "LocalizedValue": {
+      "az-AZ": "Nömrə tələb olunur",
+      "en-US": "Phone number is required",
+      "ru-RU": "Требуется номер телефона"
+    }
+  },
+  {
+    "Key": "EmailInvalidError",
+    "LocalizedValue": {
+      "az-AZ": "Email yanlışdır",
+      "en-US": "Email is invalid",
+      "ru-RU": "Электронная почта недействительна"
+    }
+  },
+  {
+    "Key": "EmailRequiredError",
+    "LocalizedValue": {
+      "az-AZ": "Email tələb olunur",
+      "en-US": "Email is required",
+      "ru-RU": "Требуется электронная почта"
+    }
+  }
+]

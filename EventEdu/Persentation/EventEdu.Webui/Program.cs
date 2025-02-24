@@ -1,16 +1,23 @@
+using System.Globalization;
 using EventEdu.Persistence;
 using RequestLocalizationOptions = Microsoft.AspNetCore.Builder.RequestLocalizationOptions;
 using Microsoft.AspNetCore.StaticFiles;
 using System.Runtime.CompilerServices;
+using EventEdu.Webui.Localization;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
  
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+// builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 builder.Services.AddControllersWithViews().AddViewLocalization();
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddLocalization();
+builder.Services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizationFactory>();
 
  
 builder.Services.AddPersistenceServices(builder.Configuration);
@@ -31,8 +38,14 @@ app.UseHttpsRedirection();
  
 app.UseStaticFiles();
 
-var locOptions = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
-app.UseRequestLocalization(locOptions!.Value);
+// var locOptions = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
+// app.UseRequestLocalization(locOptions!.Value);
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(new CultureInfo("az-AZ"))
+});
+
+app.UseMiddleware<LocalizationMiddleware>();
 
   
 app.UseRouting();

@@ -7,6 +7,29 @@
   <ItemGroup>
     <Folder Include="DTOs\" />
     <Folder Include="Exceptions\" />
+    <Folder Include="Repository\Category\" />
+    <Folder Include="Repository\CategoryDetail\" />
+    <Folder Include="Repository\Comment\" />
+    <Folder Include="Repository\CommentDetail\" />
+    <Folder Include="Repository\ContactInfo\" />
+    <Folder Include="Repository\Event\" />
+    <Folder Include="Repository\EventDetail\" />
+    <Folder Include="Repository\EventSpeaker\" />
+    <Folder Include="Repository\EventSponsor\" />
+    <Folder Include="Repository\FeedBack\" />
+    <Folder Include="Repository\FeedBackDetail\" />
+    <Folder Include="Repository\Media\" />
+    <Folder Include="Repository\HeroSection\" />
+    <Folder Include="Repository\HeroSectionDetail\" />
+    <Folder Include="Repository\AboutSection\" />
+    <Folder Include="Repository\AboutSectionDetail\" />
+    <Folder Include="Repository\UserEvent\" />
+    <Folder Include="Repository\SponsorDetail\" />
+    <Folder Include="Repository\Sponsor\" />
+    <Folder Include="Repository\SpeakerDetail\" />
+    <Folder Include="Repository\Speaker\" />
+    <Folder Include="Repository\NotificationDetail\" />
+    <Folder Include="Repository\Notification\" />
     <Folder Include="Token\" />
     <Folder Include="Validator\" />
   </ItemGroup>

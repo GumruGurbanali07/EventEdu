@@ -1,5 +1,0 @@
-C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Infrastructure\EventEdu.Persistence\obj\Debug\net8.0\EventEdu.Persistence.csproj.AssemblyReference.cache
-C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Infrastructure\EventEdu.Persistence\obj\Debug\net8.0\EventEdu.Persistence.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Infrastructure\EventEdu.Persistence\obj\Debug\net8.0\EventEdu.Persistence.AssemblyInfoInputs.cache
-C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Infrastructure\EventEdu.Persistence\obj\Debug\net8.0\EventEdu.Persistence.AssemblyInfo.cs
-C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Infrastructure\EventEdu.Persistence\obj\Debug\net8.0\EventEdu.Persistence.csproj.CoreCompileInputs.cache

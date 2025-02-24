@@ -13,4 +13,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Infrastructure\EventEdu.Persistence\EventEdu.Persistence.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Controllers\HomeController.cs" />
+  </ItemGroup>
 </Project>

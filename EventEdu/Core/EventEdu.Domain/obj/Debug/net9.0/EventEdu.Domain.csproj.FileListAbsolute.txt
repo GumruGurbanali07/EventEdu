@@ -1,0 +1,12 @@
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Core\EventEdu.Domain\bin\Debug\net9.0\EventEdu.Domain.deps.json
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Core\EventEdu.Domain\bin\Debug\net9.0\EventEdu.Domain.dll
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Core\EventEdu.Domain\bin\Debug\net9.0\EventEdu.Domain.pdb
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Core\EventEdu.Domain\obj\Debug\net9.0\EventEdu.Domain.csproj.AssemblyReference.cache
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Core\EventEdu.Domain\obj\Debug\net9.0\EventEdu.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Core\EventEdu.Domain\obj\Debug\net9.0\EventEdu.Domain.AssemblyInfoInputs.cache
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Core\EventEdu.Domain\obj\Debug\net9.0\EventEdu.Domain.AssemblyInfo.cs
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Core\EventEdu.Domain\obj\Debug\net9.0\EventEdu.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Core\EventEdu.Domain\obj\Debug\net9.0\EventEdu.Domain.dll
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Core\EventEdu.Domain\obj\Debug\net9.0\refint\EventEdu.Domain.dll
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Core\EventEdu.Domain\obj\Debug\net9.0\EventEdu.Domain.pdb
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Core\EventEdu.Domain\obj\Debug\net9.0\ref\EventEdu.Domain.dll

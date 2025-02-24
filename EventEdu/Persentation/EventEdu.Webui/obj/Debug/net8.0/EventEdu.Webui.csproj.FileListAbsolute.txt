@@ -1,0 +1,8 @@
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Persentation\EventEdu.Webui\obj\Debug\net8.0\EventEdu.Webui.csproj.AssemblyReference.cache
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Persentation\EventEdu.Webui\obj\Debug\net8.0\EventEdu.Webui.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Persentation\EventEdu.Webui\obj\Debug\net8.0\EventEdu.Webui.AssemblyInfoInputs.cache
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Persentation\EventEdu.Webui\obj\Debug\net8.0\EventEdu.Webui.AssemblyInfo.cs
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Persentation\EventEdu.Webui\obj\Debug\net8.0\EventEdu.Webui.csproj.CoreCompileInputs.cache
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Persentation\EventEdu.Webui\obj\Debug\net8.0\EventEdu.Webui.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Persentation\EventEdu.Webui\obj\Debug\net8.0\EventEdu.Webui.RazorAssemblyInfo.cache
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Persentation\EventEdu.Webui\obj\Debug\net8.0\EventEdu.Webui.RazorAssemblyInfo.cs

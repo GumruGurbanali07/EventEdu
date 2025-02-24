@@ -1,0 +1,4 @@
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Core\EventEdu.Domain\obj\Debug\net8.0\EventEdu.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Core\EventEdu.Domain\obj\Debug\net8.0\EventEdu.Domain.AssemblyInfoInputs.cache
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Core\EventEdu.Domain\obj\Debug\net8.0\EventEdu.Domain.AssemblyInfo.cs
+C:\Users\Sheki-S\Documents\EventEdu\EventEdu\Core\EventEdu.Domain\obj\Debug\net8.0\EventEdu.Domain.csproj.CoreCompileInputs.cache

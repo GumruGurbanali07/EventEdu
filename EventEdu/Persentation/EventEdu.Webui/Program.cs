@@ -1,23 +1,23 @@
 using System.Globalization;
 using EventEdu.Persistence;
 using RequestLocalizationOptions = Microsoft.AspNetCore.Builder.RequestLocalizationOptions;
-using Microsoft.AspNetCore.StaticFiles;
-using System.Runtime.CompilerServices;
 using EventEdu.Webui.Localization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
-
  
-// builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-
 builder.Services.AddControllersWithViews().AddViewLocalization();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddLocalization();
 builder.Services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizationFactory>();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true; // For GDPR compliance
+});
 
  
 builder.Services.AddPersistenceServices(builder.Configuration);
@@ -33,6 +33,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+app.UseSession();
 
 app.UseHttpsRedirection();
  
@@ -47,7 +48,6 @@ app.UseRequestLocalization(new RequestLocalizationOptions
 
 app.UseMiddleware<LocalizationMiddleware>();
 
-  
 app.UseRouting();
 
 app.UseAuthorization();

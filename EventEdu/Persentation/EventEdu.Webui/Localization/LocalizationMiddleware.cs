@@ -10,7 +10,7 @@ public class LocalizationMiddleware(RequestDelegate next)
 
     public async Task InvokeAsync(HttpContext context)
     {
-        string? cultureKey = context.Request.Headers.AcceptLanguage;
+        string cultureKey = context.Session.GetString("lang") ?? "az-AZ";
 
         string? preferredCulture = ParseAcceptLanguageHeader(cultureKey);
 

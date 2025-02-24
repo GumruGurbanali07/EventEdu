@@ -1,5 +1,13 @@
 [
   {
+    "Key": "BestOnlineCourses",
+    "LocalizedValue": {
+      "az-AZ": "Ən Yaxşı Onlayn Kurslar",
+      "en-US": "Best Online Courses",
+      "ru-RU": "Лучшие онлайн-курсы"
+    }
+  },
+  {
     "Key": "CodeMinimumLengthError",
     "LocalizedValue": {
       "az-AZ": "Kodun minimum uzunluğu 3 olmalıdır",

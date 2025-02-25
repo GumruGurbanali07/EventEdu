@@ -554,12 +554,10 @@ input {
 
 .eventPrev {
     left: -31px;
-    /*margin-top:5px;*/
 }
 
 .eventNext {
     right: -31px;
-    /*margin-top: 5px;*/
 }
 
 .eventPrev i {
@@ -752,7 +750,7 @@ a, a:hover {
     }
 
 .similar {
-    margin-left: 10%;
+    margin-left: 11%;
     margin-bottom: 20px;
     font-size: 30px;
 }
@@ -761,7 +759,7 @@ a, a:hover {
     display: flex;
     justify-content: center;
     margin: 0;
-    gap: 30px;
+    gap: 15px;
 }
 
 .similar-events {
@@ -769,20 +767,6 @@ a, a:hover {
     border: 2px solid #ccc;
     border-radius: 20px;
 }
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-
-/*body {
-    background: #f5f5f5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}*/
 
 .profile-container {
     display: flex;
@@ -791,7 +775,7 @@ a, a:hover {
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     width: 80%;
-    margin-top:2rem;
+    margin-top: 2rem;
 }
 
 .profile-form {
@@ -828,7 +812,7 @@ input, select {
 
 .gender-toggle {
     display: flex;
-    gap:20px;
+    gap: 20px;
 }
 
     .gender-toggle button {
@@ -920,33 +904,155 @@ input, select {
     border-radius: 10px;
     display: flex;
     justify-content: space-between;
-    align-items:center;
+    align-items: center;
     border: 1px solid #ddd;
 }
 
 .canceled {
     border-left: 5px solid red;
 }
-/*.pagination {
+
+.comment-container-header{
+    width:80%;
+    display:flex;
+    justify-content:space-between;
+    margin:auto;
+}
+.comment-container-header .left-side{
+    width:20%
+}
+
+.comment-container-header .right-side {
+        display:flex;
+        align-items:end;
+        gap:10px;
+        padding-right:15px;
+}
+    .comment-container-header .right-side i:hover {
+        color: #06bbcc;
+    }
+
+    .event-review-text {
+        margin-bottom: 0;
+    }
+
+.review-container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    margin: 20px auto;
+}
+
+.rating {
     display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}*/
+    align-items: center;
+    gap: 5px;
+    font-size: 20px;
+    padding-left: 15px;
+    margin-bottom: -10px;
+    margin-top: 0px;
+}
 
- /*   .pagination button {
-        padding: 10px 20px;
-        margin: 0 5px;
-        background-color: #f1f1f1;
-        border: 1px solid #ddd;
-        cursor: pointer;
+.stars {
+    color: gold;
+    font-size: 18px;
+}
+
+.review {
+    display: flex ;
+    gap:10px;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+    .review img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 10px;
     }
 
-        .pagination button:hover {
-            background-color: #ddd;
-        }
+.review-content {
+    text-align: left;
+}
 
-    .pagination .page-number {
-        padding: 10px 20px;
-        display: inline-block;
+.time {
+    font-size: 0.8em;
+    color: gray;
+}
+
+#load-more {
+    background: #ddd;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.send-review {
+    margin-left: 15px;
+}
+
+    .send-review .stars {
+        display: flex;
+        padding-left: 60px;
     }
-*/
+
+.stars span {
+    font-size: 20px;
+    color: #ddd;
+    cursor: pointer;
+}
+
+    .stars span.active {
+        color: gold;
+    }
+
+.comment-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+textarea {
+    width: 100%;
+    height: 60px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    resize: none;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 5px;
+}
+
+.action-btn {
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 10px;
+    margin-left: 5px;
+    color:#fff;
+}
+    .action-btn:focus{
+        box-shadow:none;
+    }
+
+    .btn-secondary {
+        background-color: #ccc;
+        color: #333;
+    }

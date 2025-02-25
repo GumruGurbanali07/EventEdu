@@ -20,16 +20,4 @@ public class HomeController : Controller
 
         return View();
     }
-
-    public IActionResult Profile()
-    {
-        ViewBag.Localizer = _localizer;
-
-        return View();
-    }
-
-    public IActionResult ParticipationHistory()
-    {
-        return View();
-    }
 }

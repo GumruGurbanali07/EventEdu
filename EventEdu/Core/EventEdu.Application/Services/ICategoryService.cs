@@ -12,7 +12,7 @@ namespace EventEdu.Application.Services
 		Task<bool> AddCategoryAsync(Category category);
 		Task<bool> AddCategoryDetailAsync(CategoryDetail categoryDetail);
 		Task<Category> GetCategoryByIdAsync(Guid categoryId);
-		Task<CategoryDetail> GetCategoryDetailByIdAsync(Guid categoryDetailId);
+		Task<IEnumerable<CategoryDetail>> GetCategoryDetailsByLanguageAsync(Guid categoryId, Guid languageId);
 		Task<IEnumerable<Category>> GetAllCategoriesAsync();
 		Task<IEnumerable<CategoryDetail>> GetAllCategoryDetailsAsync();
 		Task<bool> UpdateCategoryAsync(Category category);

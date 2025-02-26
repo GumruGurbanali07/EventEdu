@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using EventEdu.Application.DTOs.Language;
 using EventEdu.Application.Repository;
 using EventEdu.Application.Services;
 using EventEdu.Application.ViewModel;
+using EventEdu.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,29 +17,54 @@ namespace EventEdu.Persistence.Services
 	{
 		private readonly ILanguageReadRepository _languageReadRepository;
 		private readonly ILanguageWriteRepository _languageWriteRepository;
-		private readonly IMapper _mapper;
-		public LanguageService(ILanguageReadRepository languageReadRepository, ILanguageWriteRepository languageWriteRepository, IMapper mapper)
+
+		public LanguageService(ILanguageReadRepository languageReadRepository, ILanguageWriteRepository languageWriteRepository)
 		{
 			_languageReadRepository = languageReadRepository;
 			_languageWriteRepository = languageWriteRepository;
-			_mapper = mapper;
 		}
 
-		public async Task<LanguageViewModel> GetLanguageAsync(string isoCode)
+		public async Task<bool> AddLanguageAsync(LanguageAddDTO languageAddDTO)
 		{
-			var languages = _languageReadRepository.GetAll();
+			var existLang = await _languageReadRepository.GetByIsoCodeAsync(languageAddDTO.IsoCode);
+			if (existLang != null)
+			{
+				throw new Exception("Language is already exist!");
+			}
 
-			var language = languages.FirstOrDefault(x => x.IsoCode.ToLower() == isoCode.ToLower());
+			var language = new Language
+			{
+				Name = languageAddDTO.Name,
+				IsoCode = languageAddDTO.IsoCode,
+				ImagePath = languageAddDTO.ImagePath
+			};
 
-			return  _mapper.Map<LanguageViewModel>(language);
+			var result = await _languageWriteRepository.AddAsync(language);
+			if (result)
+			{
+				await _languageWriteRepository.SaveChangeAsync();
+			}
+			return result;
 		}
 
-		public async Task<List<LanguageViewModel>> GetLanguagesAsync()
+		public Task<List<Language>> GetAllLanguagesAsync()
 		{
-			var languages =await _languageReadRepository.GetAll().ToListAsync();
-			var languageViewModels=_mapper.Map<List<LanguageViewModel>>(languages);
-			return languageViewModels;
+			throw new NotImplementedException();
+		}
 
- 		}
+		public Task<Language?> GetLanguageByIdAsync(string id)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<bool> RemoveLanguageAsync(string id)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<bool> UpdateLanguageAsync(Language language)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

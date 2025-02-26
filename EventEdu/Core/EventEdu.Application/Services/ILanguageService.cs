@@ -1,4 +1,6 @@
-﻿using EventEdu.Application.ViewModel;
+﻿using EventEdu.Application.DTOs.Language;
+using EventEdu.Application.ViewModel;
+using EventEdu.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,10 @@ namespace EventEdu.Application.Services
 {
 	public interface ILanguageService
 	{
-		Task<List<LanguageViewModel>> GetLanguagesAsync();
-		Task<LanguageViewModel> GetLanguageAsync(string isoCode);
+		Task<List<Language>> GetAllLanguagesAsync();
+		Task<Language?> GetLanguageByIdAsync(string id);
+		Task<bool> AddLanguageAsync(LanguageAddDTO languageAddDTO);
+		Task<bool> UpdateLanguageAsync(Language language);
+		Task<bool> RemoveLanguageAsync(string id);
 	}
 }

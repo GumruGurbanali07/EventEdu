@@ -5,10 +5,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="DTOs\" />
     <Folder Include="Exceptions\" />
-    <Folder Include="Repository\Category\" />
-    <Folder Include="Repository\CategoryDetail\" />
+    <Folder Include="Repository\AboutSection\" />
     <Folder Include="Repository\Comment\" />
     <Folder Include="Repository\CommentDetail\" />
     <Folder Include="Repository\ContactInfo\" />
@@ -21,7 +19,6 @@
     <Folder Include="Repository\Media\" />
     <Folder Include="Repository\HeroSection\" />
     <Folder Include="Repository\HeroSectionDetail\" />
-    <Folder Include="Repository\AboutSection\" />
     <Folder Include="Repository\AboutSectionDetail\" />
     <Folder Include="Repository\UserEvent\" />
     <Folder Include="Repository\SponsorDetail\" />

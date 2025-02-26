@@ -1,6 +1,7 @@
 ﻿using EventEdu.Application.Repository;
 using EventEdu.Domain.Entities;
 using EventEdu.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,10 @@ namespace EventEdu.Persistence.Repository
 		public LanguageReadRepository(AppDbContext context) : base(context)
 		{
 		}
+		public async Task<Language> GetByIsoCodeAsync(string isoCode)
+		{
+			return await _context.Languages.FirstOrDefaultAsync(x => x.IsoCode == isoCode);
+		}
+
 	}
 }

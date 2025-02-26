@@ -14,6 +14,8 @@ public class HomeController : Controller
         _localizer = localizer;
     }
 
+
+
     public IActionResult Index()
     {
         ViewBag.Localizer = _localizer;

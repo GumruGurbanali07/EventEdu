@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Application.Repository
 {
-	public interface ILanguageReadRepository:IReadRepository<Language>
-	{
-		Task<Language> GetByIsoCodeAsync(string isoCode);
-	}
+    public interface ICategoryWriteRepository:IWriteRepository<Category>
+    {
+    }
 }

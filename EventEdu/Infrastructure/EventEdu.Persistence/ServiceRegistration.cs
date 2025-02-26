@@ -40,12 +40,22 @@ namespace EventEdu.Persistence
                 options.Password.RequireUppercase = true;
                 options.Password.RequireDigit = true;
             }).AddEntityFrameworkStores<AppDbContext>();
+            //Services
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<ILanguageService, LanguageService>();
-            services.AddSingleton<StringLocalizerService>();
+			services.AddScoped<ICategoryService, CategoryService>();
+
+            //Repositories
+			services.AddSingleton<StringLocalizerService>();
             services.AddScoped<ILanguageReadRepository, LanguageReadRepository>();
             services.AddScoped<ILanguageWriteRepository, LanguageWriteRepository>();
-               
+            services.AddScoped<ICategoryReadRepository, CategoryReadRepository>();
+            services.AddScoped<ICategoryWriteRepository, CategoryWriteRepository>();
+            services.AddScoped<ICategoryDetailReadRepository, CategoryDetailReadRepository>();
+            services.AddScoped<ICategoryDetailWriteRepository, CategoryDetailWriteRepository>();
+
+
+            
         }
     }
 }

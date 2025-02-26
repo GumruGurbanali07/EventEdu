@@ -1,6 +1,8 @@
-﻿using EventEdu.Application.Services;
+﻿using EventEdu.Application.DTOs.Category;
+using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace EventEdu.Webui.Controllers
 {
@@ -15,25 +17,23 @@ namespace EventEdu.Webui.Controllers
 			_categoryService = categoryService;
 		}
 
-		[HttpPost("add-category")]
-		public async Task<IActionResult> AddCategory([FromBody] Category category)
-		{
-			if (category == null)
-			{
-				return BadRequest("Category cannot be null");
-			}
+		//[HttpGet("get-categories")]
+		//public async Task<IActionResult> GetCategories()
+		//{
+		//	// Mövcud səhifənin dilini alırıq
+		//	string languageCode = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName;
 
-			var result = await _categoryService.AddCategoryAsync(category);
-			if (result)
-			{
-				return Ok("Category added successfully");
-			}
+		//	// Dil koduna uyğun olaraq database-dən dilin ID-sini götürməliyik
+		//	Guid languageId = await _categoryService.GetCategoryDetailsByLanguageAsync(languageCode);
 
-			return BadRequest("Failed to add category");
-		}
+		//	// Seçilmiş dilə uyğun kateqoriyaları çək
+		//	var categories = await _categoryService.GetCategoryDetailsByLanguageAsync(languageId);
+
+		//	return View(categories);
+		//}
 
 		[HttpPost("add-category-detail")]
-		public async Task<IActionResult> AddCategoryDetail([FromBody] CategoryDetail categoryDetail)
+		public async Task<IActionResult> AddCategoryDetail([FromBody] CategoryDetailDTO categoryDetail)
 		{
 			if (categoryDetail == null)
 			{
@@ -42,28 +42,25 @@ namespace EventEdu.Webui.Controllers
 
 			try
 			{
+				// Əgər CategoryDetail əlavə edilsə
 				var result = await _categoryService.AddCategoryDetailAsync(categoryDetail);
+
 				if (result)
 				{
 					return Ok("Category detail added successfully");
 				}
-				return BadRequest("Failed to add category detail");
+				else
+				{
+					return BadRequest("Failed to add category detail: Category might already exist or there is some other issue.");
+				}
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				// Server tərəfdən səhv baş verdikdə
+				return StatusCode(500, $"Internal server error: {ex.Message}");
 			}
 		}
 
-		[HttpGet("get-category-details/{categoryId}/{languageId}")]
-		public async Task<IActionResult> GetCategoryDetailsByLanguage(Guid categoryId, Guid languageId)
-		{
-			var categoryDetails = await _categoryService.GetCategoryDetailsByLanguageAsync(categoryId, languageId);
-			if (categoryDetails == null)
-			{
-				return NotFound("Category details not found");
-			}
-			return Ok(categoryDetails);
-		}
+
 	}
 }

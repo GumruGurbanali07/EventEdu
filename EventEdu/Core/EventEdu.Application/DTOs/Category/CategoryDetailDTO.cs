@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EventEdu.Application.DTOs.Category
+{
+    public class CategoryDetailDTO
+    {
+		public string CategoryName { get; set; }
+		public Guid LanguageId { get; set; }
+		
+	}
+}

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Application.DTOs.Language
 {
-    public class LanguageAddDTO
+    public class LanguageGetDto
     {
-		public string Name { get; set; }
-		public string IsoCode { get; set; }
-		public string ImagePath { get; set; }
+		public Guid Id { get; set; }
+		public string? IsoCode { get; set; }
+		public string? ImagePath { get; set; }
 	}
 }

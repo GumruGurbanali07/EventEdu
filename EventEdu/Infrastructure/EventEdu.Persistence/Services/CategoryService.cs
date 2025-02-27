@@ -44,11 +44,9 @@ namespace EventEdu.Persistence.Services
 				throw new ArgumentNullException(nameof(categoryDetail));
 			}
 
-			// Mövcud Category-nu tapırıq
 			var existingCategory =  _categoryReadRepository.GetAll().FirstOrDefault(x => x.CategoryDetail.Any(x => x.CategoryName == categoryDetail.CategoryName));
 			if (existingCategory == null)
 			{
-				// Category mövcud deyilsə, yeni bir Category yaradın
 				existingCategory = new Category();
 				
 				var categoryAdded = await _categoryWriteRepository.AddAsync(existingCategory);
@@ -56,26 +54,29 @@ namespace EventEdu.Persistence.Services
 					return false;
 			}
 
-			// Dili yoxlayırıq
 			var languageExists = await _languageReadRepository.GetByIdAsync(categoryDetail.LanguageId.ToString());
 			if (languageExists == null)
 			{
 				throw new Exception($"Language with ID {categoryDetail.LanguageId} not found.");
 			}
 
-			// Yeni CategoryDetail yaradılır
 			var newCategoryDetail = new CategoryDetail
 			{
-				CategoryId = existingCategory.Id, // Mövcud və ya yeni yaradılmış Category ID
-				CategoryName = categoryDetail.CategoryName, // CategoryName eyni olacaq
+				CategoryId = existingCategory.Id, 
+				CategoryName = categoryDetail.CategoryName, 
 				LanguageId = categoryDetail.LanguageId
-			};
-
-			// Yeni CategoryDetail əlavə edirik
+			};			
 			await _categoryDetailWriteRepository.AddAsync(newCategoryDetail);
 			await _categoryDetailWriteRepository.SaveChangeAsync();
-
 			return true;
+		}
+
+		public async Task<Guid> GetLanguageIdByIsoCodeAsync(string isoCode)
+		{
+			var language = await _languageReadRepository.GetAll()
+				.FirstOrDefaultAsync(x => x.IsoCode == isoCode);
+
+			return language?.Id ?? Guid.Empty;
 		}
 
 		public async Task<List<CategoryDetail>> GetCategoryDetailsByLanguageAsync(Guid languageId)
@@ -105,10 +106,6 @@ namespace EventEdu.Persistence.Services
 		{
 			throw new NotImplementedException();
 		}
-
-
-
-	
 
 		public Task<bool> UpdateCategoryDetailAsync(CategoryDetail categoryDetail)
 		{

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,5 +12,6 @@ namespace EventEdu.Application.Repository
 	{
 		IQueryable<T> GetAll(bool tracking=true);
 		Task<T> GetByIdAsync(string id, bool tracking=true);
+		Task<T> GetAsync(Expression<Func<T, bool>> predicate);
 	}
 }

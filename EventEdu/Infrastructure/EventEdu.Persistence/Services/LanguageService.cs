@@ -4,10 +4,13 @@ using EventEdu.Application.Repository;
 using EventEdu.Application.Services;
 using EventEdu.Application.ViewModel;
 using EventEdu.Domain.Entities;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,54 +20,37 @@ namespace EventEdu.Persistence.Services
 	{
 		private readonly ILanguageReadRepository _languageReadRepository;
 		private readonly ILanguageWriteRepository _languageWriteRepository;
+		private readonly IHttpContextAccessor _contextAccessor;
+		private readonly IMapper _mapper;
 
-		public LanguageService(ILanguageReadRepository languageReadRepository, ILanguageWriteRepository languageWriteRepository)
+		public LanguageService(ILanguageReadRepository languageReadRepository, ILanguageWriteRepository languageWriteRepository, IMapper mapper, IHttpContextAccessor contextAccessor)
 		{
 			_languageReadRepository = languageReadRepository;
 			_languageWriteRepository = languageWriteRepository;
+			_mapper = mapper;
+			_contextAccessor = contextAccessor;
 		}
 
-		public async Task<bool> AddLanguageAsync(LanguageAddDTO languageAddDTO)
+		public List<LanguageGetDto> GetAll()
 		{
-			var existLang = await _languageReadRepository.GetByIsoCodeAsync(languageAddDTO.IsoCode);
-			if (existLang != null)
-			{
-				throw new Exception("Language is already exist!");
-			}
-
-			var language = new Language
-			{
-				Name = languageAddDTO.Name,
-				IsoCode = languageAddDTO.IsoCode,
-				ImagePath = languageAddDTO.ImagePath
-			};
-
-			var result = await _languageWriteRepository.AddAsync(language);
-			if (result)
-			{
-				await _languageWriteRepository.SaveChangeAsync();
-			}
-			return result;
+			var languages = _languageReadRepository.GetAll();
+			var dtos = _mapper.Map<List<LanguageGetDto>>(languages);
+			return dtos;
 		}
 
-		public Task<List<Language>> GetAllLanguagesAsync()
+		public async Task<LanguageGetDto> GetLanguageAsync(Expression<Func<Language, bool>> predicate)
 		{
-			throw new NotImplementedException();
+			var language = await _languageReadRepository.GetAsync(predicate);
+			var dto = _mapper.Map<LanguageGetDto>(language);
+			return dto;
 		}
 
-		public Task<Language?> GetLanguageByIdAsync(string id)
+		public async Task<LanguageGetDto> GetSelectedLanguageAsync()
 		{
-			throw new NotImplementedException();
-		}
-
-		public Task<bool> RemoveLanguageAsync(string id)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<bool> UpdateLanguageAsync(Language language)
-		{
-			throw new NotImplementedException();
+			var culture = _contextAccessor.HttpContext?.Request.Cookies[CookieRequestCultureProvider.DefaultCookieName];
+			var isoCode = culture?.Substring(culture.LastIndexOf('=') + 1) ?? "az";
+			var selectedLanguage = await _languageReadRepository.GetAsync(x => x.IsoCode == isoCode);
+			return _mapper.Map<LanguageGetDto>(selectedLanguage);
 		}
 	}
 }

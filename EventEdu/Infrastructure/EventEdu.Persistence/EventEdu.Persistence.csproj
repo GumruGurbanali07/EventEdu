@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\EventEdu.Application\EventEdu.Application.csproj" />
+    <ProjectReference Include="..\..\Core\EventEdu.Domain\EventEdu.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.AspNetCore.Localization">

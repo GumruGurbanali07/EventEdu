@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Persistence.Repository
 {
-    public class ContactInforWriteRepository : WriteRepository<ContactInfo>, IContactInfoWriteRepository
+    public class ContactInfoWriteRepository : WriteRepository<ContactInfo>, IContactInfoWriteRepository
     {
-        public ContactInforWriteRepository(AppDbContext context) : base(context)
+        public ContactInfoWriteRepository(AppDbContext context) : base(context)
         {
         }
     }

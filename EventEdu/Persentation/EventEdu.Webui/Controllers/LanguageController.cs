@@ -15,8 +15,12 @@ public class LanguageController : Controller
 		_languageService = languageService;
 	}
 
+	[HttpGet]
+	public async Task<IActionResult> Index()
+	=> await _languageService.GetAllLanguagesAsync().ContinueWith(a => Ok(a.Result));
+
 	[HttpPost]
-	public async Task<IActionResult> AddLanguage([FromBody] LanguageAddDTO languageAddDTO)
+	public async Task<IActionResult> AddLanguage([FromBody] LanguageGetDTO languageAddDTO)
 	{
 		if (languageAddDTO == null)
 		{

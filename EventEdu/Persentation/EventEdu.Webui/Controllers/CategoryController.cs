@@ -2,6 +2,7 @@
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Globalization;
 
 namespace EventEdu.Webui.Controllers
@@ -11,10 +12,11 @@ namespace EventEdu.Webui.Controllers
 	public class CategoryController : Controller
     {
 		private readonly ICategoryService _categoryService;
-
-		public CategoryController(ICategoryService categoryService)
+		private readonly IStringLocalizer<CategoryController> _localizer;
+		public CategoryController(ICategoryService categoryService, IStringLocalizer<CategoryController> localizer)
 		{
 			_categoryService = categoryService;
+			_localizer = localizer;
 		}
 
 		//[HttpGet("get-categories")]
@@ -31,6 +33,31 @@ namespace EventEdu.Webui.Controllers
 
 		//	return View(categories);
 		//}
+		public async Task<IActionResult> Index()
+		{
+			// Get the current language from the session or request
+			var currentLanguage = HttpContext.Session.GetString("lang") ?? "az-AZ";
+
+			// Fetch the LanguageId for the current language
+			var languageId = await _categoryService.GetLanguageIdByIsoCodeAsync(currentLanguage);
+
+			if (languageId == Guid.Empty)
+			{
+				// Handle case where language is not found
+				ViewBag.ErrorMessage = _localizer!["LanguageNotFound"];
+				return View();
+			}
+
+			// Fetch category details for the current language
+			var categoryDetails = await _categoryService.GetCategoryDetailsByLanguageAsync(languageId);
+
+			// Pass the localized categories to the view
+			ViewBag.Localizer = _localizer;
+			ViewBag.Categories = categoryDetails;
+
+			return Ok(); //bax bunlar home index icindekiler ucundurr 
+		}
+
 
 		[HttpPost("add-category-detail")]
 		public async Task<IActionResult> AddCategoryDetail([FromBody] CategoryDetailDTO categoryDetail)
@@ -39,7 +66,7 @@ namespace EventEdu.Webui.Controllers
 			{
 				return BadRequest("Category detail cannot be null");
 			}
-
+			
 			try
 			{
 				// Əgər CategoryDetail əlavə edilsə

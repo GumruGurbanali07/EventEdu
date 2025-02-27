@@ -22,48 +22,49 @@ builder.Services.AddLocalization();
 builder.Services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizationFactory>();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true; // For GDPR compliance
+	options.IdleTimeout = TimeSpan.FromMinutes(30);
+	options.Cookie.HttpOnly = true;
+	options.Cookie.IsEssential = true; // For GDPR compliance
 });
 
- 
+
 builder.Services.AddPersistenceServices(builder.Configuration);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-//// Configure the HTTP request pipeline.
-//if (!app.Environment.IsDevelopment())
-//{
-//    app.UseExceptionHandler("/Home/Error");
-//    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-//    app.UseHsts();
-//}
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+	app.UseExceptionHandler("/Home/Error");
+	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+	app.UseHsts();
+}
 
 //API
-if (app.Environment.IsDevelopment())
-{
-	app.UseSwagger(); // Swagger
-	app.UseSwaggerUI(c =>
-	{
-		c.SwaggerEndpoint("/swagger/v1/swagger.json", "EventEdu API v1");
-		c.RoutePrefix = string.Empty; // Swagger UI əsas səhifə kimi görünəcək
-	});
-}
+//if (app.Environment.IsDevelopment())
+//{
+//	app.UseSwagger(); // Swagger
+//	app.UseSwaggerUI(c =>
+//	{
+//		c.SwaggerEndpoint("/swagger/v1/swagger.json", "EventEdu API v1");
+//		c.RoutePrefix = string.Empty; // Swagger UI əsas səhifə kimi görünəcək
+//	});
+//}
+
 
 app.UseSession();
 
 app.UseHttpsRedirection();
- 
+
 app.UseStaticFiles();
 
 // var locOptions = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
 // app.UseRequestLocalization(locOptions!.Value);
 app.UseRequestLocalization(new RequestLocalizationOptions
 {
-    DefaultRequestCulture = new RequestCulture(new CultureInfo("az-AZ"))
+	DefaultRequestCulture = new RequestCulture(new CultureInfo("az-AZ"))
 });
 
 app.UseMiddleware<LocalizationMiddleware>();
@@ -75,9 +76,9 @@ app.UseAuthorization();
 app.MapStaticAssets();
 
 app.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}")
-        .WithStaticAssets();
+		name: "default",
+		pattern: "{controller=Home}/{action=Index}/{id?}")
+		.WithStaticAssets();
 
 
 app.Run();

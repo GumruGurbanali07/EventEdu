@@ -2,12 +2,12 @@
   "ExpandedNodes": [
     "",
     "\\EventEdu",
-    "\\EventEdu\\Persentation",
+    "\\EventEdu\\Core",
+    "\\EventEdu\\Infrastructure",
     "\\EventEdu\\Persentation\\EventEdu.Webui",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\wwwroot",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\wwwroot\\assets",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\wwwroot\\assets\\js"
   ],
-  "SelectedNode": "\\EventEdu\\Persentation\\EventEdu.Webui\\wwwroot\\assets\\js\\main.js",
   "PreviewInSolutionExplorer": false
 }

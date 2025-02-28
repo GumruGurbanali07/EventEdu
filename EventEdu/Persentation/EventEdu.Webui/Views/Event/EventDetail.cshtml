@@ -2,11 +2,18 @@
 
 <div class="eventDetail-buttons">
     <i id="heart" class="fa-regular fa-heart"></i>
-    @* <i class="fa-solid fa-heart"></i> *@
-
-    <i class="fa-solid fa-share"></i>
+    <i id="shareBtn" class="fa-solid fa-share"></i>
 </div>
 
+<!-- Modal Structure -->
+<div id="shareModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Share This Page</h2>
+        <p>Copy the URL below:</p>
+        <input type="text" id="pageUrl" readonly>
+    </div>
+</div>
 
 <div class="about-event">
     <div class="about">

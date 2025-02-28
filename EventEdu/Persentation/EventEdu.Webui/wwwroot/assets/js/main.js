@@ -151,14 +151,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-// Auto-Slider for Sponsor's Page
-function showSlider() {
-    document.querySelectorAll('.slider').forEach(slider => slider.classList.remove('active'));
-    let targetSlider = document.querySelector(window.location.hash);
-    if (targetSlider) targetSlider.classList.add('active');
-}
-window.addEventListener('load', showSlider);
-window.addEventListener('hashchange', showSlider);
+//// Auto-Slider for Sponsor's Page
+//function showSlider() {
+//    document.querySelectorAll('.slider').forEach(slider => slider.classList.remove('active'));
+//    let targetSlider = document.querySelector(window.location.hash);
+//    if (targetSlider) targetSlider.classList.add('active');
+//}
+//window.addEventListener('load', showSlider);
+//window.addEventListener('hashchange', showSlider);
 
 // Gender Selection
 document.addEventListener("DOMContentLoaded", function () {
@@ -169,10 +169,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    document.querySelector(".save").addEventListener("click", function (event) {
-        event.preventDefault();
-        alert("Your changes have been saved!");
-    });
+    //document.querySelector(".save").addEventListener("click", function (event) {
+    //    event.preventDefault();
+    //    alert("Your changes have been saved!");
+    //});
 
     document.querySelectorAll(".sidebar li").forEach(item => {
         item.addEventListener("click", function () {
@@ -205,16 +205,15 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
-
 // Pagination For Categories of Events Page
 document.addEventListener("DOMContentLoaded", function () {
     let currentEPage = 1;
     const itemsPerEPage = 20; // Number of events per page
-    const Eitems = document.querySelectorAll('.eventSlide'); // Make sure this class is correct
+    const Eitems = document.querySelectorAll('.eventSlide'); // Ensure this class is correct
     const totalEPages = Math.ceil(Eitems.length / itemsPerEPage);
 
-    const prevEBtn = document.getElementById('prevEventBtn');
-    const nextEBtn = document.getElementById('nextEventBtn');
+    const prevEBtn = document.getElementsByClassName('prevEventBtn')[0]; // Access the first element
+    const nextEBtn = document.getElementsByClassName('nextEventBtn')[0]; // Access the first element
 
     function updateEventsPagination() {
         // Hide all event items initially
@@ -231,27 +230,30 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Enable or disable buttons based on the current page
-        prevEBtn.disabled = currentEPage === 1;
-        nextEBtn.disabled = currentEPage === totalEPages;
+        if (prevEBtn) prevEBtn.disabled = currentEPage === 1;
+        if (nextEBtn) nextEBtn.disabled = currentEPage === totalEPages;
 
         // Smooth scroll to the top of the page
         window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
+    if (nextEBtn) {
+        nextEBtn.addEventListener('click', () => {
+            if (currentEPage < totalEPages) {
+                currentEPage++;
+                updateEventsPagination();
+            }
+        });
+    }
 
-    prevEBtn.addEventListener('click', () => {
-        if (currentEPage > 1) {
-            currentEPage--;
-            updateEventsPagination();
-        }
-    });
-
-    nextEBtn.addEventListener('click', () => {
-        if (currentEPage < totalEPages) {
-            currentEPage++;
-            updateEventsPagination();
-        }
-    });
+    if (prevEBtn) {
+        prevEBtn.addEventListener('click', () => {
+            if (currentEPage > 1) {
+                currentEPage--;
+                updateEventsPagination();
+            }
+        });
+    }
 
     // Initial pagination setup
     updateEventsPagination();
@@ -264,11 +266,13 @@ const reviewsPerPage = 3;
 function paginateReviews() {
     const reviews = document.querySelectorAll('.review');
     const totalReviews = reviews.length;
+    const totalPages = Math.ceil(totalReviews / reviewsPerPage);
 
-    // Hide all reviews
-    reviews.forEach((review, index) => {
-        review.style.display = 'none';
-    });
+    const prevArrow = document.querySelector('.right-side .fa-arrow-left');
+    const nextArrow = document.querySelector('.right-side .fa-arrow-right');
+
+    // Hide all reviews initially
+    reviews.forEach(review => review.style.display = 'none');
 
     // Show only reviews for the current page
     for (let i = (currentPage - 1) * reviewsPerPage; i < currentPage * reviewsPerPage; i++) {
@@ -277,48 +281,58 @@ function paginateReviews() {
         }
     }
 
-    // Disable or enable the arrows based on current page
-    const prevArrow = document.querySelector('.right-side .fa-arrow-left');
-    const nextArrow = document.querySelector('.right-side .fa-arrow-right');
-    const totalPages = Math.ceil(totalReviews / reviewsPerPage);
-
-    // Disable the previous arrow if on the first page
-    if (currentPage === 1) {
-        prevArrow.disabled = true;
-    } else {
-        prevArrow.disabled = false;
+    // Handle arrow visibility (if the elements exist)
+    if (prevArrow) {
+        if (currentPage === 1) {
+            prevArrow.classList.add('disabled'); // Add a disabled class
+            prevArrow.style.opacity = '0.5';
+            prevArrow.style.pointerEvents = 'none';
+        } else {
+            prevArrow.classList.remove('disabled');
+            prevArrow.style.opacity = '1';
+            prevArrow.style.pointerEvents = 'auto';
+        }
     }
 
-    // Disable the next arrow if on the last page
-    if (currentPage === totalPages) {
-        nextArrow.disabled = true;
-    } else {
-        nextArrow.disabled = false;
+    if (nextArrow) {
+        if (currentPage === totalPages) {
+            nextArrow.classList.add('disabled');
+            nextArrow.style.opacity = '0.5';
+            nextArrow.style.pointerEvents = 'none';
+        } else {
+            nextArrow.classList.remove('disabled');
+            nextArrow.style.opacity = '1';
+            nextArrow.style.pointerEvents = 'auto';
+        }
     }
 }
 
 // Event listener for the left (previous) arrow
-document.querySelector('.right-side .fa-arrow-left').addEventListener('click', function () {
-    if (currentPage > 1) {
-        currentPage--;
-        paginateReviews();
-    }
-});
+const prevArrow = document.querySelector('.right-side .fa-arrow-left');
+if (prevArrow) {
+    prevArrow.addEventListener('click', function () {
+        if (currentPage > 1) {
+            currentPage--;
+            paginateReviews();
+        }
+    });
+}
 
 // Event listener for the right (next) arrow
-document.querySelector('.right-side .fa-arrow-right').addEventListener('click', function () {
-    const reviews = document.querySelectorAll('.review');
-    const totalPages = Math.ceil(reviews.length / reviewsPerPage);
-    if (currentPage < totalPages) {
-        currentPage++;
-        paginateReviews();
-    }
-});
+const nextArrow = document.querySelector('.right-side .fa-arrow-right');
+if (nextArrow) {
+    nextArrow.addEventListener('click', function () {
+        const reviews = document.querySelectorAll('.review');
+        const totalPages = Math.ceil(reviews.length / reviewsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            paginateReviews();
+        }
+    });
+}
 
 // Initialize pagination
 paginateReviews();
-
-
 
 // Pagination For Participation History Page
 let currentHPage = 1;
@@ -326,12 +340,13 @@ const itemsPerHPage = 4; // Number of items per page
 const Hitems = document.querySelectorAll('.participation-item');
 const totalHPages = Math.ceil(Hitems.length / itemsPerHPage);
 
-const prevHBtn = document.getElementById('prevEventHistoryBtn');
-const nextHBtn = document.getElementById('nextEventHistoryBtn');
+// Using querySelector to get the first matching element
+const prevHBtn = document.querySelector('.prevEventHistoryBtn');
+const nextHBtn = document.querySelector('.nextEventHistoryBtn');
 
 function updateHistoryPagination() {
     // Hide all items initially
-    Hitems.forEach((item, index) => {
+    Hitems.forEach(item => {
         item.style.display = 'none';
     });
 
@@ -344,40 +359,75 @@ function updateHistoryPagination() {
     }
 
     // Enable or disable buttons based on the current page
-    prevHBtn.disabled = currentHPage === 1;
-    nextHBtn.disabled = currentHPage === totalHPages;
+    if (prevHBtn) prevHBtn.disabled = (currentHPage === 1);
+    if (nextHBtn) nextHBtn.disabled = (currentHPage === totalHPages);
 }
 
-prevHBtn.addEventListener('click', () => {
-    if (currentHPage > 1) {
-        currentHPage--;
-        updateHistoryPagination(); // Corrected function name
-    }
-});
+if (prevHBtn) {
+    prevHBtn.addEventListener('click', () => {
+        if (currentHPage > 1) {
+            currentHPage--;
+            updateHistoryPagination();
+        }
+    });
+}
 
-nextHBtn.addEventListener('click', () => {
-    if (currentHPage < totalHPages) {
-        currentHPage++;
-        updateHistoryPagination(); // Corrected function name
-    }
-});
+if (nextHBtn) {
+    nextHBtn.addEventListener('click', () => {
+        if (currentHPage < totalHPages) {
+            currentHPage++;
+            updateHistoryPagination();
+        }
+    });
+}
 
 // Initial pagination setup
 updateHistoryPagination();
 
 
-//// Handle the click event for the heart (like) icon
-//var heartIcon = document.getElementById('heart');
-//heartIcon.addEventListener('click', function () {
 
-//    // Toggle between regular and solid heart classes
-//    if (heartIcon.classList.contains('fa-regular')) {
-//        heartIcon.classList.remove('fa-regular');
-//        heartIcon.classList.add('fa-solid');
-//        heartIcon.style.color = "red";  // Set color to red when liked
-//    } else {
-//        heartIcon.classList.remove('fa-solid');
-//        heartIcon.classList.add('fa-regular');
-//        heartIcon.style.color = "";  // Remove color when unliked, restoring default
-//    }
-//});
+document.addEventListener("DOMContentLoaded", function () {
+    const heartIcon = document.getElementById('heart');
+    if (!heartIcon) {
+        console.error("Heart icon with id 'heart' not found.");
+        return;
+    }
+
+    heartIcon.addEventListener('click', function () {
+        // Toggle between regular and solid heart classes
+        if (heartIcon.classList.contains('fa-regular')) {
+            heartIcon.classList.remove('fa-regular');
+            heartIcon.classList.add('fa-solid');
+            heartIcon.style.color = "red";  // Set color to red when liked
+        } else {
+            heartIcon.classList.remove('fa-solid');
+            heartIcon.classList.add('fa-regular');
+            heartIcon.style.color = "";  // Restore default color when unliked
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const shareBtn = document.getElementById('shareBtn');
+    const shareModal = document.getElementById('shareModal');
+    const closeBtn = shareModal.querySelector('.close');
+    const pageUrlInput = document.getElementById('pageUrl');
+
+    // When share button is clicked, show the modal and update the URL
+    shareBtn.addEventListener('click', function () {
+        pageUrlInput.value = window.location.href; // Get the current page URL
+        shareModal.style.display = 'block';
+    });
+
+    // Close the modal when the close button is clicked
+    closeBtn.addEventListener('click', function () {
+        shareModal.style.display = 'none';
+    });
+
+    // Close the modal when clicking outside the modal content
+    window.addEventListener('click', function (event) {
+        if (event.target === shareModal) {
+            shareModal.style.display = 'none';
+        }
+    });
+});

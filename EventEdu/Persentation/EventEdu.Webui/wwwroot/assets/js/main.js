@@ -209,7 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener("DOMContentLoaded", function () {
     let currentEPage = 1;
     const itemsPerEPage = 20; // Number of events per page
-    const Eitems = document.querySelectorAll('.eventSlide'); // Ensure this class is correct
+    const Eitems = document.querySelectorAll('.eventSlide-item'); // Ensure this class is correct
     const totalEPages = Math.ceil(Eitems.length / itemsPerEPage);
 
     const prevEBtn = document.getElementsByClassName('prevEventBtn')[0]; // Access the first element
@@ -431,3 +431,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+
+
+
+

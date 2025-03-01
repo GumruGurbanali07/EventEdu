@@ -1,9 +1,9 @@
-﻿using EventEdu.Application.DTOs.Language;
+﻿
 using EventEdu.Application.Services;
-using EventEdu.Domain.Entities;
+using EventEdu.Application.ViewModel;
 using Microsoft.AspNetCore.Mvc;
-
 namespace EventEdu.Webui.Controllers;
+
 [ApiController]
 [Route("api/[controller]")]
 public class LanguageController : Controller
@@ -15,29 +15,25 @@ public class LanguageController : Controller
 		_languageService = languageService;
 	}
 
-	[HttpGet]
-	public async Task<IActionResult> Index()
-	=> await _languageService.GetAllLanguagesAsync().ContinueWith(a => Ok(a.Result));
-
 	[HttpPost]
-	public async Task<IActionResult> AddLanguage([FromBody] LanguageGetDTO languageAddDTO)
+	public async Task<IActionResult> AddLanguage([FromBody] LanguageViewModel languageViewModel)
 	{
-		if (languageAddDTO == null)
+		if (string.IsNullOrEmpty(languageViewModel.Name) || string.IsNullOrEmpty(languageViewModel.IsoCode))
 		{
-			return BadRequest("\"Language information was not entered correctly.\"");
+			return BadRequest(new { message = "Name və ISO Code boş ola bilməz" });
 		}
-		try
+
+		await _languageService.AddLanguageAsync(languageViewModel);
+		return Ok(new { message = "Language added successfully" });
+	}
+
+	public IActionResult Change(string? lang)
+	{
+		if (!string.IsNullOrEmpty(lang))
 		{
-			var result = await _languageService.AddLanguageAsync(languageAddDTO);
-			if (result)
-			{
-				return Ok("Language added successfully");
-			}
-			return BadRequest("Language could not be added");
+			HttpContext.Session.SetString("lang", lang);
 		}
-		catch (Exception ex)
-		{
-			return StatusCode(500, $"Xəta baş verdi: {ex.Message}");
-		}
+
+		return RedirectToAction("Index", "Home");
 	}
 }

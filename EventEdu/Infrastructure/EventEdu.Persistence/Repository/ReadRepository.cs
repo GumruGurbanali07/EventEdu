@@ -1,4 +1,5 @@
-﻿using EventEdu.Application.Repository;
+﻿
+using EventEdu.Application.Repository;
 using EventEdu.Domain.Entities.Common;
 using EventEdu.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -21,17 +22,17 @@ namespace EventEdu.Persistence.Repository
 		public DbSet<T> Table => _context.Set<T>();
 		public IQueryable<T> GetAll(bool tracking = true)
 		{
-			var query=Table.AsQueryable();
-			if (!tracking) 
-				query=Table.AsNoTracking();
+			var query = Table.AsQueryable();
+			if (!tracking)
+				query = Table.AsNoTracking();
 			return query;
 		}
 
-		public async Task<T> GetByIdAsync(string id,bool tracking=true)
+		public async Task<T> GetByIdAsync(string id, bool tracking = true)
 		{
 			var query = Table.AsQueryable();
-			if(!tracking)
-				query=Table.AsNoTracking();
+			if (!tracking)
+				query = Table.AsNoTracking();
 			return await query.FirstOrDefaultAsync(x => x.Id == Guid.Parse(id));
 		}
 	}

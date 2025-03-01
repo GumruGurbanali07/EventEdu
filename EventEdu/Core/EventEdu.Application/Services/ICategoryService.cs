@@ -10,15 +10,7 @@ namespace EventEdu.Application.Services
 {
     public interface ICategoryService
     {
-		public Task<Guid> GetLanguageIdByIsoCodeAsync(string isoCode);
-		Task<bool> AddCategoryDetailAsync(CategoryDetailDTO categoryDetail);
-		Task<Category> GetCategoryByIdAsync(Guid categoryId);
-		Task<List<CategoryDetail>> GetCategoryDetailsByLanguageAsync(Guid languageId);
-		Task<IEnumerable<Category>> GetAllCategoriesAsync();
-		Task<IEnumerable<CategoryDetail>> GetAllCategoryDetailsAsync();
-		
-		Task<bool> UpdateCategoryDetailAsync(CategoryDetail categoryDetail);
-		
-		Task<bool> DeleteCategoryDetailAsync(Guid categoryDetailId);
+		Task<List<CategoryDetail>> GetCategoriesByLanguageAsync(string isoCode);
+		Task AddCategoryWithLanguageAsync(string categoryName, Guid languageId);
 	}
 }

@@ -1,16 +1,12 @@
 ﻿using AutoMapper;
-using EventEdu.Application.DTOs.Language;
 using EventEdu.Application.Repository;
 using EventEdu.Application.Services;
 using EventEdu.Application.ViewModel;
 using EventEdu.Domain.Entities;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,37 +16,34 @@ namespace EventEdu.Persistence.Services
 	{
 		private readonly ILanguageReadRepository _languageReadRepository;
 		private readonly ILanguageWriteRepository _languageWriteRepository;
-		private readonly IHttpContextAccessor _contextAccessor;
 		private readonly IMapper _mapper;
-
-		public LanguageService(ILanguageReadRepository languageReadRepository, ILanguageWriteRepository languageWriteRepository, IMapper mapper, IHttpContextAccessor contextAccessor)
+		public LanguageService(ILanguageReadRepository languageReadRepository, ILanguageWriteRepository languageWriteRepository, IMapper mapper)
 		{
 			_languageReadRepository = languageReadRepository;
 			_languageWriteRepository = languageWriteRepository;
 			_mapper = mapper;
-			_contextAccessor = contextAccessor;
 		}
 
-		public List<LanguageGetDto> GetAll()
+		public async Task AddLanguageAsync(LanguageViewModel languageViewModel)
+		{
+			var language = _mapper.Map<Language>(languageViewModel);
+			await _languageWriteRepository.AddAsync(language);
+			await _languageWriteRepository.SaveChangeAsync();
+		}
+		public async Task<LanguageViewModel> GetLanguageAsync(string isoCode)
 		{
 			var languages = _languageReadRepository.GetAll();
-			var dtos = _mapper.Map<List<LanguageGetDto>>(languages);
-			return dtos;
+
+			var language = languages.FirstOrDefault(x => x.IsoCode.ToLower() == isoCode.ToLower());
+
+			return _mapper.Map<LanguageViewModel>(language);
 		}
 
-		public async Task<LanguageGetDto> GetLanguageAsync(Expression<Func<Language, bool>> predicate)
+		public async Task<List<LanguageViewModel>> GetLanguagesAsync()
 		{
-			var language = await _languageReadRepository.GetAsync(predicate);
-			var dto = _mapper.Map<LanguageGetDto>(language);
-			return dto;
-		}
-
-		public async Task<LanguageGetDto> GetSelectedLanguageAsync()
-		{
-			var culture = _contextAccessor.HttpContext?.Request.Cookies[CookieRequestCultureProvider.DefaultCookieName];
-			var isoCode = culture?.Substring(culture.LastIndexOf('=') + 1) ?? "az";
-			var selectedLanguage = await _languageReadRepository.GetAsync(x => x.IsoCode == isoCode);
-			return _mapper.Map<LanguageGetDto>(selectedLanguage);
+			var languages = await _languageReadRepository.GetAll().ToListAsync();
+			var languageViewModels = _mapper.Map<List<LanguageViewModel>>(languages);
+			return languageViewModels;
 		}
 	}
 }

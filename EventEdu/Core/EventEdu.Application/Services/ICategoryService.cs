@@ -10,7 +10,8 @@ namespace EventEdu.Application.Services
 {
     public interface ICategoryService
     {
-		Task<List<CategoryDetail>> GetCategoriesByLanguageAsync(string isoCode);
-		Task AddCategoryWithLanguageAsync(string categoryName, Guid languageId);
+		//Task<List<CategoryDetail>> GetCategoriesByLanguageAsync(string isoCode);
+		Task AddCategoryWithLanguageAsync(CreateCategoryDTO createCategoryDTO);
+	    Task<List<GetCategoryDTO>> GetCategoriesByLanguageAsync(string isoCode);
 	}
 }

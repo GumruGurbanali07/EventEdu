@@ -10,7 +10,6 @@ namespace EventEdu.Domain.Entities
    public class CategoryDetail:BaseEntity
     {
 		public string CategoryName { get; set; }
-		public string CategoryDescription { get; set; }
 		public Guid CategoryId { get; set; }
 		public Category Category { get; set; }
 		public Guid LanguageId { get; set; }

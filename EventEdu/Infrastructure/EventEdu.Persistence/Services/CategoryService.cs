@@ -2,6 +2,7 @@
 using EventEdu.Application.Repository;
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
+using EventEdu.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,42 +16,90 @@ namespace EventEdu.Persistence.Services
 	{
 		private readonly ICategoryReadRepository _categoryReadRepository;
 		private readonly ICategoryWriteRepository _categoryWriteRepository;
-
-		public CategoryService(ICategoryReadRepository categoryReadRepository, ICategoryWriteRepository categoryWriteRepository)
+		private readonly AppDbContext _context;
+		public CategoryService(ICategoryReadRepository categoryReadRepository, ICategoryWriteRepository categoryWriteRepository, AppDbContext context)
 		{
 			_categoryReadRepository = categoryReadRepository;
 			_categoryWriteRepository = categoryWriteRepository;
+			_context = context;
 		}
 
-		public async Task<List<CategoryDetail>> GetCategoriesByLanguageAsync(string isoCode)
-		{
-			var categories = await _categoryReadRepository.GetAll()
-				.Include(x => x.CategoryDetail)
-				.ThenInclude(x => x.Language)
-				.Where(z => z.CategoryDetail.Any(y => y.Language.IsoCode == isoCode))
-				.SelectMany(c => c.CategoryDetail.Where(cd => cd.Language.IsoCode == isoCode))
-				.ToListAsync();
+		//public async Task<List<CategoryDetail>> GetCategoriesByLanguageAsync(string isoCode)
+		//{
+		//	var categories = await _categoryReadRepository.GetAll()
+		//		.Include(x => x.CategoryDetail)
+		//		.ThenInclude(x => x.Language)
+		//		.Where(z => z.CategoryDetail.Any(y => y.Language.IsoCode == isoCode))
+		//		.SelectMany(c => c.CategoryDetail.Where(cd => cd.Language.IsoCode == isoCode))
+		//		.ToListAsync();
+		//	return categories;
+		//}
 
-			return categories;
-		}
-
-		public async Task AddCategoryWithLanguageAsync(string categoryName, Guid languageId)
+		public async Task AddCategoryWithLanguageAsync(CreateCategoryDTO createCategoryDTO)
 		{
+			
+			var language = await _context.Languages
+										  .FirstOrDefaultAsync(l => l.Id == createCategoryDTO.LanguageId);
+			if (language == null)
+			{
+				throw new Exception("Selected language not found.");
+			}
+
 			var category = new Category
 			{
 				Id = Guid.NewGuid(),
-				CategoryDetail = new List<CategoryDetail>
-				{
-					new CategoryDetail
-					{
-						Id = Guid.NewGuid(),
-						CategoryName = categoryName,
-						LanguageId = languageId
-					}
-				}
+				CreatedDate = DateTime.UtcNow,
+				UpdatedDate = DateTime.UtcNow,
 			};
-			await _categoryWriteRepository.AddAsync(category);
-			await _categoryWriteRepository.SaveChangeAsync();
+
+			_context.Categories.Add(category);
+			await _context.SaveChangesAsync(); 
+
+			
+			var categoryDetail = new CategoryDetail
+			{
+				Id = Guid.NewGuid(),
+				CategoryName = createCategoryDTO.CategoryName,
+				CategoryId = category.Id,
+				LanguageId = createCategoryDTO.LanguageId,
+				CreatedDate = DateTime.UtcNow,
+				UpdatedDate = DateTime.UtcNow,
+			};
+
+			_context.CategoryDetails.Add(categoryDetail);
+			await _context.SaveChangesAsync(); 
+					
+		}
+		public async Task<List<GetCategoryDTO>> GetCategoriesByLanguageAsync(string isoCode)
+		{
+			// Dilin seçilməsi
+			var language = await _context.Languages
+										  .FirstOrDefaultAsync(l => l.IsoCode == isoCode);
+			if (language == null)
+			{
+				language = await _context.Languages.FirstAsync();
+			}
+
+			var categories = await _context.Categories
+										   .Select(c => new GetCategoryDTO
+										   {
+											   Id = c.Id,
+											   CategoryName = _context.CategoryDetails
+															   .Where(cd => cd.CategoryId == c.Id && cd.LanguageId == language.Id)
+															   .Select(cd => cd.CategoryName)
+															   .FirstOrDefault(),
+
+											   ImagePath = language.ImagePath
+										   })
+										   .ToListAsync();
+			return categories;
+
+			//var categories = await _context.Categories
+			//						   .Where(c => c. == isoCode)
+			//						   .ToListAsync();
+			//return categories;
 		}
 	}
-}
+
+	}
+

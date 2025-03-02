@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using EventEdu.Application.DTOs.Language;
 using EventEdu.Application.Repository;
 using EventEdu.Application.Services;
 using EventEdu.Application.ViewModel;
 using EventEdu.Domain.Entities;
+using EventEdu.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,12 +18,31 @@ namespace EventEdu.Persistence.Services
 	{
 		private readonly ILanguageReadRepository _languageReadRepository;
 		private readonly ILanguageWriteRepository _languageWriteRepository;
+		private readonly AppDbContext _context;
 		private readonly IMapper _mapper;
-		public LanguageService(ILanguageReadRepository languageReadRepository, ILanguageWriteRepository languageWriteRepository, IMapper mapper)
+		public LanguageService(ILanguageReadRepository languageReadRepository, ILanguageWriteRepository languageWriteRepository, IMapper mapper, AppDbContext context)
 		{
 			_languageReadRepository = languageReadRepository;
 			_languageWriteRepository = languageWriteRepository;
 			_mapper = mapper;
+			_context = context;
+		}
+
+		public async Task<Language> CreateAsync(CreateLanguageDTO languageDTO)
+		{
+			if (_context.Languages.Any(x => x.IsoCode == languageDTO.IsoCode))
+			{
+				throw new InvalidOperationException("Bu ISO kodlu dil artıq mövcuddur.");
+			}
+			var newLang = new Language
+			{
+				IsoCode = languageDTO.IsoCode,
+				ImagePath = languageDTO.ImagePath,
+				Name = languageDTO.Name
+			};
+			await _languageWriteRepository.AddAsync(newLang);
+			await _languageWriteRepository.SaveChangeAsync();
+			return newLang;
 		}
 
 		public async Task AddLanguageAsync(LanguageViewModel languageViewModel)
@@ -30,6 +51,9 @@ namespace EventEdu.Persistence.Services
 			await _languageWriteRepository.AddAsync(language);
 			await _languageWriteRepository.SaveChangeAsync();
 		}
+
+		
+
 		public async Task<LanguageViewModel> GetLanguageAsync(string isoCode)
 		{
 			var languages = _languageReadRepository.GetAll();

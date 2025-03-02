@@ -13,7 +13,8 @@ namespace EventEdu.Application.Profiles
 	{
 		public AutoMapping()
 		{
-			CreateMap<LanguageViewModel, Language>().ReverseMap();
+			CreateMap<LanguageViewModel, Language>();
+			CreateMap<Language, LanguageViewModel>();
 		}
 	}
 }

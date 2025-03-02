@@ -27,6 +27,15 @@ builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddControllersWithViews();
 
 
+// Swagger services
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+	c.SwaggerDoc("v1", new OpenApiInfo { Title = "EventEdu API", Version = "v1" });
+});
+// Swagger services
+
+
 
 var app = builder.Build();
 
@@ -55,6 +64,13 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+// Enable Swagger middleware
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+	c.SwaggerEndpoint("/swagger/v1/swagger.json", "EventEdu API v1");
+});
+// Enable Swagger middleware
 
 
 app.MapStaticAssets();

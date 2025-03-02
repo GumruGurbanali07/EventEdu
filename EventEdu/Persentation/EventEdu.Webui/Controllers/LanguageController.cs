@@ -1,4 +1,5 @@
 ﻿
+using EventEdu.Application.DTOs.Language;
 using EventEdu.Application.Services;
 using EventEdu.Application.ViewModel;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,24 @@ public class LanguageController : Controller
 		_languageService = languageService;
 	}
 
+	[HttpPost("create")]
+	public async Task<IActionResult> CreateLanguage([FromBody] CreateLanguageDTO languageDTO)
+	{
+		try
+		{
+			var newLanguage = await _languageService.CreateAsync(languageDTO);
+			return Ok(newLanguage); // 200 OK cavabı ilə yeni dil məlumatını qaytarır.
+		}
+		catch (InvalidOperationException ex)
+		{
+			return BadRequest(ex.Message); // 400 Bad Request cavabı ilə xəta mesajını qaytarır.
+		}
+		catch (Exception ex)
+		{
+			return StatusCode(500, "Daxili server xətası: " + ex.Message); // 500 Internal Server Error cavabı ilə ümumi xəta mesajını qaytarır.
+		}
+	}
+
 	[HttpPost]
 	public async Task<IActionResult> AddLanguage([FromBody] LanguageViewModel languageViewModel)
 	{
@@ -27,6 +46,7 @@ public class LanguageController : Controller
 		return Ok(new { message = "Language added successfully" });
 	}
 
+	[HttpGet]
 	public IActionResult Change(string? lang)
 	{
 		if (!string.IsNullOrEmpty(lang))

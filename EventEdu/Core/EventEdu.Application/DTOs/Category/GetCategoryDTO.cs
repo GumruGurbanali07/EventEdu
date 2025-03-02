@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Application.DTOs.Category
 {
-    public class CategoryDetailDTO
+    public class GetCategoryDTO
     {
+		public Guid Id { get; set; }
 		public string CategoryName { get; set; }
-		public Guid LanguageId { get; set; }
-		
+		public string IsoCode { get; set; }  // ISO code (az-AZ, en-US, ru-RU)
+
+		public string ImagePath { get; set; }
 	}
 }

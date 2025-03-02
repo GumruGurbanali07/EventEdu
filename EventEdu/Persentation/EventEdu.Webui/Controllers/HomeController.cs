@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 
 namespace EventEdu.Webui.Controllers;
-[ApiController]
-[Route("api/[controller]")]
+//[ApiController]
+//[Route("api/[controller]")]
 public class HomeController : Controller
 {
 	private readonly ILogger<HomeController> _logger;
@@ -17,12 +17,12 @@ public class HomeController : Controller
 		_localizer = localizer;
 		_categoryService = categoryService;
 	}
-	[HttpGet]
+	//[HttpGet]
 	public async Task<IActionResult> Index()
 	{
-		var isoCode = "az-AZ"; 
-		var categories = await _categoryService.GetCategoriesByLanguageAsync(isoCode);
+		var lang = HttpContext.Session.GetString("lang") ?? "en-US";
 
+		var categories = await _categoryService.GetCategoriesByLanguageAsync(lang);
 		
 		ViewBag.Localizer = _localizer;
 		ViewBag.Categories = categories;

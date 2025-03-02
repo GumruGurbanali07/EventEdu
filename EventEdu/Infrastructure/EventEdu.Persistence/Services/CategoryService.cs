@@ -72,34 +72,33 @@ namespace EventEdu.Persistence.Services
 		}
 		public async Task<List<GetCategoryDTO>> GetCategoriesByLanguageAsync(string isoCode)
 		{
-			// Dilin seçilməsi
-			var language = await _context.Languages
-										  .FirstOrDefaultAsync(l => l.IsoCode == isoCode);
+			// Dil tapılır
+			var language = await _context.Languages.FirstOrDefaultAsync(l => l.IsoCode == isoCode);
+
 			if (language == null)
 			{
-				language = await _context.Languages.FirstAsync();
+				language = await _context.Languages.FirstAsync(); 
 			}
 
 			var categories = await _context.Categories
-										   .Select(c => new GetCategoryDTO
-										   {
-											   Id = c.Id,
-											   CategoryName = _context.CategoryDetails
-															   .Where(cd => cd.CategoryId == c.Id && cd.LanguageId == language.Id)
-															   .Select(cd => cd.CategoryName)
-															   .FirstOrDefault(),
+				.Where(c => _context.CategoryDetails
+					.Any(cd => cd.CategoryId == c.Id && cd.LanguageId == language.Id)) 
+				.Select(c => new GetCategoryDTO
+				{
+					Id = c.Id,
+					CategoryName = _context.CategoryDetails
+						.Where(cd => cd.CategoryId == c.Id && cd.LanguageId == language.Id) 
+						.Select(cd => cd.CategoryName)
+						.FirstOrDefault(),
+					IsoCode=language.IsoCode,
+					ImagePath = language.ImagePath
+				})
+				.ToListAsync();
 
-											   ImagePath = language.ImagePath
-										   })
-										   .ToListAsync();
 			return categories;
-
-			//var categories = await _context.Categories
-			//						   .Where(c => c. == isoCode)
-			//						   .ToListAsync();
-			//return categories;
 		}
-	}
 
 	}
+
+}
 

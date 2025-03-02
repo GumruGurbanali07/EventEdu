@@ -1,7 +1,7 @@
-﻿﻿@using EventEdu.Webui.Controllers
-@using Microsoft.Extensions.Localization
+﻿
 @{
     var localizer = ViewBag.Localizer as IStringLocalizer<HomeController>;
+    var categories = ViewBag.Categories as List<GetCategoryDTO>;
 }
 
 <div class="container-fluid p-0 mb-5">
@@ -41,7 +41,8 @@
     </div>
 </div>
 <!-- Carousel End -->
-@* <!-- Service Start -->
+
+@*  <!-- Service Start -->
 <div class="container-xxl py-5">
     <div class="container">
         <div class="row g-4">
@@ -84,12 +85,12 @@
         </div>
     </div>
 </div>
-<!-- Service End --> *@
+<!-- Service End -->  *@
 
 
 
 
-@* Category *@
+<!-- Service Start -->
 <div class="container-xxl py-5">
     <div class="container">
         <div class="row g-4">
@@ -99,7 +100,6 @@
                     <div class="service-item text-center pt-3">
                         <div class="p-4">
                             <i class="fa fa-3x fa-graduation-cap text-primary mb-4"></i>
-                            <!-- Category name -->
                             <h5 class="mb-3">@category.CategoryName</h5>
                             <p>Diam elitr kasd sed at elitr sed ipsum justo dolor sed clita amet diam</p>
                         </div>
@@ -109,8 +109,7 @@
         </div>
     </div>
 </div>
-@* category *@
-
+<!-- Service End -->
 
 
 

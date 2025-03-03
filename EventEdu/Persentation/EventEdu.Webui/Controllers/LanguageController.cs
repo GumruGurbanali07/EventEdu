@@ -5,8 +5,8 @@ using EventEdu.Application.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 namespace EventEdu.Webui.Controllers;
 
-//[ApiController]
-//[Route("api/[controller]")]
+[ApiController]
+[Route("api/[controller]")]
 public class LanguageController : Controller
 {
 	private readonly ILanguageService _languageService;
@@ -16,7 +16,7 @@ public class LanguageController : Controller
 		_languageService = languageService;
 	}
 
-	//[HttpPost("create")]
+	[HttpPost("create")]
 	public async Task<IActionResult> CreateLanguage([FromBody] CreateLanguageDTO languageDTO)
 	{
 		try
@@ -34,7 +34,7 @@ public class LanguageController : Controller
 		}
 	}
 
-	//[HttpPost]
+	[HttpPost]
 	public async Task<IActionResult> AddLanguage([FromBody] LanguageViewModel languageViewModel)
 	{
 		if (string.IsNullOrEmpty(languageViewModel.Name) || string.IsNullOrEmpty(languageViewModel.IsoCode))
@@ -46,7 +46,7 @@ public class LanguageController : Controller
 		return Ok(new { message = "Language added successfully" });
 	}
 
-	//[HttpGet]
+	[HttpGet]
 	public IActionResult Change(string? lang)
 	{
 		if (!string.IsNullOrEmpty(lang))

@@ -7,8 +7,8 @@ using System.Globalization;
 
 namespace EventEdu.Webui.Controllers
 {
-	//[ApiController]
-	//[Route("api/[controller]")]
+	[ApiController]
+	[Route("api/[controller]")]
 	public class CategoryController : Controller
     {
 		private readonly ICategoryService _categoryService;
@@ -18,7 +18,7 @@ namespace EventEdu.Webui.Controllers
 			_categoryService = categoryService;
 		}
 
-		//[HttpGet]
+		[HttpGet]
 		public async Task<IActionResult> GetCategoriesByLanguage(string isoCode)
 		{
 			var categories = await _categoryService.GetCategoriesByLanguageAsync(isoCode);
@@ -32,7 +32,7 @@ namespace EventEdu.Webui.Controllers
 		//	return View(categories);
 		//}
 
-		//[HttpPost]
+		[HttpPost]
 		public async Task<IActionResult> AddCategoryWithLanguage([FromBody] CreateCategoryDTO createCategoryDTO)
 		{
 			if (createCategoryDTO == null)

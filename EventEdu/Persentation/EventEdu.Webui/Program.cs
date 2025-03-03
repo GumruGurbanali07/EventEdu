@@ -5,7 +5,7 @@ using RequestLocalizationOptions = Microsoft.AspNetCore.Builder.RequestLocalizat
 using EventEdu.Webui.Localization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
-//using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,11 +28,11 @@ builder.Services.AddControllersWithViews();
 
 
 //Swagger services
-//builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen(c =>
-//{
-//	c.SwaggerDoc("v1", new OpenApiInfo { Title = "EventEdu API", Version = "v1" });
-//});
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+	c.SwaggerDoc("v1", new OpenApiInfo { Title = "EventEdu API", Version = "v1" });
+});
 //Swagger services
 
 
@@ -65,11 +65,11 @@ app.UseRouting();
 app.UseAuthorization();
 
 //// Enable Swagger middleware
-//app.UseSwagger();
-//app.UseSwaggerUI(c =>
-//{
-//	c.SwaggerEndpoint("/swagger/v1/swagger.json", "EventEdu API v1");
-//});
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+	c.SwaggerEndpoint("/swagger/v1/swagger.json", "EventEdu API v1");
+});
 //// Enable Swagger middleware
 
 

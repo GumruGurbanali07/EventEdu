@@ -13,5 +13,6 @@ namespace EventEdu.Application.Services
 		//Task<List<CategoryDetail>> GetCategoriesByLanguageAsync(string isoCode);
 		Task AddCategoryWithLanguageAsync(CreateCategoryDTO createCategoryDTO);
 	    Task<List<GetCategoryDTO>> GetCategoriesByLanguageAsync(string isoCode);
+		Task UpdateCategoryAsync(Guid categoryId, UpdateCategoryDTO updateCategoryDTO);
 	}
 }

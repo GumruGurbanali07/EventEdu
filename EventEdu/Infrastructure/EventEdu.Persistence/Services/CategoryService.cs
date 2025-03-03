@@ -104,6 +104,26 @@ namespace EventEdu.Persistence.Services
 			return categories;
 		}
 
+		public async Task UpdateCategoryAsync(Guid categoryId, UpdateCategoryDTO updateCategoryDTO)
+		{
+			var categoryDetail = await _context.CategoryDetails
+				.FirstOrDefaultAsync(x=>x.Id==categoryId);
+			if (categoryDetail == null)
+			{
+				throw new Exception("Category not found");
+			}
+			bool isCategoryExist = await _context.CategoryDetails
+				.AnyAsync(x => x.CategoryName == updateCategoryDTO.CategoryName && x.LanguageId == updateCategoryDTO.LanguageId
+				&& x.Id != categoryId);
+			if (isCategoryExist)
+			{
+				throw new Exception("This category name already exists for the selected language.");
+			}
+			categoryDetail.CategoryName = updateCategoryDTO.CategoryName;
+			categoryDetail.LanguageId = updateCategoryDTO.LanguageId;
+			categoryDetail.UpdatedDate = DateTime.UtcNow;
+			await _context.SaveChangesAsync();
+		}
 	}
 
 }

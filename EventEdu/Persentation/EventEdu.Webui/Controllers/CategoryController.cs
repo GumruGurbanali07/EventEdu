@@ -2,6 +2,7 @@
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
 
@@ -10,7 +11,7 @@ namespace EventEdu.Webui.Controllers
 	[ApiController]
 	[Route("api/[controller]")]
 	public class CategoryController : Controller
-    {
+	{
 		private readonly ICategoryService _categoryService;
 
 		public CategoryController(ICategoryService categoryService)
@@ -50,6 +51,22 @@ namespace EventEdu.Webui.Controllers
 				return BadRequest($"Error: {ex.Message}");
 			}
 		}
+
+		[HttpPut("{categoryId}")]
+		public async Task<IActionResult> UpdateCategory(Guid categoryId, [FromBody] UpdateCategoryDTO updateCategoryDTO)
+		{
+			try
+			{
+				await _categoryService.UpdateCategoryAsync(categoryId, updateCategoryDTO);
+				return Ok(new { message = "Category updated successfully." });
+			}
+			catch(Exception ex)
+			{
+				return BadRequest(new { error = ex.Message });
+
+			}
+		} 
+
 
 	}
 }

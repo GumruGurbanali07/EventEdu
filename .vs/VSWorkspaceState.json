@@ -2,12 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\EventEdu",
-    "\\EventEdu\\Core",
     "\\EventEdu\\Infrastructure",
+    "\\EventEdu\\Persentation",
     "\\EventEdu\\Persentation\\EventEdu.Webui",
-    "\\EventEdu\\Persentation\\EventEdu.Webui\\wwwroot",
-    "\\EventEdu\\Persentation\\EventEdu.Webui\\wwwroot\\assets",
-    "\\EventEdu\\Persentation\\EventEdu.Webui\\wwwroot\\assets\\js"
+    "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas",
+    "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin",
+    "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Controllers",
+    "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views",
+    "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Shared"
   ],
+  "SelectedNode": "\\EventEdu\\EventEdu.sln",
   "PreviewInSolutionExplorer": false
 }

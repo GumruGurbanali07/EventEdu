@@ -60,9 +60,9 @@ namespace EventEdu.Persistence.Services
 			};
 
 			_context.Categories.Add(category);
-			await _context.SaveChangesAsync(); 
+			await _context.SaveChangesAsync();
 
-			
+
 			var categoryDetail = new CategoryDetail
 			{
 				Id = Guid.NewGuid(),
@@ -74,8 +74,8 @@ namespace EventEdu.Persistence.Services
 			};
 
 			_context.CategoryDetails.Add(categoryDetail);
-			await _context.SaveChangesAsync(); 
-					
+			await _context.SaveChangesAsync();
+
 		}
 		public async Task<List<GetCategoryDTO>> GetCategoriesByLanguageAsync(string isoCode)
 		{
@@ -83,20 +83,20 @@ namespace EventEdu.Persistence.Services
 
 			if (language == null)
 			{
-				language = await _context.Languages.FirstAsync(); 
+				language = await _context.Languages.FirstAsync();
 			}
 
 			var categories = await _context.Categories
 				.Where(c => _context.CategoryDetails
-					.Any(cd => cd.CategoryId == c.Id && cd.LanguageId == language.Id)) 
+					.Any(cd => cd.CategoryId == c.Id && cd.LanguageId == language.Id))
 				.Select(c => new GetCategoryDTO
 				{
 					Id = c.Id,
 					CategoryName = _context.CategoryDetails
-						.Where(cd => cd.CategoryId == c.Id && cd.LanguageId == language.Id) 
+						.Where(cd => cd.CategoryId == c.Id && cd.LanguageId == language.Id)
 						.Select(cd => cd.CategoryName)
 						.FirstOrDefault(),
-					IsoCode=language.IsoCode,
+					IsoCode = language.IsoCode,
 					ImagePath = language.ImagePath
 				})
 				.ToListAsync();
@@ -104,10 +104,12 @@ namespace EventEdu.Persistence.Services
 			return categories;
 		}
 
+
+
 		public async Task UpdateCategoryAsync(Guid categoryId, UpdateCategoryDTO updateCategoryDTO)
 		{
 			var categoryDetail = await _context.CategoryDetails
-				.FirstOrDefaultAsync(x=>x.Id==categoryId);
+				.FirstOrDefaultAsync(x => x.Id == categoryId);
 			if (categoryDetail == null)
 			{
 				throw new Exception("Category not found");
@@ -124,7 +126,65 @@ namespace EventEdu.Persistence.Services
 			categoryDetail.UpdatedDate = DateTime.UtcNow;
 			await _context.SaveChangesAsync();
 		}
+		public async Task SoftDeleteCategoryAsync(Guid categoryId)
+		{
+			var categories = await _context.Categories.FirstOrDefaultAsync(x => x.Id == categoryId);
+			if (categories == null)
+			{
+				throw new Exception("Category not found");
+			}
+			categories.SoftDelete();
+			var categoryDetails = await _context.CategoryDetails.Where(x => x.CategoryId == categoryId).ToListAsync();
+			foreach (var detail in categoryDetails)
+			{
+				detail.SoftDelete();
+			}
+			await _context.SaveChangesAsync();
+		}
+		public async Task RestoreCategoryAsync(Guid categoryId)
+		{
+			var categories = await _context.Categories.FirstOrDefaultAsync(x => x.Id == categoryId);
+			if (categories == null)
+			{
+				throw new Exception("Category not found");
+			}
+			categories.Restore();
+			var categoryDetails = await _context.CategoryDetails.Where(x => x.CategoryId == categoryId).ToListAsync();
+			foreach(var detail in categoryDetails)
+			{
+				detail.Restore();
+			}
+			await _context.SaveChangesAsync();
+
+
+
+		}
+
+		public async Task<GetCategoryDTO?> GetCategoryByIdAndLanguageAsync(Guid categoryId, string isoCode)
+		{
+			var language = await _context.Languages.FirstOrDefaultAsync(l => l.IsoCode == isoCode);
+			if (language == null)
+			{
+				language = await _context.Languages.FirstAsync(); // Default dili götür
+			}
+
+			var category = await _context.Categories
+				.Where(c => c.Id == categoryId)
+				.Select(c => new GetCategoryDTO
+				{
+					Id = c.Id,
+					CategoryName = _context.CategoryDetails
+						.Where(cd => cd.CategoryId == categoryId && cd.LanguageId == language.Id)
+						.Select(cd => cd.CategoryName)
+						.FirstOrDefault(),
+					IsoCode = language.IsoCode,
+					ImagePath = language.ImagePath
+				})
+				.FirstOrDefaultAsync();
+
+			return category;
+		}
+
 	}
 
 }
-

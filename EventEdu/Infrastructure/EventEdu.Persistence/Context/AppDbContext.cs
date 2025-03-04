@@ -22,7 +22,6 @@ namespace EventEdu.Persistence.Context
 		public DbSet<CategoryDetail> CategoryDetails { get; set; }
 		public DbSet<Comment> Comments { get; set; }
 		public DbSet<CommentDetail> CommentDetails { get; set; }
-		public DbSet<ContactInfo> ContactInfos { get; set; }
 		public DbSet<Event> Events { get; set; }
 		public DbSet<EventDetail> EventDetails { get; set; }
 		public DbSet<EventSpeaker> EventSpeakers { get; set; }
@@ -30,7 +29,6 @@ namespace EventEdu.Persistence.Context
 		public DbSet<FeedBack> FeedBacks { get; set; }
 		public DbSet<FeedBackDetail> FeedBackDetails { get; set; }
 		public DbSet<Language> Languages { get; set; }
-		public DbSet<Media> Medias { get; set; }
 		public DbSet<Notification> Notifications { get; set; }
 		public DbSet<NotificationDetail> NotificationDetails { get; set; }
 		public DbSet<Speaker> Speakers { get; set; }

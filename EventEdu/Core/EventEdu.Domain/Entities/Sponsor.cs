@@ -11,8 +11,6 @@ namespace EventEdu.Domain.Entities
 	{
 		public string Website {  get; set; }
 
-		public ICollection<Media> Medias { get; set; }
-		public ICollection<ContactInfo> ContactInfos { get; set; }
 		public ICollection<EventSponsor> EventSponsors { get; set; }
 
 

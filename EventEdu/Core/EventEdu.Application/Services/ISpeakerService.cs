@@ -1,0 +1,15 @@
+﻿using EventEdu.Application.DTOs.Speaker;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EventEdu.Application.Services
+{
+	public interface ISpeakerService
+	{
+		Task AddSpeakerWithLanguageAsync(CreateSpeakerDTO createSpeakerDTO);
+
+	}
+}

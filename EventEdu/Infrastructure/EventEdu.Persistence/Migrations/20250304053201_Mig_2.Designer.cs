@@ -4,6 +4,7 @@ using EventEdu.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventEdu.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250304053201_Mig_2")]
+    partial class Mig_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -195,6 +198,56 @@ namespace EventEdu.Persistence.Migrations
                     b.HasIndex("LanguageId");
 
                     b.ToTable("CommentDetails");
+                });
+
+            modelBuilder.Entity("EventEdu.Domain.Entities.ContactInfo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FacebookLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InstagramLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LinkedInLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SpeakerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SponsorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SpeakerId");
+
+                    b.HasIndex("SponsorId");
+
+                    b.ToTable("ContactInfos");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Event", b =>
@@ -596,6 +649,53 @@ namespace EventEdu.Persistence.Migrations
                     b.ToTable("Languages");
                 });
 
+            modelBuilder.Entity("EventEdu.Domain.Entities.Media", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AboutSectionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("HeroSectionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("SponsorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UploadedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AboutSectionId");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("HeroSectionId");
+
+                    b.HasIndex("SponsorId");
+
+                    b.ToTable("Medias");
+                });
+
             modelBuilder.Entity("EventEdu.Domain.Entities.Notification", b =>
                 {
                     b.Property<Guid>("Id")
@@ -664,28 +764,8 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FacebookLink")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InstagramLink")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<string>("TwitterLink")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -988,6 +1068,25 @@ namespace EventEdu.Persistence.Migrations
                     b.Navigation("Language");
                 });
 
+            modelBuilder.Entity("EventEdu.Domain.Entities.ContactInfo", b =>
+                {
+                    b.HasOne("EventEdu.Domain.Entities.Speaker", "Speaker")
+                        .WithMany("ContactInfos")
+                        .HasForeignKey("SpeakerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EventEdu.Domain.Entities.Sponsor", "Sponsor")
+                        .WithMany("ContactInfos")
+                        .HasForeignKey("SponsorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Speaker");
+
+                    b.Navigation("Sponsor");
+                });
+
             modelBuilder.Entity("EventEdu.Domain.Entities.Event", b =>
                 {
                     b.HasOne("EventEdu.Domain.Entities.Category", "Category")
@@ -1103,6 +1202,33 @@ namespace EventEdu.Persistence.Migrations
                     b.Navigation("HeroSection");
 
                     b.Navigation("Language");
+                });
+
+            modelBuilder.Entity("EventEdu.Domain.Entities.Media", b =>
+                {
+                    b.HasOne("EventEdu.Domain.Entities.AboutSection", null)
+                        .WithMany("Medias")
+                        .HasForeignKey("AboutSectionId");
+
+                    b.HasOne("EventEdu.Domain.Entities.Event", null)
+                        .WithMany("Medias")
+                        .HasForeignKey("EventId");
+
+                    b.HasOne("EventEdu.Domain.Entities.HeroSection", "HeroSection")
+                        .WithMany("Medias")
+                        .HasForeignKey("HeroSectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EventEdu.Domain.Entities.Sponsor", "Sponsor")
+                        .WithMany("Medias")
+                        .HasForeignKey("SponsorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("HeroSection");
+
+                    b.Navigation("Sponsor");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Notification", b =>
@@ -1242,6 +1368,8 @@ namespace EventEdu.Persistence.Migrations
             modelBuilder.Entity("EventEdu.Domain.Entities.AboutSection", b =>
                 {
                     b.Navigation("AboutSectionDetails");
+
+                    b.Navigation("Medias");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Category", b =>
@@ -1264,6 +1392,8 @@ namespace EventEdu.Persistence.Migrations
 
                     b.Navigation("FeedBacks");
 
+                    b.Navigation("Medias");
+
                     b.Navigation("Notifications");
 
                     b.Navigation("UserEvents");
@@ -1277,6 +1407,8 @@ namespace EventEdu.Persistence.Migrations
             modelBuilder.Entity("EventEdu.Domain.Entities.HeroSection", b =>
                 {
                     b.Navigation("HeroSectionDetails");
+
+                    b.Navigation("Medias");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Identity.AppUser", b =>
@@ -1295,6 +1427,8 @@ namespace EventEdu.Persistence.Migrations
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Speaker", b =>
                 {
+                    b.Navigation("ContactInfos");
+
                     b.Navigation("EventSpeakers");
 
                     b.Navigation("SpeakerDetails");
@@ -1302,7 +1436,11 @@ namespace EventEdu.Persistence.Migrations
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Sponsor", b =>
                 {
+                    b.Navigation("ContactInfos");
+
                     b.Navigation("EventSponsors");
+
+                    b.Navigation("Medias");
                 });
 #pragma warning restore 612, 618
         }

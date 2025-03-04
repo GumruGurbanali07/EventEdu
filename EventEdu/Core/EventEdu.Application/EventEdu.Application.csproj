@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="DTOs\About\" />
+    <Folder Include="DTOs\Feedback\" />
     <Folder Include="Exceptions\" />
     <Folder Include="Repository\Category\" />
     <Folder Include="Repository\CategoryDetail\" />
@@ -16,5 +18,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
   </ItemGroup>
 </Project>

@@ -9,11 +9,12 @@ namespace EventEdu.Domain.Entities
 {
 	public class Sponsor:BaseEntity
 	{
-		public string Website {  get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Website {  get; set; }
+		public string ImagePath { get; set; }
 
-		public ICollection<Media> Medias { get; set; }
-		public ICollection<ContactInfo> ContactInfos { get; set; }
-		public ICollection<EventSponsor> EventSponsors { get; set; }
+		public ICollection<EventSponsor>? EventSponsors { get; set; }
 
 
 	}

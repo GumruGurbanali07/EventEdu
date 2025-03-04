@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EventEdu.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Mig_1 : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -525,7 +525,10 @@ namespace EventEdu.Persistence.Migrations
                 columns: table => new
                 {
                     EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SpeakerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    SpeakerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -549,7 +552,10 @@ namespace EventEdu.Persistence.Migrations
                 columns: table => new
                 {
                     EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SponsorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    SponsorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -659,7 +665,10 @@ namespace EventEdu.Persistence.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {

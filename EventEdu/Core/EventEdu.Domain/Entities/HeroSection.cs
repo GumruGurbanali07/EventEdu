@@ -11,7 +11,6 @@ namespace EventEdu.Domain.Entities
     {
 		public string Title { get; set; }
 		public string Description { get; set; }
-		public ICollection<Media> Medias { get; set; }
 		public ICollection<HeroSectionDetail> HeroSectionDetails { get; set; }
 		
 	}

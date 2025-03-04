@@ -26,7 +26,6 @@ namespace EventEdu.Domain.Entities
 
 		public ICollection<Notification> Notifications { get; set; }
 
-		public ICollection<Media> Medias { get; set; }
 
 
 

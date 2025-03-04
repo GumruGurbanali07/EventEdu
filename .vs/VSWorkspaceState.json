@@ -2,15 +2,16 @@
   "ExpandedNodes": [
     "",
     "\\EventEdu",
-    "\\EventEdu\\Infrastructure",
+    "\\EventEdu\\Core",
+    "\\EventEdu\\Core\\EventEdu.Domain",
+    "\\EventEdu\\Core\\EventEdu.Domain\\Entities",
     "\\EventEdu\\Persentation",
     "\\EventEdu\\Persentation\\EventEdu.Webui",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin",
-    "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Controllers",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Shared"
   ],
-  "SelectedNode": "\\EventEdu\\EventEdu.sln",
+  "SelectedNode": "\\EventEdu\\Core\\EventEdu.Domain\\Entities\\Media.cs",
   "PreviewInSolutionExplorer": false
 }

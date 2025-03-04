@@ -1,0 +1,45 @@
+﻿
+<form asp-action="AddSponsor" method="post" enctype="multipart/form-data">
+    <h4 style="margin-left:40px">Add Sponsor</h4>
+    <!-- File input -->
+    <div class="addOrEditCard card">
+        <div class="chosenImage"><img src="~/client/assets/img/teams/team-2.jpg" /></div>
+        <div class="card-body">
+            <div class="form-floating form-floating-outline mb-3">
+                <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
+                    <option selected value="1">Aze</option>
+                    <option value="2">Ru</option>
+                    <option value="3">Eng</option>
+                </select>
+                <label for="exampleFormControlSelect1">Language</label>
+            </div>
+            <div class="mb-3">
+                <label for="formFile" class="form-label">Sponsor's Image</label>
+                <input class="form-control" type="file" id="formFile">
+            </div>
+            <div>
+                <label for="defaultFormControlInput" class="form-label">Sponsor Name</label>
+                <input type="text" class="form-control" id="defaultFormControlInput" placeholder="John Doe" aria-describedby="defaultFormControlHelp" />
+                <div id="defaultFormControlHelp" class="form-text text-danger"></div>
+            </div>
+            <div>
+                <label for="defaultFormControlInput" class="form-label">Email</label>
+                <input type="text" class="form-control" id="defaultFormControlInput" placeholder="John Doe" aria-describedby="defaultFormControlHelp" />
+                <div id="defaultFormControlHelp" class="form-text text-danger"></div>
+            </div>
+            <div>
+                <label for="defaultFormControlInput" class="form-label">Phone number</label>
+                <input type="text" class="form-control" id="defaultFormControlInput" placeholder="John Doe" aria-describedby="defaultFormControlHelp" />
+                <div id="defaultFormControlHelp" class="form-text text-danger"></div>
+            </div>
+            <div>
+                <label for="defaultFormControlInput" class="form-label">Website</label>
+                <input type="text" class="form-control" id="defaultFormControlInput" placeholder="John Doe" aria-describedby="defaultFormControlHelp" />
+                <div id="defaultFormControlHelp" class="form-text text-danger"></div>
+            </div>
+   
+            
+            <button type="submit" class="btn btn-primary mt-3">Save</button>
+        </div>
+    </div>
+</form>

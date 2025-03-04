@@ -1,0 +1,18 @@
+﻿using EventEdu.Application.DTOs.Category;
+using EventEdu.Application.DTOs.Sponsor;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EventEdu.Application.Services
+{
+    public interface ISponsorService
+    {
+        Task AddSponsorAsync(CreateSponsorDTO addSponsorDTO);
+        Task<List<GetSponsorDTO>> GetAllSponsorsByLanguageAsync(string isoCode);
+        Task<GetSponsorDTO> GetSponsorById(Guid id);
+        Task<GetSponsorDTO> DeleteSponsor(Guid id, string webRootPath);
+    }
+}

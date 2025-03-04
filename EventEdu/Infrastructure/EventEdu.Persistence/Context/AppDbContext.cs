@@ -30,7 +30,6 @@ namespace EventEdu.Persistence.Context
 		public DbSet<FeedBack> FeedBacks { get; set; }
 		public DbSet<FeedBackDetail> FeedBackDetails { get; set; }
 		public DbSet<Language> Languages { get; set; }
-		public DbSet<Media> Medias { get; set; }
 		public DbSet<Notification> Notifications { get; set; }
 		public DbSet<NotificationDetail> NotificationDetails { get; set; }
 		public DbSet<Speaker> Speakers { get; set; }

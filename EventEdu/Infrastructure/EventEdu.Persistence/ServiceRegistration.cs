@@ -80,9 +80,6 @@ namespace EventEdu.Persistence
 			services.AddScoped<IFeedBackDetailReadRepository, FeedBackDetailReadRepository>();
 			services.AddScoped<IFeedBackDetailWriteRepository, FeedBackDetailWriteRepository>();
 
-			services.AddScoped<IMediaReadRepository, MediaReadRepository>();
-			services.AddScoped<IMediaWriteRepository, MediaWriteRepository>();
-
 			services.AddScoped<INotficationReadRepository, NotficationReadRepository>();
 			services.AddScoped<INotficationWriteRepository, NotficationWriteRepository>();
 			services.AddScoped<INotficationDetailReadRepository, NotficationDetailReadRepository>();

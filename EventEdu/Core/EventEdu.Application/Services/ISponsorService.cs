@@ -12,7 +12,8 @@ namespace EventEdu.Application.Services
     {
         Task AddSponsorAsync(CreateSponsorDTO addSponsorDTO);
         Task<List<GetSponsorDTO>> GetAllSponsorsByLanguageAsync(string isoCode);
-        Task<GetSponsorDTO> GetSponsorById(Guid id);
-        Task<GetSponsorDTO> DeleteSponsor(Guid id, string webRootPath);
+        Task<GetSponsorDTO> GetSponsorById(Guid id, string isoCode);
+        Task<GetSponsorDTO> EditSponsor(Guid id);
+        Task<GetSponsorDTO> DeleteSponsor(Guid id);
     }
 }

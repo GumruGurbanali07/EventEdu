@@ -16,6 +16,6 @@ namespace EventEdu.Domain.Entities
 
 		public ICollection<EventSponsor>? EventSponsors { get; set; }
 
-
-	}
+        public ICollection<SponsorDetail>? SponsorsDetail { get; set; }
+    }
 }

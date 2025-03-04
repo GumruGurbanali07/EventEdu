@@ -10,8 +10,9 @@
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views",
-    "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Shared"
+    "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Shared",
+    "\\EventEdu\\Persentation\\EventEdu.Webui\\Controllers"
   ],
-  "SelectedNode": "\\EventEdu\\Core\\EventEdu.Domain\\Entities\\Media.cs",
+  "SelectedNode": "\\EventEdu\\Core\\EventEdu.Domain\\Entities\\Sponsor.cs",
   "PreviewInSolutionExplorer": false
 }

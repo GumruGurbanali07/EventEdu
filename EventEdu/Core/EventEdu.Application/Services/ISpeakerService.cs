@@ -1,4 +1,5 @@
-﻿using EventEdu.Application.DTOs.Speaker;
+﻿using EventEdu.Application.DTOs.Category;
+using EventEdu.Application.DTOs.Speaker;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace EventEdu.Application.Services
 	public interface ISpeakerService
 	{
 		Task AddSpeakerWithLanguageAsync(CreateSpeakerDTO createSpeakerDTO);
-
+		Task<List<GetSpeakerDTO>> GetSpeakersByLanguageAsync(string isoCode);
+		Task UpdateCategoryAsync(Guid categoryId, UpdateCategoryDTO updateCategoryDTO);
 	}
 }

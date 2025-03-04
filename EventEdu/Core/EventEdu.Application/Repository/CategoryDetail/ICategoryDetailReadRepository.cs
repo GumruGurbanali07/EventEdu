@@ -9,7 +9,7 @@ namespace EventEdu.Application.Repository
 {
    public interface ICategoryDetailReadRepository:IReadRepository<CategoryDetail>
     {
-		Task<CategoryDetail> GetByCategoryNameAndLanguageIdAsync(string categoryName, Guid languageId);
+		
 
 	}
 }

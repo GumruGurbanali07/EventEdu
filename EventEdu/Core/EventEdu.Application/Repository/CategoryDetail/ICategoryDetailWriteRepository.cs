@@ -9,7 +9,6 @@ namespace EventEdu.Application.Repository
 {
 	public interface ICategoryDetailWriteRepository : IWriteRepository<CategoryDetail>
 	{
-		Task AddAsync(CategoryDetail categoryDetail);
-		Task SaveChangesAsync();
+	
 	}
 }

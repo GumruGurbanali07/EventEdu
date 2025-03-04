@@ -9,6 +9,6 @@ namespace EventEdu.Application.Repository
 {
     public interface ICategoryReadRepository:IReadRepository<Category>
     {
-        Task<Category> GetByIdAsync(Guid id);
+        
     }
 }

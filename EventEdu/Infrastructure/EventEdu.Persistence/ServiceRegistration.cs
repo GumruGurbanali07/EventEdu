@@ -46,6 +46,7 @@ namespace EventEdu.Persistence
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<ILanguageService, LanguageService>();
 			services.AddScoped<ICategoryService, CategoryService>();
+			services.AddScoped<ISpeakerService, SpeakerService>();
 
 			//Repositories
 			services.AddSingleton<StringLocalizerService>();

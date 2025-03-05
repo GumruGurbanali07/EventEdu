@@ -12,6 +12,8 @@ namespace EventEdu.Application.Services
 	{
 		Task AddSpeakerWithLanguageAsync(CreateSpeakerDTO createSpeakerDTO);
 		Task<List<GetSpeakerDTO>> GetSpeakersByLanguageAsync(string isoCode);
-		Task UpdateCategoryAsync(Guid categoryId, UpdateCategoryDTO updateCategoryDTO);
+		Task UpdateSpeakerAsync(Guid speakerId, UpdateSpeakerDTO updateSpeakerDTO);
+		Task SoftDeleteSpeakerAsnyc(Guid speakerId);
+		Task RestoreSpeakerAsync(Guid speakerId);
 	}
 }

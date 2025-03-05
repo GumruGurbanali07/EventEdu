@@ -1,5 +1,6 @@
 ﻿using EventEdu.Application.DTOs.Speaker;
 using EventEdu.Application.Services;
+using EventEdu.Persistence.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventEdu.Webui.Controllers
@@ -45,9 +46,50 @@ namespace EventEdu.Webui.Controllers
 			}
 			catch (Exception ex)
 			{
-				// Log the exception (you can use a logging library like Serilog, NLog, etc.)
 				return StatusCode(500, $"Internal server error: {ex.Message}");
 			}
 		}
+
+		[HttpPut("{speakerId}")]
+		public async Task<IActionResult> UpdateSpeaker(Guid speakerId, [FromBody] UpdateSpeakerDTO updateSpeakerDTO)
+		{
+			if (updateSpeakerDTO == null)
+			{
+				return BadRequest("Invalid speaker update data.");
+			}
+
+			await _speakerService.UpdateSpeakerAsync(speakerId, updateSpeakerDTO);
+			return Ok("Speaker successfully updated.");
+		}
+
+		[HttpDelete("soft-delete/{speakerId}")]
+		public async Task<IActionResult> SoftDeleteSpeaker(Guid speakerId)
+		{
+			try
+			{
+				await _speakerService.SoftDeleteSpeakerAsnyc(speakerId);
+				return Ok(new { message = "Speaker soft deleted successfully." });
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
+		}
+
+		
+		[HttpPut("restore/{speakerId}")]
+		public async Task<IActionResult> RestoreSpeaker(Guid speakerId)
+		{
+			try
+			{
+				await _speakerService.RestoreSpeakerAsync(speakerId);
+				return Ok(new { message = "Speaker restored successfully." });
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
+		}
+
 	}
 }

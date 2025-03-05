@@ -117,10 +117,12 @@ namespace EventEdu.Persistence.Services
 			bool isCategoryExist = await _context.CategoryDetails
 				.AnyAsync(x => x.CategoryName == updateCategoryDTO.CategoryName && x.LanguageId == updateCategoryDTO.LanguageId
 				&& x.Id != categoryId);
+
 			if (isCategoryExist)
 			{
 				throw new Exception("This category name already exists for the selected language.");
 			}
+
 			categoryDetail.CategoryName = updateCategoryDTO.CategoryName;
 			categoryDetail.LanguageId = updateCategoryDTO.LanguageId;
 			categoryDetail.UpdatedDate = DateTime.UtcNow;

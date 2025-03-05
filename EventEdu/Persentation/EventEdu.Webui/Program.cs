@@ -22,9 +22,9 @@ builder.Services.AddSession(options =>
 	options.Cookie.HttpOnly = true;
 	options.Cookie.IsEssential = true; // For GDPR compliance
 });
-//builder.Services.AddScoped<IMediaService, MediaService>();
 
 builder.Services.AddPersistenceServices(builder.Configuration);
+builder.Services.AddScoped<ISponsorService, SponsorService>();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

@@ -20,7 +20,8 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View();
+            var sponsors = await _sponsorService.GetAllSponsorsByLanguageAsync("en");
+            return View(sponsors);
         }
 
         [HttpGet]
@@ -71,9 +72,34 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult EditSponsor()
+        public async Task<IActionResult> EditSponsorAsync(Guid id)
         {
-            return View();
+            var sponsor = await _sponsorService.GetSponsorById(id, "en"); 
+            if (sponsor == null)
+            {
+                return NotFound();
+            }
+            return View(sponsor);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditSponsorAsync(Guid id, CreateSponsorDTO updateSponsorDTO)
+        {
+            if (updateSponsorDTO == null)
+            {
+                return BadRequest("Sponsor data is required.");
+            }
+
+            try
+            {
+                var updatedSponsor = await _sponsorService.EditSponsor(id, updateSponsorDTO);
+                return RedirectToAction(nameof(Index)); 
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(updateSponsorDTO);
+            }
         }
 
         [HttpPost]

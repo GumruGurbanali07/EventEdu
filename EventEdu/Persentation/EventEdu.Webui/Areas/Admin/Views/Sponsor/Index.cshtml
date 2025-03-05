@@ -1,6 +1,14 @@
-﻿<!-- Basic Bootstrap Table -->
+﻿@model List<EventEdu.Application.DTOs.Sponsor.GetSponsorDTO>
+
+@{
+    ViewData["Title"] = "Sponsors List";
+}
+
+<!-- Basic Bootstrap Table -->
 <div class="card">
     <h5 class="card-header">Sponsor Table</h5>
+    <a href="@Url.Action("Create", "Sponsor")" class="btn btn-primary mb-3">Add New Sponsor</a>
+
     <div class="table-responsive text-nowrap">
         <table class="table">
             <thead>
@@ -12,66 +20,25 @@
                 </tr>
             </thead>
             <tbody class="table-border-bottom-0">
-                <tr>
-                    <td style="display:flex; gap:5px;align-items:center;"><div class="imgAsAnIconContent"><img class="imgAsAnIcon" src="~/client/assets/img/teams/team-1.jpg" /></div><span>Tours Project</span></td>
-                    <td>Albert Cook</td>
-                   
-                    <td><span class="badge rounded-pill bg-label-primary me-1">www.az</span></td>
-                    <td>
-                        <div class="dropdown">
-                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line"></i></button>
-                            <div class="dropdown-menu">
-                                <a asp-controller="Sponsor" asp-action="Edit" class="dropdown-item"><i class="ri-pencil-line me-2"></i> Edit</a>
-                                <a asp-controller="Sponsor" asp-action="Delete" class="dropdown-item"><i class="ri-delete-bin-6-line me-2"></i> Delete</a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="display:flex; gap:5px;align-items:center;"><div class="imgAsAnIconContent"><img class="imgAsAnIcon" src="~/client/assets/img/teams/team-1.jpg" /></div><span>Greenhouse Project</span></td>
-                    <td>Trevor Baker</td>
+            @foreach (var sponsor in Model)
+                {
+                    <tr>
+                        <td style="display:flex; gap:5px;align-items:center;"><div class="imgAsAnIconContent"><img class="imgAsAnIcon" src="@(string.IsNullOrEmpty(@sponsor.ImagePath) ? "~/client/assets/img/default-jpg.jpg" : @sponsor.ImagePath)" /></div><span>Tours Project</span></td>
+                        <td>@sponsor.SponsorName</td>
 
-                    <td><span class="badge rounded-pill bg-label-primary me-1">www.az</span></td>
-                    <td>
-                        <div class="dropdown">
-                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line"></i></button>
-                            <div class="dropdown-menu">
-                                <a asp-controller="Sponsor" asp-action="Edit" class="dropdown-item"><i class="ri-pencil-line me-2"></i> Edit</a>
-                                <a asp-controller="Sponsor" asp-action="Delete" class="dropdown-item"><i class="ri-delete-bin-6-line me-2"></i> Delete</a>
+                        <td><span class="badge rounded-pill bg-label-primary me-1">@sponsor.Website</span></td>
+                        <td>
+                            <div class="dropdown">
+                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line"></i></button>
+                                <div class="dropdown-menu">
+                                    <a asp-controller="Sponsor" asp-action="Edit" class="dropdown-item"><i class="ri-pencil-line me-2"></i> Edit</a>
+                                    <a asp-controller="Sponsor" asp-action="Delete" class="dropdown-item"><i class="ri-delete-bin-6-line me-2"></i> Delete</a>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td style ="display:flex; gap:5px;align-items:center;"><div class="imgAsAnIconContent"><img class="imgAsAnIcon" src="~/client/assets/img/teams/team-1.jpg" /></div><span>Greenhouse Project</span></td>
-                    <td>Trevor Baker</td>
+                        </td>
+                    </tr>
 
-                    <td><span class="badge rounded-pill bg-label-primary me-1">www.az</span></td>
-                    <td>
-                        <div class="dropdown">
-                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line"></i></button>
-                            <div class="dropdown-menu">
-                                <a asp-controller="Sponsor" asp-action="Edit" class="dropdown-item"><i class="ri-pencil-line me-2"></i> Edit</a>
-                                <a asp-controller="Sponsor" asp-action="Delete" class="dropdown-item"><i class="ri-delete-bin-6-line me-2"></i> Delete</a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="display:flex; gap:5px;align-items:center;"><div class="imgAsAnIconContent"><img class="imgAsAnIcon" src="~/client/assets/img/teams/team-1.jpg" /></div><span>Bank Project</span></td>
-                    <td>Jerry Milton</td>
-                    
-                    <td><span class="badge rounded-pill bg-label-primary me-1">www.az</span></td>
-                    <td>
-                        <div class="dropdown">
-                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line"></i></button>
-                            <div class="dropdown-menu">
-                                <a asp-controller="Sponsor" asp-action="AddSponsor" class="dropdown-item"><i class="ri-pencil-line me-2"></i> Edit</a>
-                                <a asp-controller="Sponsor" asp-action="DeleteSponsor" class="dropdown-item"><i class="ri-delete-bin-6-line me-2"></i> Delete</a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
+                }
             </tbody>
         </table>
     </div>

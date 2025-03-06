@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Application.Repository
 {
-    public interface IEventWriteRepository : IWriteRepository<Event>
-    {
-    }
+	public interface IEventWriteRepository : IWriteRepository<Event>
+	{
+	}
 }

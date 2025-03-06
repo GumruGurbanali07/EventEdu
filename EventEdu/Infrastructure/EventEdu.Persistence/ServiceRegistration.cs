@@ -1,3 +1,4 @@
+﻿
 using System.Globalization;
 using System.Reflection;
 using EventEdu.Application.Repositor;
@@ -17,34 +18,34 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EventEdu.Persistence
 {
-    public static class ServiceRegistration
-    {
-        public static void AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.Configure<RequestLocalizationOptions>(options =>
-            {
-                var suportedCultures = new List<CultureInfo>
-                {
-                    new CultureInfo("en-US"),
-                    new CultureInfo("az")
-                };
-                options.DefaultRequestCulture = new RequestCulture(culture: "en-US", uiCulture: "en-US");
-                options.SupportedCultures = suportedCultures;
-                options.SupportedUICultures = suportedCultures;
-            });
+	public static class ServiceRegistration
+	{
+		public static void AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
+		{
+			services.Configure<RequestLocalizationOptions>(options =>
+			{
+				var suportedCultures = new List<CultureInfo>
+				{
+					new CultureInfo("en-US"),
+					new CultureInfo("az")
+				};
+				options.DefaultRequestCulture = new RequestCulture(culture: "en-US", uiCulture: "en-US");
+				options.SupportedCultures = suportedCultures;
+				options.SupportedUICultures = suportedCultures;
+			});
 
-            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("SqlServer")));
-            services.AddIdentity<AppUser, AppRole>(options =>
-            {
-                options.Password.RequiredLength = 6;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireDigit = true;
-            }).AddEntityFrameworkStores<AppDbContext>();
-            //Services
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            services.AddScoped<ILanguageService, LanguageService>();
+			services.AddDbContext<AppDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("SqlServer")));
+			services.AddIdentity<AppUser, AppRole>(options =>
+			{
+				options.Password.RequiredLength = 6;
+				options.Password.RequireLowercase = true;
+				options.Password.RequireNonAlphanumeric = false;
+				options.Password.RequireUppercase = true;
+				options.Password.RequireDigit = true;
+			}).AddEntityFrameworkStores<AppDbContext>();
+			//Services
+			services.AddAutoMapper(Assembly.GetExecutingAssembly());
+			services.AddScoped<ILanguageService, LanguageService>();
 			services.AddScoped<ICategoryService, CategoryService>();
 			services.AddScoped<ISpeakerService, SpeakerService>();
 
@@ -58,13 +59,9 @@ namespace EventEdu.Persistence
 			services.AddScoped<ICategoryWriteRepository, CategoryWriteRepository>();
 			services.AddScoped<ICategoryDetailReadRepository, CategoryDetailReadRepository>();
 			services.AddScoped<ICategoryDetailWriteRepository, CategoryDetailWriteRepository>();
-
-			services.AddScoped<ICommentReadRepository, CommentReadRepository>();
-			services.AddScoped<ICommentWriteRepository, CommentWriteRepository>();
-			services.AddScoped<ICommentDetailReadRepository, CommentDetailReadRepository>();
-			services.AddScoped<ICommentDetailWriteRepository, CommentDetailWriteRepository>();
-
 			
+
+
 
 			services.AddScoped<IEventReadRepository, EventReadRepository>();
 			services.AddScoped<IEventWriteRepository, EventWriteRepository>();
@@ -80,7 +77,7 @@ namespace EventEdu.Persistence
 			services.AddScoped<IFeedBackDetailReadRepository, FeedBackDetailReadRepository>();
 			services.AddScoped<IFeedBackDetailWriteRepository, FeedBackDetailWriteRepository>();
 
-			
+
 
 			services.AddScoped<INotficationReadRepository, NotficationReadRepository>();
 			services.AddScoped<INotficationWriteRepository, NotficationWriteRepository>();
@@ -113,5 +110,5 @@ namespace EventEdu.Persistence
 
 
 		}
-    }
+	}
 }

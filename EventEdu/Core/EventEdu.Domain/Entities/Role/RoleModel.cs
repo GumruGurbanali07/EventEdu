@@ -8,6 +8,6 @@ namespace EventEdu.Domain.Entities.Role
 {
 	public enum RoleModel
 	{
-		Admin, Chief_Editor, Editor,Moderator,Student,Teacher
+		Admin, Chief_Editor, Editor,Moderator,User
 	}
 }

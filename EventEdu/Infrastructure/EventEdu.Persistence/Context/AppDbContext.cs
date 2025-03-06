@@ -19,9 +19,7 @@ namespace EventEdu.Persistence.Context
 		}
 
 		public DbSet<Category> Categories { get; set; }
-		public DbSet<CategoryDetail> CategoryDetails { get; set; }
-		public DbSet<Comment> Comments { get; set; }
-		public DbSet<CommentDetail> CommentDetails { get; set; }
+		public DbSet<CategoryDetail> CategoryDetails { get; set; }		
 		public DbSet<Event> Events { get; set; }
 		public DbSet<EventDetail> EventDetails { get; set; }
 		public DbSet<EventSpeaker> EventSpeakers { get; set; }

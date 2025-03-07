@@ -26,22 +26,31 @@ namespace EventEdu.Persistence.Services
 			var existingUser = await _userManager.FindByEmailAsync(registerDTO.Email);
 			if (existingUser != null)
 			{
-				throw new Exception("Bu email ilə artıq istifadəçi mövcuddur.");
-
+				throw new Exception("Bu email ilə artıq istifadəçi mövcuddur");
 			}
+
 			if (registerDTO.Password != registerDTO.ConfirmPassword)
 			{
 				throw new Exception("Parollar uyğun gəlmir.");
-
 			}
 
 			var user = new AppUser
 			{
-				UserName = registerDTO.Firstname + registerDTO.Lastname,
+				Id = Guid.NewGuid().ToString(),
+				Firstname = registerDTO.Firstname,
+				Lastname = registerDTO.Lastname,
 				Email = registerDTO.Email,
+				UserName=registerDTO.Email
 			};
+
 			var result = await _userManager.CreateAsync(user, registerDTO.Password);
-			return result;
+
+			if (result.Succeeded)
+			{				
+				var userId = user.Id; 
+			}							
+				return result;
+			
 		}
 
 		public async Task<SignInResult> LoginAsync(UserLoginDTO userLoginDTO)
@@ -50,7 +59,6 @@ namespace EventEdu.Persistence.Services
 			if (user == null)
 			{
 				return SignInResult.Failed;
-
 			}
 			var result = await _signInManager.PasswordSignInAsync(user, userLoginDTO.Password, userLoginDTO.RememberMe, false);
 			

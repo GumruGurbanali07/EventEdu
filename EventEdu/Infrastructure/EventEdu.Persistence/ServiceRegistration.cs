@@ -11,6 +11,7 @@ using EventEdu.Persistence.Repository;
 using EventEdu.Persistence.Repository.Notfication;
 using EventEdu.Persistence.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -35,19 +36,15 @@ namespace EventEdu.Persistence
 			});
 
 			services.AddDbContext<AppDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("SqlServer")));
-			services.AddIdentity<AppUser, AppRole>(options =>
-			{
-				options.Password.RequiredLength = 6;
-				options.Password.RequireLowercase = true;
-				options.Password.RequireNonAlphanumeric = false;
-				options.Password.RequireUppercase = true;
-				options.Password.RequireDigit = true;
-			}).AddEntityFrameworkStores<AppDbContext>();
+			services.AddIdentity<AppUser, AppRole>(options => options.SignIn.RequireConfirmedAccount = false)
+			.AddEntityFrameworkStores<AppDbContext>()
+			.AddDefaultTokenProviders();
 			//Services
 			services.AddAutoMapper(Assembly.GetExecutingAssembly());
 			services.AddScoped<ILanguageService, LanguageService>();
 			services.AddScoped<ICategoryService, CategoryService>();
 			services.AddScoped<ISpeakerService, SpeakerService>();
+			services.AddScoped<IUserService, UserService>();
 
 			//Repositories
 			services.AddSingleton<StringLocalizerService>();

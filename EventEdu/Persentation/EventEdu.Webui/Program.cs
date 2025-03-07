@@ -62,6 +62,7 @@ app.UseMiddleware<LocalizationMiddleware>();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 //// Enable Swagger middleware

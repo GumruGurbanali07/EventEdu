@@ -15,67 +15,57 @@ namespace EventEdu.Webui.Controllers
 			_userService = userService;
 		}
 
-		[HttpGet]
-		public IActionResult Register()
-		{
-			return View();
-		}
 
-		[HttpPost]
-		public async Task<IActionResult> Register(UserRegisterDTO registerDTO)
+		[HttpPost("RegisterUser")]
+		public async Task<IActionResult> Register([FromBody] UserRegisterDTO registerDTO)
 		{
-			if (ModelState.IsValid)
+			if (!ModelState.IsValid)
 			{
-				try
-				{
-					var result = await _userService.RegisterAsync(registerDTO);
-					if (result.Succeeded)
-					{
-						return RedirectToAction("Login");
-					}
-					foreach (var error in result.Errors)
-					{
-						ModelState.AddModelError(string.Empty, error.Description);
-					}
-				}
-				catch (Exception ex)
-				{
-					ModelState.AddModelError(string.Empty, ex.Message); 
-				}
+				return BadRequest(ModelState);
 			}
 
-			return View(registerDTO);
-		}
-
-		
-		[HttpGet]
-		public IActionResult Login()
-		{
-			return View();
-		}
-
-		[HttpPost]
-		public async Task<IActionResult> Login(UserLoginDTO userLoginDTO)
-		{
-			if (ModelState.IsValid)
+			try
 			{
-				var result = await _userService.LoginAsync(userLoginDTO);
+				var result = await _userService.RegisterAsync(registerDTO);
+
 				if (result.Succeeded)
 				{
-					return RedirectToAction("Index", "Home");
+					return Ok(new { message = "Qeydiyyat uğurla tamamlandı." });
 				}
-				ModelState.AddModelError(string.Empty, "İstifadəçi adı və ya parol səhvdir.");
-			}
 
-			return View();
+				return BadRequest(new { errors = result.Errors.Select(e => e.Description) });
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { error = ex.Message });
+			}
 		}
 
-		
-		[HttpPost]
+
+
+		[HttpPost("LoginUser")]
+		public async Task<IActionResult> Login([FromBody] UserLoginDTO userLoginDTO)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+
+			var result = await _userService.LoginAsync(userLoginDTO);
+			if (result.Succeeded)
+			{
+				return Ok(new { message = "Giriş uğurludur." });
+			}
+
+			return BadRequest(new { error = "İstifadəçi adı və ya parol səhvdir." });
+		}
+
+
+		[HttpPost("logout")]
 		public async Task<IActionResult> Logout()
 		{
 			await _userService.LogOutAsync();
-			return RedirectToAction("Login");
+			return Ok(new { message = "Çıxış edildi." });
 		}
 	}
 }

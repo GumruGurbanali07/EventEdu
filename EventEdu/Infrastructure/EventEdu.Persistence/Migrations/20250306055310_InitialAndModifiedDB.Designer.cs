@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventEdu.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250305174630_ModifiedSponsorsDB")]
-    partial class ModifiedSponsorsDB
+    [Migration("20250306055310_InitialAndModifiedDB")]
+    partial class InitialAndModifiedDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

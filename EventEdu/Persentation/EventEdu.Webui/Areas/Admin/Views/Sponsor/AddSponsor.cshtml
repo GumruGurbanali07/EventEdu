@@ -1,45 +1,84 @@
-﻿
+﻿@using EventEdu.Application.DTOs.Sponsor
+@model CreateSponsorDTO
+
 <form asp-action="AddSponsor" method="post" enctype="multipart/form-data">
     <h4 style="margin-left:40px">Add Sponsor</h4>
-    <!-- File input -->
+
     <div class="addOrEditCard card">
-        <div class="chosenImage"><img src="~/client/assets/img/teams/team-2.jpg" /></div>
+        <!-- Image Preview -->
+        <div class="chosenImage">
+            <img id="imagePreview" src="~/client/assets/img/teams/team-2.jpg" alt="Sponsor Image" />
+        </div>
+
         <div class="card-body">
+            <!-- Language Dropdown -->
             <div class="form-floating form-floating-outline mb-3">
-                <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
-                    <option selected value="1">Aze</option>
-                    <option value="2">Ru</option>
-                    <option value="3">Eng</option>
+                <select asp-for="LanguageId" class="form-select" aria-label="Choose a Language">
+                    <option selected disabled value="">Choose a Language</option>
+                    <option value="B3284054-E7FA-48FB-7C70-08DD595D715B">Aze</option>
+                    <option value="4C11A351-B8D5-4D69-7C72-08DD595D715B">Ru</option>
+                    <option value="C9B1E706-D934-4B46-7C71-08DD595D715B">Eng</option>
                 </select>
-                <label for="exampleFormControlSelect1">Language</label>
+                <label for="LanguageId">Language</label>
+                <span class="form-text text-danger" asp-validation-for="LanguageId"></span>
             </div>
+
+            <!-- File Input for Image -->
             <div class="mb-3">
-                <label for="formFile" class="form-label">Sponsor's Image</label>
-                <input class="form-control" type="file" id="formFile">
+                <label for="ImageFile" class="form-label">Sponsor's Image</label>
+                <input class="form-control" type="file" asp-for="ImageFile" id="ImageFile" accept="image/*" onchange="previewImage(event)">
+                <span class="form-text text-danger" asp-validation-for="ImageFile"></span>
             </div>
+
+            <!-- Sponsor Name (inside SponsorDetails) -->
             <div>
-                <label for="defaultFormControlInput" class="form-label">Sponsor Name</label>
-                <input type="text" class="form-control" id="defaultFormControlInput" placeholder="John Doe" aria-describedby="defaultFormControlHelp" />
-                <div id="defaultFormControlHelp" class="form-text text-danger"></div>
+                <label for="SponsorDetails_0__SponsorName" class="form-label">Sponsor Name</label>
+                <input type="text" asp-for="SponsorName" class="form-control" placeholder="Enter Sponsor Name">
+                <span class="form-text text-danger" asp-validation-for="SponsorName"></span>
             </div>
+
+            <!-- Sponsor Description -->
             <div>
-                <label for="defaultFormControlInput" class="form-label">Email</label>
-                <input type="text" class="form-control" id="defaultFormControlInput" placeholder="John Doe" aria-describedby="defaultFormControlHelp" />
-                <div id="defaultFormControlHelp" class="form-text text-danger"></div>
+                <label for="SponsorDetails_0__SponsorDescription" class="form-label">Sponsor Description</label>
+                <textarea asp-for="SponsorDescription" class="form-control" placeholder="Enter Sponsor Description"></textarea>
+                <span class="form-text text-danger" asp-validation-for="SponsorDescription"></span>
             </div>
+
+            <!-- Email -->
             <div>
-                <label for="defaultFormControlInput" class="form-label">Phone number</label>
-                <input type="text" class="form-control" id="defaultFormControlInput" placeholder="John Doe" aria-describedby="defaultFormControlHelp" />
-                <div id="defaultFormControlHelp" class="form-text text-danger"></div>
+                <label for="Email" class="form-label">Email</label>
+                <input type="email" asp-for="Email" class="form-control" placeholder="Enter Email">
+                <span class="form-text text-danger" asp-validation-for="Email"></span>
             </div>
+
+            <!-- Phone Number -->
             <div>
-                <label for="defaultFormControlInput" class="form-label">Website</label>
-                <input type="text" class="form-control" id="defaultFormControlInput" placeholder="John Doe" aria-describedby="defaultFormControlHelp" />
-                <div id="defaultFormControlHelp" class="form-text text-danger"></div>
+                <label for="PhoneNumber" class="form-label">Phone number</label>
+                <input type="tel" asp-for="PhoneNumber" class="form-control" placeholder="Enter Phone Number">
+                <span class="form-text text-danger" asp-validation-for="PhoneNumber"></span>
             </div>
-   
-            
+
+            <!-- Website -->
+            <div>
+                <label for="Website" class="form-label">Website</label>
+                <input type="text" asp-for="Website" class="form-control" placeholder="Enter Website URL">
+                <span class="form-text text-danger" asp-validation-for="Website"></span>
+            </div>
+
+            <!-- Submit Button -->
             <button type="submit" class="btn btn-primary mt-3">Save</button>
         </div>
     </div>
 </form>
+
+<!-- Image Preview Script -->
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var output = document.getElementById('imagePreview');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>

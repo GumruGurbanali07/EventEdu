@@ -7,7 +7,7 @@
 <!-- Basic Bootstrap Table -->
 <div class="card">
     <h5 class="card-header">Sponsor Table</h5>
-    <a href="@Url.Action("Create", "Sponsor")" class="btn btn-primary mb-3">Add New Sponsor</a>
+    <a href="@Url.Action("AddSponsor", "Sponsor")" class="btn btn-primary mb-3">Add New Sponsor</a>
 
     <div class="table-responsive text-nowrap">
         <table class="table">
@@ -23,8 +23,8 @@
             @foreach (var sponsor in Model)
                 {
                     <tr>
-                        <td style="display:flex; gap:5px;align-items:center;"><div class="imgAsAnIconContent"><img class="imgAsAnIcon" src="@(string.IsNullOrEmpty(@sponsor.ImagePath) ? "~/client/assets/img/default-jpg.jpg" : @sponsor.ImagePath)" /></div><span>Tours Project</span></td>
-                        <td>@sponsor.SponsorName</td>
+                        <td style="display:flex; gap:5px;align-items:center;"><div class="imgAsAnIconContent"><img class="imgAsAnIcon" src="@(string.IsNullOrEmpty(@sponsor.ImagePath) ? "~/client/assets/img/default-jpg.jpg" : @sponsor.ImagePath)" /></div><span>@sponsor.SponsorName</span></td>
+                        <td>@sponsor.Email</td>
 
                         <td><span class="badge rounded-pill bg-label-primary me-1">@sponsor.Website</span></td>
                         <td>

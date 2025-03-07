@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EventEdu.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class InitialAndModifiedDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -131,7 +131,10 @@ namespace EventEdu.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Website = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -375,6 +378,31 @@ namespace EventEdu.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ContactInfos",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FacebookLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LinkedInLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    InstagramLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SpeakerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContactInfos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ContactInfos_Speakers_SpeakerId",
+                        column: x => x.SpeakerId,
+                        principalTable: "Speakers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SpeakerDetails",
                 columns: table => new
                 {
@@ -404,43 +432,12 @@ namespace EventEdu.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ContactInfos",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FacebookLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LinkedInLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    InstagramLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SponsorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SpeakerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ContactInfos", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ContactInfos_Speakers_SpeakerId",
-                        column: x => x.SpeakerId,
-                        principalTable: "Speakers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ContactInfos_Sponsors_SponsorId",
-                        column: x => x.SponsorId,
-                        principalTable: "Sponsors",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "SponsorDetails",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SponsorName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SponsorDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SponsorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -598,47 +595,6 @@ namespace EventEdu.Persistence.Migrations
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Medias",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UploadedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SponsorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    HeroSectionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AboutSectionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Medias", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Medias_AboutSections_AboutSectionId",
-                        column: x => x.AboutSectionId,
-                        principalTable: "AboutSections",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Medias_Events_EventId",
-                        column: x => x.EventId,
-                        principalTable: "Events",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Medias_HeroSections_HeroSectionId",
-                        column: x => x.HeroSectionId,
-                        principalTable: "HeroSections",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Medias_Sponsors_SponsorId",
-                        column: x => x.SponsorId,
-                        principalTable: "Sponsors",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -823,11 +779,6 @@ namespace EventEdu.Persistence.Migrations
                 column: "SpeakerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ContactInfos_SponsorId",
-                table: "ContactInfos",
-                column: "SponsorId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_EventDetails_EventId",
                 table: "EventDetails",
                 column: "EventId");
@@ -881,26 +832,6 @@ namespace EventEdu.Persistence.Migrations
                 name: "IX_HeroSectionDetails_LanguageId",
                 table: "HeroSectionDetails",
                 column: "LanguageId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Medias_AboutSectionId",
-                table: "Medias",
-                column: "AboutSectionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Medias_EventId",
-                table: "Medias",
-                column: "EventId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Medias_HeroSectionId",
-                table: "Medias",
-                column: "HeroSectionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Medias_SponsorId",
-                table: "Medias",
-                column: "SponsorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_NotificationDetails_LanguageId",
@@ -989,9 +920,6 @@ namespace EventEdu.Persistence.Migrations
                 name: "HeroSectionDetails");
 
             migrationBuilder.DropTable(
-                name: "Medias");
-
-            migrationBuilder.DropTable(
                 name: "NotificationDetails");
 
             migrationBuilder.DropTable(
@@ -1004,6 +932,9 @@ namespace EventEdu.Persistence.Migrations
                 name: "UserEvents");
 
             migrationBuilder.DropTable(
+                name: "AboutSections");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
@@ -1011,9 +942,6 @@ namespace EventEdu.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "FeedBacks");
-
-            migrationBuilder.DropTable(
-                name: "AboutSections");
 
             migrationBuilder.DropTable(
                 name: "HeroSections");

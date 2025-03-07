@@ -1,7 +1,9 @@
 ﻿using EventEdu.Application.DTOs.Sponsor;
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
+using EventEdu.Persistence.Context;
 using EventEdu.Persistence.Extensions;
+using EventEdu.Persistence.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,10 +14,12 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
     {
         private readonly ISponsorService _sponsorService;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public SponsorController(ISponsorService sponsorService, IWebHostEnvironment webHostEnvironment)
+        private readonly AppDbContext _context;
+        public SponsorController(ISponsorService sponsorService, IWebHostEnvironment webHostEnvironment, AppDbContext context)
         {
             _sponsorService = sponsorService;
             _webHostEnvironment = webHostEnvironment;
+            _context = context;
         }
 
         public async Task<IActionResult> Index()
@@ -27,47 +31,36 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult AddSponsor()
         {
+            var languages = _context.Languages.ToList();
+
+            if (languages == null || !languages.Any())
+            {
+                ModelState.AddModelError("", "No languages found. Please add languages first.");
+            }
+
+            ViewBag.Languages = languages; // Pass languages to the view
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddSponsorAsync(CreateSponsorDTO sponsorDTO)
+        public async Task<IActionResult> AddSponsor(CreateSponsorDTO addSponsorDTO)
         {
 
-            if (!ModelState.IsValid)
-            {
-                return View(sponsorDTO);
-            }
-            else
-            {
-                if (!sponsorDTO.ImageFile.CheckFileType("image"))
-                {
-                    ModelState.AddModelError("", "Invalid File");
-                    return View(sponsorDTO);
-                }
-                if (!sponsorDTO.ImageFile.CheckFileSize(10))
-                {
-                    ModelState.AddModelError("", "Invalid File Size");
-                    return View(sponsorDTO);
-                }
-
-                string uniqueFileName = await sponsorDTO.ImageFile.SaveFilesAsync(_webHostEnvironment.WebRootPath, "client", "assets", "img", "categoryIcons");
-
-                CreateSponsorDTO newsponsorDTO = new CreateSponsorDTO
-                {
-                    ImageFile = sponsorDTO.ImageFile
-                };
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return View(addSponsorDTO);
+            //}
 
             try
             {
-                await _sponsorService.AddSponsorAsync(sponsorDTO);
-                return RedirectToAction("Index");
+                await _sponsorService.AddSponsor(addSponsorDTO);
+
+                return RedirectToAction("Index", "Sponsor"); 
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", ex.Message);
-                return View(sponsorDTO);
+                return View(addSponsorDTO); 
             }
         }
 
@@ -108,12 +101,11 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
             try
             {
                 await _sponsorService.DeleteSponsor(Id);
-                return RedirectToAction("Index"); 
+                return Ok(new { message = "Sponsor soft deleted successfully." });
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = ex.Message;
-                return RedirectToAction("Index");
+                return BadRequest(new { message = ex.Message });
             }
         }
     }

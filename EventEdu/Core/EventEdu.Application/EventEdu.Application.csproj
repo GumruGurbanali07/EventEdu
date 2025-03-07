@@ -7,6 +7,7 @@
   <ItemGroup>
     <Folder Include="DTOs\About\" />
     <Folder Include="DTOs\Feedback\" />
+    <Folder Include="DTOs\AboutSection\" />
     <Folder Include="Exceptions\" />
     <Folder Include="Repository\Category\" />
     <Folder Include="Repository\CategoryDetail\" />

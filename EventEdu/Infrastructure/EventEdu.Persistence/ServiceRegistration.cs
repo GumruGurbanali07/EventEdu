@@ -40,7 +40,7 @@ namespace EventEdu.Persistence
 			.AddEntityFrameworkStores<AppDbContext>()
 			.AddDefaultTokenProviders();
 			//Services
-			services.AddAutoMapper(Assembly.GetExecutingAssembly());
+			//services.AddAutoMapper(Assembly.GetExecutingAssembly());
 			services.AddScoped<ILanguageService, LanguageService>();
 			services.AddScoped<ICategoryService, CategoryService>();
 			services.AddScoped<ISpeakerService, SpeakerService>();

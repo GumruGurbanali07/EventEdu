@@ -6,6 +6,8 @@ using EventEdu.Webui.Localization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
 using Microsoft.OpenApi.Models;
+using EventEdu.Application.Profiles;
+using EventEdu.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,10 @@ builder.Services.AddSession(options =>
 
 
 builder.Services.AddPersistenceServices(builder.Configuration);
+builder.Services.AddApplicationServices();
+
+builder.Services.AddAutoMapper(typeof(AutoMapping));
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

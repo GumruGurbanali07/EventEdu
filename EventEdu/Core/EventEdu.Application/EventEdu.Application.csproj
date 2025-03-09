@@ -5,16 +5,22 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Validator\**" />
+    <EmbeddedResource Remove="Validator\**" />
+    <None Remove="Validator\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="Exceptions\" />
     <Folder Include="Repository\Category\" />
     <Folder Include="Repository\CategoryDetail\" />
     <Folder Include="Token\" />
-    <Folder Include="Validator\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EventEdu.Domain\EventEdu.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
   </ItemGroup>
 </Project>

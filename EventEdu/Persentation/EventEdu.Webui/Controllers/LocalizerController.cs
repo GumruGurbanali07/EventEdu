@@ -1,4 +1,5 @@
 ﻿
+using EventEdu.Application.DTOs.Language;
 using EventEdu.Application.Services;
 using EventEdu.Application.ViewModel;
 using Microsoft.AspNetCore.Localization;
@@ -24,11 +25,11 @@ public class LocalizerController : Controller
 		return Redirect(Request.Headers["Referer"].ToString());
 	}
 
-	public async Task<int> GetLanguageAsync()
+	public async Task<Guid> GetLanguageAsync()
 	{
 		string? culture = Request.Cookies[CookieRequestCultureProvider.DefaultCookieName];
 		string? isoCode = culture?.Substring(culture.LastIndexOf("=") + 1) ?? "en-Us";
-		LanguageViewModel? selectedLanguage = await _languageService.GetLanguageAsync(isoCode);
+		LanguageGetDTO? selectedLanguage = await _languageService.GetLanguageAsync(isoCode);
 
 		return selectedLanguage.Id;
 	}

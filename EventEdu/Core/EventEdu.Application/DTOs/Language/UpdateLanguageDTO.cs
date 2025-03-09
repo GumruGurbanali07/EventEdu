@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Application.DTOs.Language
 {
-    public class LanguageGetDTO
-    {
-		public Guid Id { get; set; }
+    public class UpdateLanguageDTO
+    {		
+		
 		public string Name { get; set; }
 		public string IsoCode { get; set; }
 		public string ImagePath { get; set; }

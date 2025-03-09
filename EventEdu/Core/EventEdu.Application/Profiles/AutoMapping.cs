@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EventEdu.Application.DTOs.Language;
 using EventEdu.Application.ViewModel;
 using EventEdu.Domain.Entities;
 using System;
@@ -13,8 +14,9 @@ namespace EventEdu.Application.Profiles
 	{
 		public AutoMapping()
 		{
-			CreateMap<LanguageViewModel, Language>();
-			CreateMap<Language, LanguageViewModel>();
+			CreateMap<Language, CreateLanguageDTO>().ReverseMap();
+			CreateMap<Language, LanguageGetDTO>().ReverseMap();
+			CreateMap<Language, UpdateLanguageDTO>().ReverseMap();
 		}
 	}
 }

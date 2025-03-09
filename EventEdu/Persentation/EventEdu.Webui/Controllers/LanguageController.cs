@@ -16,35 +16,6 @@ public class LanguageController : Controller
 		_languageService = languageService;
 	}
 
-	[HttpPost("create")]
-	public async Task<IActionResult> CreateLanguage([FromBody] CreateLanguageDTO languageDTO)
-	{
-		try
-		{
-			var newLanguage = await _languageService.CreateAsync(languageDTO);
-			return Ok(newLanguage); // 200 OK cavabı ilə yeni dil məlumatını qaytarır.
-		}
-		catch (InvalidOperationException ex)
-		{
-			return BadRequest(ex.Message); // 400 Bad Request cavabı ilə xəta mesajını qaytarır.
-		}
-		catch (Exception ex)
-		{
-			return StatusCode(500, "Daxili server xətası: " + ex.Message); // 500 Internal Server Error cavabı ilə ümumi xəta mesajını qaytarır.
-		}
-	}
-
-	[HttpPost]
-	public async Task<IActionResult> AddLanguage([FromBody] LanguageViewModel languageViewModel)
-	{
-		if (string.IsNullOrEmpty(languageViewModel.Name) || string.IsNullOrEmpty(languageViewModel.IsoCode))
-		{
-			return BadRequest(new { message = "Name və ISO Code boş ola bilməz" });
-		}
-
-		await _languageService.AddLanguageAsync(languageViewModel);
-		return Ok(new { message = "Language added successfully" });
-	}
 
 	[HttpGet]
 	public IActionResult Change(string? lang)
@@ -56,4 +27,95 @@ public class LanguageController : Controller
 
 		return RedirectToAction("Index", "Home");
 	}
+
+
+	[HttpPost("create")]
+	public async Task<IActionResult> CreateLanguage([FromBody] CreateLanguageDTO languageDTO)
+	{
+		try
+		{
+			var newLanguage = await _languageService.CreateAsync(languageDTO);
+			return Ok(newLanguage); 
+		}
+		catch (InvalidOperationException ex)
+		{
+			return BadRequest(ex.Message); 
+		}
+		catch (Exception ex)
+		{
+			return StatusCode(500, "Daxili server xətası: " + ex.Message); 
+		}
+	}
+	[HttpGet("{isoCode}")]
+	public async Task<IActionResult> Get(string isoCode)
+	{
+		try
+		{
+			var language = await _languageService.GetLanguageAsync(isoCode);
+			return Ok(language);
+		}
+		catch (Exception ex)
+		{
+			return StatusCode(500, "Daxili server xətası: " + ex.Message);
+		}
+	}
+
+	[HttpGet("getall")]
+	public async Task<IActionResult> GetAll()
+	{
+		try
+		{
+			var languages = await _languageService.GetLanguagesAsync();
+			return Ok(languages);
+		}
+		catch (Exception ex)
+		{
+			return StatusCode(500, "Daxili server xətası: " + ex.Message);
+		}
+	}
+
+	[HttpPut("{id}")]
+	public async Task<IActionResult> Update(Guid id, [FromBody] UpdateLanguageDTO languageDTO)
+	{
+		try
+		{
+			await _languageService.UpdateLanguageAsync(id, languageDTO);
+			return NoContent();
+		}
+		catch (Exception ex)
+		{
+			return StatusCode(500, "Daxili server xətası: " + ex.Message);
+		}
+	}
+
+	[HttpDelete("{id}")]
+	public async Task<IActionResult> SoftDelete(Guid id)
+	{
+		try
+		{
+			await _languageService.SoftDeleteLanguageAsync(id);
+			return NoContent();
+		}
+		catch (Exception ex)
+		{
+			return StatusCode(500, "Daxili server xətası: " + ex.Message);
+		}
+	}
+
+	[HttpPost("restore/{id}")]
+	public async Task<IActionResult> Restore(Guid id)
+	{
+		try
+		{
+			await _languageService.RestoreLanguageAsync(id);
+			return NoContent();
+		}
+		catch (Exception ex)
+		{
+			return StatusCode(500, "Daxili server xətası: " + ex.Message);
+		}
+	}
+
+
+
 }

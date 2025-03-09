@@ -37,16 +37,14 @@ namespace EventEdu.Persistence.Services
 
 		public async Task AddCategoryWithLanguageAsync(CreateCategoryDTO createCategoryDTO)
 		{
-			bool isCategoryExist = await _context.CategoryDetails.AnyAsync(x => x.CategoryName == createCategoryDTO.CategoryName && x.LanguageId == createCategoryDTO.LanguageId);
+			bool isCategoryExist = await _categoryReadRepository.GetAll().AnyAsync(x=>x.CategoryDetail.Any(x => x.CategoryName == createCategoryDTO.CategoryName && x.LanguageId == createCategoryDTO.LanguageId));
 			if (isCategoryExist)
 			{
 				throw new Exception("This category already exists for the selected language.");
 
 			}
 
-
-			var language = await _context.Languages
-										  .FirstOrDefaultAsync(l => l.Id == createCategoryDTO.LanguageId);
+			var language = await _context.Languages.FirstOrDefaultAsync(l => l.Id == createCategoryDTO.LanguageId);
 			if (language == null)
 			{
 				throw new Exception("Selected language not found.");

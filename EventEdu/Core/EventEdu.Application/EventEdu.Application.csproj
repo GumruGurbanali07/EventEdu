@@ -5,7 +5,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="DTOs\About\" />
     <Folder Include="DTOs\Feedback\" />
     <Folder Include="DTOs\AboutSection\" />
     <Folder Include="Exceptions\" />

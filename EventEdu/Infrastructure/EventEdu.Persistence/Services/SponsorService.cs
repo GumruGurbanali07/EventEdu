@@ -1,18 +1,13 @@
 ﻿using EventEdu.Application.DTOs.Sponsor;
-using EventEdu.Application.Repositor;
 using EventEdu.Application.Repository;
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using System.IO;
-using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
-using System.Reflection.Metadata;
-using System;
 using EventEdu.Persistence.Extensions;
 using EventEdu.Persistence.Context;
-using EventEdu.Application.DTOs.Sponsor;
+using EventEdu.Persistence.Repository;
+using EventEdu.Application.Repositor;
 
 namespace EventEdu.Persistence.Services
 {
@@ -24,6 +19,7 @@ namespace EventEdu.Persistence.Services
         private readonly IFileService _fileService;
         private readonly IHostingEnvironment _environment;
         private readonly AppDbContext _context;
+
 
 
         public SponsorService(ISponsorReadRepository sponsorReadRepository,
@@ -57,7 +53,7 @@ namespace EventEdu.Persistence.Services
                 throw new Exception("Selected language not found.");
             }
 
-           
+
 
             if (!addSponsorDTO.ImageFile.CheckFileType("image"))
             {
@@ -80,6 +76,7 @@ namespace EventEdu.Persistence.Services
                 PhoneNumber = addSponsorDTO.PhoneNumber.Trim(),
                 Website = addSponsorDTO.Website.Trim(),
                 ImagePath = imagePath.Trim(),
+                IsDeleted = false,
                 CreatedDate = DateTime.UtcNow.AddHours(4),
                 UpdatedDate = DateTime.UtcNow.AddHours(4)
             };
@@ -89,57 +86,27 @@ namespace EventEdu.Persistence.Services
 
 
             var sponsorDetail = new SponsorDetail
-                {
-                    Id = Guid.NewGuid(),
-                    SponsorName = addSponsorDTO.SponsorName.Trim(),
-                    SponsorDescription = addSponsorDTO.SponsorDescription.Trim(),
-                    SponsorId = sponsor.Id, 
-                    LanguageId = addSponsorDTO.LanguageId, 
-                    CreatedDate = DateTime.UtcNow.AddHours(4),
-                    UpdatedDate = DateTime.UtcNow.AddHours(4)
-                };
+            {
+                Id = Guid.NewGuid(),
+                SponsorName = addSponsorDTO.SponsorName.Trim(),
+                SponsorDescription = addSponsorDTO.SponsorDescription.Trim(),
+                SponsorId = sponsor.Id,
+                LanguageId = addSponsorDTO.LanguageId,
+                IsDeleted = false,
+                CreatedDate = DateTime.UtcNow.AddHours(4),
+                UpdatedDate = DateTime.UtcNow.AddHours(4)
+            };
 
-                _context.SponsorDetails.Add(sponsorDetail);
-                await _context.SaveChangesAsync();
-            }
-
-
-
-
-        public async Task DeleteSponsor(Guid id)
-        {
-            //var sponsors = await _context.Sponsors.FirstOrDefaultAsync(x => x.Id == id);
-            //if (sponsors == null)
-            //{
-            //    throw new Exception("sponsor not found");
-            //}
-            //sponsors.SoftDelete();
-            //var sponsorDetails = await _context.SponsorDetails.Where(x => x.SponsorId == id).ToListAsync();
-            //foreach (var detail in sponsorDetails)
-            //{
-            //    detail.SoftDelete();
-            //}
-            //await _context.SaveChangesAsync();
-        }
-
-        public Task<GetSponsorDTO> EditSponsor(Guid id, CreateSponsorDTO updateSponsorDTO)
-        {
-            throw new NotImplementedException();
+            _context.SponsorDetails.Add(sponsorDetail);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<List<GetSponsorDTO>> GetAllSponsorsByLanguageAsync(string isoCode)
         {
-            //var language = await _languageReadRepository.GetByIsoCodeAsync(isoCode);
-
-            //if (language == null)
-            //{
-            //    throw new Exception("Invalid language selection.");
-            //}
 
             var sponsors = await _sponsorReadRepository.GetAll()
                 .Include(s => s.SponsorsDetail)
                 .ThenInclude(sd => sd.Language)
-                //.Where(s => s.SponsorsDetail.Any(sd => sd.SponsorId == s.Id && sd.LanguageId == language.Id))
                 .Select(s => new GetSponsorDTO
                 {
                     Id = s.Id,
@@ -147,8 +114,10 @@ namespace EventEdu.Persistence.Services
                     PhoneNumber = s.PhoneNumber,
                     Website = s.Website,
                     ImagePath = s.ImagePath,
+                    IsDeleted = s.IsDeleted,
                     SponsorName = s.SponsorsDetail.FirstOrDefault().SponsorName,
                     SponsorDescription = s.SponsorsDetail.FirstOrDefault().SponsorDescription
+
                 })
         .ToListAsync();
 
@@ -183,5 +152,101 @@ namespace EventEdu.Persistence.Services
 
             return sponsor;
         }
+
+        public async Task DeleteSponsor(Guid id)
+        {
+            var sponsors = await _context.Sponsors.FirstOrDefaultAsync(x => x.Id == id);
+            if (sponsors == null)
+            {
+                throw new Exception("Sponsor not found");
+            }
+            sponsors.SoftDelete();
+            var sponsorDetails = await _context.SponsorDetails.Where(x => x.SponsorId == id).ToListAsync();
+            foreach (var detail in sponsorDetails)
+            {
+                detail.SoftDelete();
+            }
+            await _sponsorWriteRepository.SaveChangeAsync();
+        }
+
+        public async Task RestoreSponsor(Guid id)
+        {
+            var sponsors = await _context.Sponsors.FirstOrDefaultAsync(x => x.Id == id);
+            if (sponsors == null)
+            {
+                throw new Exception("Sponsor not found");
+            }
+            sponsors.Restore();
+            var sponsorDetails = await _context.SponsorDetails.Where(x => x.SponsorId == id).ToListAsync();
+            foreach (var detail in sponsorDetails)
+            {
+                detail.Restore();
+            }
+            await _sponsorWriteRepository.SaveChangeAsync();
+        }
+
+        public async Task<GetSponsorDTO> EditSponsor(Guid id, CreateSponsorDTO updateSponsorDTO)
+        {
+            var sponsor = await _context.Sponsors       
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (sponsor == null)
+            {
+                throw new Exception("Sponsor not found.");
+            }                                   
+
+            var sponsorDetail = sponsor.SponsorsDetail
+                .FirstOrDefault(sd => sd.LanguageId == updateSponsorDTO.LanguageId);
+
+            if (sponsorDetail == null)
+            {
+                throw new Exception("Sponsor detail for the selected language not found.");
+            }
+
+            sponsor.Email = updateSponsorDTO.Email?.Trim() ?? sponsor.Email;
+            sponsor.PhoneNumber = updateSponsorDTO.PhoneNumber?.Trim() ?? sponsor.PhoneNumber;
+            sponsor.Website = updateSponsorDTO.Website?.Trim() ?? sponsor.Website;
+            sponsor.UpdatedDate = DateTime.UtcNow.AddHours(4);
+
+            sponsorDetail.SponsorName = updateSponsorDTO.SponsorName?.Trim() ?? sponsorDetail.SponsorName;
+            sponsorDetail.SponsorDescription = updateSponsorDTO.SponsorDescription?.Trim() ?? sponsorDetail.SponsorDescription;
+            sponsorDetail.UpdatedDate = DateTime.UtcNow.AddHours(4);
+
+            if (updateSponsorDTO.ImageFile != null)
+            {
+                if (!updateSponsorDTO.ImageFile.CheckFileType("image"))
+                {
+                    throw new Exception("Invalid file type. Please upload an image.");
+                }
+
+                if (!updateSponsorDTO.ImageFile.CheckFileSize(10))
+                {
+                    throw new Exception("File size is too large. Maximum allowed size is 10MB.");
+                }
+
+                string webRootPath = _environment.WebRootPath;
+                string newImagePath = await _fileService.SaveFilesAsync(updateSponsorDTO.ImageFile, webRootPath, "client", "assets", "img", "sponsorMedias");
+
+                sponsor.ImagePath = newImagePath.Trim();
+            }
+
+            _context.Sponsors.Update(sponsor);
+            _context.SponsorDetails.Update(sponsorDetail);
+            await _context.SaveChangesAsync();
+
+            var getSponsorDTO = new GetSponsorDTO
+            {
+                Id = sponsor.Id,
+                SponsorName = sponsorDetail.SponsorName,
+                SponsorDescription = sponsorDetail.SponsorDescription,
+                Email = sponsor.Email,
+                PhoneNumber = sponsor.PhoneNumber,
+                Website = sponsor.Website,
+                ImagePath = sponsor.ImagePath
+            };
+
+            return getSponsorDTO;
+        }
+
     }
 }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Persistence.Repository
 {
-    public class HeroSectionDetailReadRepository : ReadRepository<HeroSectionDetail>, IHeroSectionDetailReadRepository
+    public class HeroSectionDetailReadRepository : ReadRepository<HeroSectionDetails>, IHeroSectionDetailReadRepository
     {
         public HeroSectionDetailReadRepository(AppDbContext context) : base(context)
         {

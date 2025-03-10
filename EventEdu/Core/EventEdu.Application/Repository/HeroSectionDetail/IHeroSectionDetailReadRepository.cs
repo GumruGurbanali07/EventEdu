@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Application.Repository
 {
-   public interface IHeroSectionDetailReadRepository : IReadRepository<HeroSectionDetail>
+   public interface IHeroSectionDetailReadRepository : IReadRepository<HeroSectionDetails>
     {
     }
 }

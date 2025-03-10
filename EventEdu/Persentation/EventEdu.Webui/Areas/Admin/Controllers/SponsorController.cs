@@ -13,12 +13,10 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
     public class SponsorController : Controller
     {
         private readonly ISponsorService _sponsorService;
-        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly AppDbContext _context;
-        public SponsorController(ISponsorService sponsorService, IWebHostEnvironment webHostEnvironment, AppDbContext context)
+        public SponsorController(ISponsorService sponsorService, AppDbContext context)
         {
             _sponsorService = sponsorService;
-            _webHostEnvironment = webHostEnvironment;
             _context = context;
         }
 
@@ -38,7 +36,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
                 ModelState.AddModelError("", "No languages found. Please add languages first.");
             }
 
-            ViewBag.Languages = languages; // Pass languages to the view
+            ViewBag.Languages = languages;
             return View();
         }
 
@@ -55,58 +53,90 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
             {
                 await _sponsorService.AddSponsor(addSponsorDTO);
 
-                return RedirectToAction("Index", "Sponsor"); 
+                return RedirectToAction("Index", "Sponsor");
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", ex.Message);
-                return View(addSponsorDTO); 
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> EditSponsorAsync(Guid id)
-        {
-            var sponsor = await _sponsorService.GetSponsorById(id, "en"); 
-            if (sponsor == null)
-            {
-                return NotFound();
-            }
-            return View(sponsor);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> EditSponsorAsync(Guid id, CreateSponsorDTO updateSponsorDTO)
-        {
-            if (updateSponsorDTO == null)
-            {
-                return BadRequest("Sponsor data is required.");
-            }
-
-            try
-            {
-                var updatedSponsor = await _sponsorService.EditSponsor(id, updateSponsorDTO);
-                return RedirectToAction(nameof(Index)); 
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", ex.Message);
-                return View(updateSponsorDTO);
+                return View(addSponsorDTO);
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteSponsor(Guid Id)
+        public async Task<IActionResult> DeleteSponsor(Guid id)
         {
             try
             {
-                await _sponsorService.DeleteSponsor(Id);
-                return Ok(new { message = "Sponsor soft deleted successfully." });
+                await _sponsorService.DeleteSponsor(id);
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> RestoreSponsor(Guid id)
+        {
+            try
+            {
+                await _sponsorService.RestoreSponsor(id);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditSponsor(Guid id)
+        {
+            try
+            {
+                var sponsor = await _sponsorService.GetSponsorById(id,"en");
+
+                if (sponsor == null)
+                {
+                    return NotFound();
+                }
+
+                //var updateSponsorDTO = new CreateSponsorDTO
+                //{
+                //    SponsorName = sponsor.SponsorName,
+                //    SponsorDescription = sponsor.SponsorDescription,
+                //    Email = sponsor.Email,
+                //    PhoneNumber = sponsor.PhoneNumber,
+                //    Website = sponsor.Website,
+                //    //LanguageId = sponsorDTO.LanguageId
+                //};
+
+
+                return View(sponsor);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditSponsorAsync(Guid id, CreateSponsorDTO updateSponsorDTO)
+        {
+            try
+            {
+                var updatedSponsor = await _sponsorService.EditSponsor(id, updateSponsorDTO);
+                TempData["Success"] = "Sponsor updated successfully!";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return View(updateSponsorDTO);
+            }
+        }
+
     }
 }

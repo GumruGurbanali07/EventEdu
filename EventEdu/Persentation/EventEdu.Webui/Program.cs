@@ -26,6 +26,7 @@ builder.Services.AddSession(options =>
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<ISponsorService, SponsorService>();
+builder.Services.AddScoped<IHeroSectionService, HeroSectionService>();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

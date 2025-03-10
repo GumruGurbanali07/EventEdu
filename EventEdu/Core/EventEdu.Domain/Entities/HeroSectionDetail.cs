@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Domain.Entities
 {
-    public class HeroSectionDetail:BaseEntity
+    public class HeroSectionDetails:BaseEntity
     {
 		public string Title { get; set; }
 		public string Description { get; set; }
 		public Guid HeroSectionId { get; set; }
 		public HeroSection HeroSection { get; set; }
-
 		public Guid LanguageId { get; set; }
 		public Language Language { get; set; }
 	}

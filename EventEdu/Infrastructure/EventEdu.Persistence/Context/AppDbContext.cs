@@ -38,7 +38,7 @@ namespace EventEdu.Persistence.Context
 		public DbSet<SponsorDetail> SponsorDetails { get; set; }
 		public DbSet<UserEvent> UserEvents { get; set; }
 		public DbSet<HeroSection> HeroSections { get; set; }
-		public DbSet<HeroSectionDetail> HeroSectionDetails { get; set; }
+		public DbSet<HeroSectionDetails> HeroSectionDetails { get; set; }
 		public DbSet<AboutSection> AboutSections { get; set; }
 		public DbSet<AboutSectionDetail> AboutSectionDetails { get; set; }
 

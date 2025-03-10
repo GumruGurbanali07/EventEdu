@@ -15,5 +15,6 @@ namespace EventEdu.Application.Services
         Task<GetSponsorDTO> GetSponsorById(Guid id, string isoCode);
         Task<GetSponsorDTO> EditSponsor(Guid id, CreateSponsorDTO updateSponsorDTO);
         Task DeleteSponsor(Guid id);
+        Task RestoreSponsor(Guid id);
     }
 }

@@ -2,10 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\EventEdu",
-    "\\EventEdu\\Core",
-    "\\EventEdu\\Core\\EventEdu.Domain",
-    "\\EventEdu\\Core\\EventEdu.Domain\\Entities",
-    "\\EventEdu\\Core\\EventEdu.Domain\\Entities\\Common",
+    "\\EventEdu\\Infrastructure",
+    "\\EventEdu\\Infrastructure\\EventEdu.Persistence",
+    "\\EventEdu\\Infrastructure\\EventEdu.Persistence\\Services",
     "\\EventEdu\\Persentation",
     "\\EventEdu\\Persentation\\EventEdu.Webui",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas",
@@ -14,6 +13,6 @@
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Shared",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Controllers"
   ],
-  "SelectedNode": "\\EventEdu\\EventEdu.sln",
+  "SelectedNode": "\\EventEdu\\Infrastructure\\EventEdu.Persistence\\Services\\SponsorService.cs",
   "PreviewInSolutionExplorer": false
 }

@@ -187,16 +187,16 @@ namespace EventEdu.Persistence.Services
 
         public async Task<GetSponsorDTO> EditSponsor(Guid id, CreateSponsorDTO updateSponsorDTO)
         {
-            var sponsor = await _context.Sponsors       
-                .FirstOrDefaultAsync(s => s.Id == id);
+            var sponsor = _context.Sponsors
+            .Include(s => s.SponsorsDetail)  
+            .FirstOrDefault(s => s.Id == updateSponsorDTO.Id);
 
             if (sponsor == null)
             {
                 throw new Exception("Sponsor not found.");
-            }                                   
-
+            }
             var sponsorDetail = sponsor.SponsorsDetail
-                .FirstOrDefault(sd => sd.LanguageId == updateSponsorDTO.LanguageId);
+                .FirstOrDefault(sd => sd.SponsorId == updateSponsorDTO.Id);
 
             if (sponsorDetail == null)
             {

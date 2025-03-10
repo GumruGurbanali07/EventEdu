@@ -129,7 +129,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
             {
                 var updatedSponsor = await _sponsorService.EditSponsor(id, updateSponsorDTO);
                 TempData["Success"] = "Sponsor updated successfully!";
-                return RedirectToAction("Index");
+                return View(updateSponsorDTO);
             }
             catch (Exception ex)
             {

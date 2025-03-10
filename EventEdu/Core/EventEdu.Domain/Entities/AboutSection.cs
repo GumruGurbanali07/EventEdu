@@ -9,7 +9,7 @@ namespace EventEdu.Domain.Entities
 {
     public class AboutSection:BaseEntity
     {
-		
-		public ICollection<AboutSectionDetail> AboutSectionDetails { get; set; }
+        public string ImagePath { get; set; }
+        public ICollection<AboutSectionDetail> AboutSectionDetails { get; set; }
 	}
 }

@@ -1,32 +1,30 @@
-﻿using EventEdu.Application.DTOs.HeroSection;
-using EventEdu.Application.DTOs.Sponsor;
+﻿using EventEdu.Application.DTOs.AboutSection;
+using EventEdu.Application.DTOs.HeroSection;
+using EventEdu.Application.Repository;
 using EventEdu.Application.Services;
 using EventEdu.Persistence.Context;
-using EventEdu.Persistence.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class HeroSectionController : Controller
+    public class AboutSectionController : Controller
     {
-        private readonly IHeroSectionService _sliderService;
+        private readonly IAboutSectionService _aboutSectionService;
         private readonly AppDbContext _context;
-        public HeroSectionController(IHeroSectionService sliderService, AppDbContext context)
+        public AboutSectionController(IAboutSectionService aboutSectionService, AppDbContext context)
         {
-            _sliderService = sliderService;
+           _aboutSectionService = aboutSectionService;
             _context = context;
         }
-
-
         public async Task<IActionResult> Index()
         {
-            var sliders = await _sliderService.GetAllSlidersAsync();
-            return View(sliders);
+            var aboutSection = await _aboutSectionService.GetAllAboutSectionsAsync();
+            return View(aboutSection);
         }
 
         [HttpGet]
-        public IActionResult AddSlider()
+        public IActionResult AddAboutSection()
         {
             var languages = _context.Languages.ToList();
 
@@ -40,27 +38,27 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddSlider(CreateHeroSectionDTO addSliderDTO)
+        public async Task<IActionResult> AddAboutSection(CreateAboutSectionDTO addAboutSectionDTO)
         {
             try
             {
-                await _sliderService.AddSlider(addSliderDTO);
+                await _aboutSectionService.AddAboutSection(addAboutSectionDTO);
 
-                return RedirectToAction("Index", "HeroSection");
+                return RedirectToAction("Index", "AboutSection");
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", ex.Message);
-                return View(addSliderDTO);
+                return View(addAboutSectionDTO);
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteSlider(Guid id)
+        public async Task<IActionResult> DeleteAboutSection(Guid id)
         {
             try
             {
-                await _sliderService.DeleteSlider(id);
+                await _aboutSectionService.DeleteAboutSection(id);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -70,11 +68,11 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RestoreSlider(Guid id)
+        public async Task<IActionResult> RestoreAboutSection(Guid id)
         {
             try
             {
-                await _sliderService.RestoreSlider(id);
+                await _aboutSectionService.RestoreAboutSection(id);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -84,13 +82,13 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditSlider(Guid id)
+        public async Task<IActionResult> EditAboutSection(Guid id)
         {
             try
             {
-                var slider = await _sliderService.GetSLiderById(id);
+                var AboutSection = await _aboutSectionService.GetAboutSectionById(id);
 
-                if (slider == null)
+                if (AboutSection == null)
                 {
                     return NotFound();
                 }
@@ -106,7 +104,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
                 //};
 
 
-                return View(slider);
+                return View(AboutSection);
             }
             catch (Exception ex)
             {
@@ -116,18 +114,18 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditSlider(Guid id, CreateHeroSectionDTO updateSliderDTO)
+        public async Task<IActionResult> EditAboutSection(Guid id, CreateAboutSectionDTO updateAboutSectionDTO)
         {
             try
             {
-                var updatedSponsor = await _sliderService.EditSlider(id, updateSliderDTO);
-                TempData["Success"] = "Slider updated successfully!";
-                return View(updateSliderDTO);
+                var updatedAbouutSection = await _aboutSectionService.EditAboutSection(id, updateAboutSectionDTO);
+                TempData["Success"] = "About Section updated successfully!";
+                return View(updateAboutSectionDTO);
             }
             catch (Exception ex)
             {
                 TempData["Error"] = ex.Message;
-                return View(updateSliderDTO);
+                return View(updateAboutSectionDTO);
             }
         }
 

@@ -1,5 +1,4 @@
 ﻿using EventEdu.Application.DTOs.HeroSection;
-using EventEdu.Application.DTOs.Sponsor;
 using EventEdu.Application.Repositor;
 using EventEdu.Application.Repository;
 using EventEdu.Application.Services;
@@ -44,11 +43,12 @@ namespace EventEdu.Persistence.Services
         }
         public async Task AddSlider(CreateHeroSectionDTO addSliderDTO)
         {
-            bool isSliderExist = await _context.HeroSectionDetails.AnyAsync(x => x.Title == addSliderDTO.Title && x.LanguageId == addSliderDTO.LanguageId);
+            bool isSliderExist = await _context.HeroSectionDetails.AnyAsync(x => x.HeroSectionId == addSliderDTO.Id && x.LanguageId == addSliderDTO.LanguageId);
 
-            if (addSliderDTO.ImageFile == null)
+            if (isSliderExist)
             {
-                throw new Exception("Image file is required.");
+                throw new Exception("This slider already exists for the selected language.");
+
             }
 
             var language = await _context.Languages.FirstOrDefaultAsync(l => l.Id == addSliderDTO.LanguageId);
@@ -58,7 +58,10 @@ namespace EventEdu.Persistence.Services
                 throw new Exception("Selected language not found.");
             }
 
-
+            if (addSliderDTO.ImageFile == null)
+            {
+                throw new Exception("Image file is required.");
+            }
 
             if (!addSliderDTO.ImageFile.CheckFileType("image"))
             {
@@ -92,7 +95,7 @@ namespace EventEdu.Persistence.Services
                 Id = Guid.NewGuid(),
                 Title = addSliderDTO.Title.Trim(),
                 Description = addSliderDTO.Description.Trim(),
-                HeroSectionId = addSliderDTO.Id,
+                HeroSectionId = slider.Id,
                 LanguageId = addSliderDTO.LanguageId,
                 IsDeleted = false,
                 CreatedDate = DateTime.UtcNow.AddHours(4),
@@ -172,10 +175,62 @@ namespace EventEdu.Persistence.Services
             await _sliderWriteRepository.SaveChangeAsync();
         }
 
-        public Task<CreateHeroSectionDTO> EditSlider(Guid id, CreateHeroSectionDTO updateSliderDTO)
+        public async Task<CreateHeroSectionDTO> EditSlider(Guid id, CreateHeroSectionDTO updateSliderDTO)
         {
-            throw new NotImplementedException();
-        }
+            var Slider = _context.HeroSections
+           .Include(s => s.HeroSectionDetails)
+           .FirstOrDefault(s => s.Id == updateSliderDTO.Id);
 
+            if (Slider == null)
+            {
+                throw new Exception("Slider not found.");
+            }
+            var SliderDetail = Slider.HeroSectionDetails
+                .FirstOrDefault(sd => sd.HeroSectionId == updateSliderDTO.Id);
+
+            if (SliderDetail == null)
+            {
+                throw new Exception("Slider detail for the selected language not found.");
+            }
+
+            Slider.UpdatedDate = DateTime.UtcNow.AddHours(4);
+
+            SliderDetail.Title = updateSliderDTO.Title?.Trim() ?? SliderDetail.Title;
+            SliderDetail.Description = updateSliderDTO.Description?.Trim() ?? SliderDetail.Description;
+            SliderDetail.UpdatedDate = DateTime.UtcNow.AddHours(4);
+
+            if (updateSliderDTO.ImageFile != null)
+            {
+                if (!updateSliderDTO.ImageFile.CheckFileType("image"))
+                {
+                    throw new Exception("Invalid file type. Please upload an image.");
+                }
+
+                if (!updateSliderDTO.ImageFile.CheckFileSize(10))
+                {
+                    throw new Exception("File size is too large. Maximum allowed size is 10MB.");
+                }
+
+                string webRootPath = _environment.WebRootPath;
+                string newImagePath = await _fileService.SaveFilesAsync(updateSliderDTO.ImageFile, webRootPath, "client", "assets", "img", "sliderMedias");
+
+                Slider.ImagePath = newImagePath.Trim();
+            }
+
+            _context.HeroSections.Update(Slider);
+            _context.HeroSectionDetails.Update(SliderDetail);
+            await _context.SaveChangesAsync();
+
+            var getSliderDTO = new GetHeroSectionDTO
+            {
+                Id = Slider.Id,
+                Title = SliderDetail.Title,
+                Description = SliderDetail.Description,
+                ImagePath = Slider.ImagePath
+            };
+
+            return updateSliderDTO;
+        }
     }
+
 }

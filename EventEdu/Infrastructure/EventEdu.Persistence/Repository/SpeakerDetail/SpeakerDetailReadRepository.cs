@@ -1,6 +1,7 @@
 ﻿using EventEdu.Application.Repository;
 using EventEdu.Domain.Entities;
 using EventEdu.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,10 @@ namespace EventEdu.Persistence.Repository
         public SpeakerDetailReadRepository(AppDbContext context) : base(context)
         {
         }
-    }
+
+		public async Task<SpeakerDetail> GetBySpeakerIdAndLanguageIdAsync(Guid speakerId, Guid languageId)
+		{
+			return await Table.FirstOrDefaultAsync(x => x.SpeakerId == speakerId && x.LanguageId == languageId);
+		}
+	}
 }

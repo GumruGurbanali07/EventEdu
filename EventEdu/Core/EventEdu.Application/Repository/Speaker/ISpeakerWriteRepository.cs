@@ -9,5 +9,7 @@ namespace EventEdu.Application.Repository
 {
     public interface ISpeakerWriteRepository : IWriteRepository<Speaker>
     {
-    }
+		Task SoftDeleteSpeakerAsync(Guid speakerId);
+		Task RestoreSpeakerAsync(Guid speakerId);
+	}
 }

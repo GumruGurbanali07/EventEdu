@@ -8,6 +8,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.OpenApi.Models;
 using EventEdu.Application.Profiles;
 using EventEdu.Application;
+using EventEdu.Webui.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,7 +57,8 @@ app.UseSession();
 
 app.UseHttpsRedirection();
 
-app.UseStaticFiles();
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+app.ConfigureExceptionHandler(logger); app.UseStaticFiles();
 
 
 app.UseRequestLocalization(new RequestLocalizationOptions

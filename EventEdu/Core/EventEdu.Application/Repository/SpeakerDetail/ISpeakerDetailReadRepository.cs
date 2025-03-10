@@ -9,5 +9,7 @@ namespace EventEdu.Application.Repository
 {
     public interface ISpeakerDetailReadRepository : IReadRepository<SpeakerDetail>
     {
-    }
+        Task<SpeakerDetail> GetBySpeakerIdAndLanguageIdAsync(Guid speakerId, Guid languageId);
+
+	}
 }

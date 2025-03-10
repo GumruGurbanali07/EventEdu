@@ -10,7 +10,6 @@
     <None Remove="Validator\**" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Exceptions\" />
     <Folder Include="Repository\Category\" />
     <Folder Include="Repository\CategoryDetail\" />
     <Folder Include="Token\" />

@@ -67,7 +67,7 @@ namespace EventEdu.Webui.Controllers
 		{
 			try
 			{
-				await _speakerService.SoftDeleteSpeakerAsnyc(speakerId);
+				await _speakerService.SoftDeleteSpeakerAsync(speakerId);
 				return Ok(new { message = "Speaker soft deleted successfully." });
 			}
 			catch (Exception ex)

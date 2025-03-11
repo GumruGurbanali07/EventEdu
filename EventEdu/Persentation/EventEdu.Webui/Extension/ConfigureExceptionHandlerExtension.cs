@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Mime;
 using System.Text.Json;
+using EventEdu.Application.Exceptions; 
 
 namespace EventEdu.Webui.Extension
 {
@@ -20,11 +21,11 @@ namespace EventEdu.Webui.Extension
 					{
 						var statusCode = contextFeature.Error switch
 						{
-							NotFoundException => (int)HttpStatusCode.NotFound, 
-							BadRequestException => (int)HttpStatusCode.BadRequest, 
-							UnauthorizedException => (int)HttpStatusCode.Unauthorized, 
-							ValidationException => (int)HttpStatusCode.BadRequest, 
-							_ => (int)HttpStatusCode.InternalServerError 
+							NotFoundException => (int)HttpStatusCode.NotFound,
+							BadRequestException => (int)HttpStatusCode.BadRequest,
+							UnauthorizedException => (int)HttpStatusCode.Unauthorized,
+							ValidationException => (int)HttpStatusCode.BadRequest,
+							_ => (int)HttpStatusCode.InternalServerError
 						};
 
 						context.Response.StatusCode = statusCode;

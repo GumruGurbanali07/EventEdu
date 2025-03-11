@@ -6,6 +6,8 @@ using EventEdu.Persistence.Extensions;
 using EventEdu.Persistence.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
@@ -47,6 +49,20 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
             //if (!ModelState.IsValid)
             //{
             //    return View(addSponsorDTO);
+            //}
+
+            //string patternOfNameAndSurname = @"^[a-zA-Z]+ [a-zA-Z]+$";
+            //if (!Regex.IsMatch(team.Name, patternOfNameAndSurname))
+            //{
+            //    ModelState.AddModelError("Name", "Komandanın adı və soyadı mütləqdir.");
+            //    return View(team);
+            //}
+
+            //string patternOfPhoneNumber = @"^(?:\+994|0)(50|51|55|70|77)[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}$";
+            //if (!Regex.IsMatch(team.PhoneNumber, patternOfPhoneNumber))
+            //{
+            //    ModelState.AddModelError("PhoneNumber", "Daxil etdiyiniz nömrə düzgün deyil.");
+            //    return View(team);
             //}
 
             try
@@ -95,25 +111,23 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         {
             try
             {
-                var sponsor = await _sponsorService.GetSponsorById(id,"en");
+                var sponsor = await _sponsorService.GetSponsorById(id, "en");
 
                 if (sponsor == null)
                 {
                     return NotFound();
                 }
 
-                //var updateSponsorDTO = new CreateSponsorDTO
-                //{
-                //    SponsorName = sponsor.SponsorName,
-                //    SponsorDescription = sponsor.SponsorDescription,
-                //    Email = sponsor.Email,
-                //    PhoneNumber = sponsor.PhoneNumber,
-                //    Website = sponsor.Website,
-                //    //LanguageId = sponsorDTO.LanguageId
-                //};
+                var updateSponsorDTO = new CreateSponsorDTO
+                {
+                    SponsorName = sponsor.SponsorName,
+                    SponsorDescription = sponsor.SponsorDescription,
+                    Email = sponsor.Email,
+                    PhoneNumber = sponsor.PhoneNumber,
+                    Website = sponsor.Website,
+                };
 
-
-                return View(sponsor);
+                return View(updateSponsorDTO);
             }
             catch (Exception ex)
             {
@@ -121,6 +135,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
                 return RedirectToAction("Index");
             }
         }
+
 
         [HttpPost]
         public async Task<IActionResult> EditSponsorAsync(Guid id, CreateSponsorDTO updateSponsorDTO)

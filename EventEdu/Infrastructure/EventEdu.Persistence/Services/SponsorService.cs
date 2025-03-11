@@ -110,6 +110,7 @@ namespace EventEdu.Persistence.Services
                 .Select(s => new GetSponsorDTO
                 {
                     Id = s.Id,
+                    IsoCode = s.SponsorsDetail.FirstOrDefault().Language.Name,
                     Email = s.Email,
                     PhoneNumber = s.PhoneNumber,
                     Website = s.Website,
@@ -141,6 +142,7 @@ namespace EventEdu.Persistence.Services
                   .Select(s => new GetSponsorDTO
                   {
                       Id = s.Id,
+                      IsoCode = s.SponsorsDetail.FirstOrDefault().Language.IsoCode,
                       Email = s.Email,
                       PhoneNumber = s.PhoneNumber,
                       Website = s.Website,

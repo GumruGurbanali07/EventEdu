@@ -11,6 +11,6 @@
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Shared",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Controllers"
   ],
-  "SelectedNode": "\\EventEdu\\EventEdu.sln",
+  "SelectedNode": "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\HeroSection\\Index.cshtml",
   "PreviewInSolutionExplorer": false
 }

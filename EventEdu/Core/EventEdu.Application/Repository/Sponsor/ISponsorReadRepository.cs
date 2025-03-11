@@ -10,5 +10,7 @@ namespace EventEdu.Application.Repositor
 {
     public interface ISponsorReadRepository : IReadRepository<Sponsor>
     {
+        //Task<List<Sponsor>> GetSponsorsByLanguageIdAsync(Guid languageId);
+     
     }
 }

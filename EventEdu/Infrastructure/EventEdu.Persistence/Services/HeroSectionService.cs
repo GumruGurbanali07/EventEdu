@@ -1,4 +1,6 @@
-﻿using EventEdu.Application.DTOs.HeroSection;
+﻿using AutoMapper;
+using EventEdu.Application.DTOs.HeroSection;
+using EventEdu.Application.DTOs.Sponsor;
 using EventEdu.Application.Repositor;
 using EventEdu.Application.Repository;
 using EventEdu.Application.Services;
@@ -6,6 +8,7 @@ using EventEdu.Domain.Entities;
 using EventEdu.Persistence.Context;
 using EventEdu.Persistence.Extensions;
 using EventEdu.Persistence.Repository;
+using FluentValidation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -19,37 +22,56 @@ namespace EventEdu.Persistence.Services
 {
     public class HeroSectionService : IHeroSectionService
     {
+        private readonly AppDbContext _context;
         private readonly IHeroSectionReadRepository _sliderReadRepository;
         private readonly IHeroSectionWriteRepository _sliderWriteRepository;
+        private readonly IHeroSectionDetailReadRepository _sliderDetailReadRepository;
+        private readonly IHeroSectionDetailWriteRepository _sliderDetailWriteRepository;
         private readonly ILanguageReadRepository _languageReadRepository;
         private readonly IFileService _fileService;
         private readonly IHostingEnvironment _environment;
-        private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
+        private readonly IValidator<CreateHeroSectionDTO> _createHeroSectionValidator;
 
 
-        public HeroSectionService(IHeroSectionReadRepository sliderReadRepository,
+        public HeroSectionService(AppDbContext context,
+            IHeroSectionReadRepository sliderReadRepository,
             IHeroSectionWriteRepository sliderWriteRepository,
+            IHeroSectionDetailReadRepository sliderDetailReadRepository,
+            IHeroSectionDetailWriteRepository sliderDetailWriteRepository,
             ILanguageReadRepository languageReadRepository,
             IFileService fileService,
             IHostingEnvironment environment,
-             AppDbContext context)
+            IMapper mapper,
+            IValidator<CreateHeroSectionDTO> createHeroSectionValidator)
         {
+            _context = context;
             _sliderReadRepository = sliderReadRepository;
             _sliderWriteRepository = sliderWriteRepository;
+            _sliderDetailReadRepository = sliderDetailReadRepository;   
+            _sliderDetailWriteRepository = sliderDetailWriteRepository;
             _languageReadRepository = languageReadRepository;
             _fileService = fileService;
             _environment = environment;
-            _context = context;
+            _mapper = mapper;
+            _createHeroSectionValidator = createHeroSectionValidator;
         }
         public async Task AddSlider(CreateHeroSectionDTO addSliderDTO)
         {
-            bool isSliderExist = await _context.HeroSectionDetails.AnyAsync(x => x.HeroSectionId == addSliderDTO.Id && x.LanguageId == addSliderDTO.LanguageId);
+            //bool isSliderExist = await _context.HeroSectionDetails.AnyAsync(x => x.HeroSectionId == addSliderDTO.Id && x.LanguageId == addSliderDTO.LanguageId);
 
-            if (isSliderExist)
+            //if (isSliderExist)
+            //{
+            //    throw new Exception("This slider already exists for the selected language.");
+
+            //}
+
+            var validationResult = await _createHeroSectionValidator.ValidateAsync(addSliderDTO);
+            if (!validationResult.IsValid)
             {
-                throw new Exception("This slider already exists for the selected language.");
-
+                throw new ValidationException(validationResult.Errors);
             }
+
 
             var language = await _context.Languages.FirstOrDefaultAsync(l => l.Id == addSliderDTO.LanguageId);
 
@@ -57,6 +79,7 @@ namespace EventEdu.Persistence.Services
             {
                 throw new Exception("Selected language not found.");
             }
+
 
             if (addSliderDTO.ImageFile == null)
             {
@@ -77,33 +100,47 @@ namespace EventEdu.Persistence.Services
             string imagePath = await _fileService.SaveFilesAsync(addSliderDTO.ImageFile, webRootPath, "client", "assets", "img", "SliderMedias");
 
 
-            var slider = new HeroSection
-            {
-                Id = Guid.NewGuid(),
-                ImagePath = imagePath.Trim(),
-                IsDeleted = false,
-                CreatedDate = DateTime.UtcNow.AddHours(4),
-                UpdatedDate = DateTime.UtcNow.AddHours(4)
-            };
+            //var slider = new HeroSection
+            //{
+            //    Id = Guid.NewGuid(),
+            //    ImagePath = imagePath.Trim(),
+            //    IsDeleted = false,
+            //    CreatedDate = DateTime.UtcNow.AddHours(4),
+            //    UpdatedDate = DateTime.UtcNow.AddHours(4)
+            //};
 
-            _context.HeroSections.Add(slider);
-            await _context.SaveChangesAsync();
+            var slider = _mapper.Map<HeroSection>(addSliderDTO);
+            slider.Id = Guid.NewGuid();
+            slider.ImagePath = imagePath;
+            slider.IsDeleted = false;
+            slider.CreatedDate = DateTime.UtcNow.AddHours(4);
+            slider.UpdatedDate = DateTime.UtcNow.AddHours(4);
 
 
-            var sliderDetail = new HeroSectionDetails
-            {
-                Id = Guid.NewGuid(),
-                Title = addSliderDTO.Title.Trim(),
-                Description = addSliderDTO.Description.Trim(),
-                HeroSectionId = slider.Id,
-                LanguageId = addSliderDTO.LanguageId,
-                IsDeleted = false,
-                CreatedDate = DateTime.UtcNow.AddHours(4),
-                UpdatedDate = DateTime.UtcNow.AddHours(4)
-            };
+            _sliderWriteRepository.AddAsync(slider);
+            await _sliderWriteRepository.SaveChangeAsync();
 
-            _context.HeroSectionDetails.Add(sliderDetail);
-            await _context.SaveChangesAsync();
+
+            //var sliderDetail = new HeroSectionDetails
+            //{
+            //    Id = Guid.NewGuid(),
+            //    Title = addSliderDTO.Title.Trim(),
+            //    Description = addSliderDTO.Description.Trim(),
+            //    HeroSectionId = slider.Id,
+            //    LanguageId = addSliderDTO.LanguageId,
+            //    IsDeleted = false,
+            //    CreatedDate = DateTime.UtcNow.AddHours(4),
+            //    UpdatedDate = DateTime.UtcNow.AddHours(4)
+            //};
+
+            var sliderDetail = _mapper.Map<HeroSectionDetails>(addSliderDTO);
+            sliderDetail.Id = Guid.NewGuid();
+            sliderDetail.HeroSectionId = slider.Id;
+            sliderDetail.CreatedDate = DateTime.UtcNow.AddHours(4);
+            sliderDetail.UpdatedDate = DateTime.UtcNow.AddHours(4);
+
+            _sliderDetailWriteRepository.AddAsync(sliderDetail);
+            await _sliderDetailWriteRepository.SaveChangeAsync();
         }
 
         public async Task<List<GetHeroSectionDTO>> GetAllSlidersAsync()
@@ -114,6 +151,7 @@ namespace EventEdu.Persistence.Services
                .Select(s => new GetHeroSectionDTO
                {
                    Id = s.Id,
+                   IsoCode = s.HeroSectionDetails.FirstOrDefault().Language.Name,
                    Title = s.HeroSectionDetails.FirstOrDefault().Title,
                    Description = s.HeroSectionDetails.FirstOrDefault().Description,
                    ImagePath = s.ImagePath,
@@ -133,6 +171,7 @@ namespace EventEdu.Persistence.Services
                   .Select(s => new GetHeroSectionDTO
                   {
                       Id = s.Id,
+                      IsoCode = s.HeroSectionDetails.FirstOrDefault().Language.IsoCode,
                       Title = s.HeroSectionDetails.FirstOrDefault().Title,
                       Description = s.HeroSectionDetails.FirstOrDefault().Description,
                       ImagePath = s.ImagePath,
@@ -151,10 +190,12 @@ namespace EventEdu.Persistence.Services
                 throw new Exception("Slider not found");
             }
             slider.SoftDelete();
+            _sliderWriteRepository.Update(slider);
             var sliderDetails = await _context.HeroSectionDetails.Where(x => x.HeroSectionId == id).ToListAsync();
             foreach (var detail in sliderDetails)
             {
                 detail.SoftDelete();
+                _sliderDetailWriteRepository.Update(detail);
             }
             await _sliderWriteRepository.SaveChangeAsync();
         }
@@ -171,6 +212,8 @@ namespace EventEdu.Persistence.Services
             foreach (var detail in sliderDetails)
             {
                 detail.Restore();
+                _sliderWriteRepository.Update(slider);
+                _sliderDetailWriteRepository.Update(detail);
             }
             await _sliderWriteRepository.SaveChangeAsync();
         }

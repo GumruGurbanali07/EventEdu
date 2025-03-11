@@ -8,43 +8,63 @@ using EventEdu.Persistence.Extensions;
 using EventEdu.Persistence.Context;
 using EventEdu.Persistence.Repository;
 using EventEdu.Application.Repositor;
+using FluentValidation;
+using AutoMapper;
 
 namespace EventEdu.Persistence.Services
 {
     public class SponsorService : ISponsorService
     {
+        private readonly AppDbContext _context;
         private readonly ISponsorReadRepository _sponsorReadRepository;
         private readonly ISponsorWriteRepository _sponsorWriteRepository;
+        private readonly ISponsorDetailReadRepository _sponsorDetailReadRepository;
+        private readonly ISponsorDetailWriteRepository _sponsorDetailWriteRepository;
         private readonly ILanguageReadRepository _languageReadRepository;
         private readonly IFileService _fileService;
         private readonly IHostingEnvironment _environment;
-        private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
+        private readonly IValidator<CreateSponsorDTO> _createSponsorValidator;
 
 
-
-        public SponsorService(ISponsorReadRepository sponsorReadRepository,
+        public SponsorService(AppDbContext context,
+            ISponsorReadRepository sponsorReadRepository,
             ISponsorWriteRepository sponsorWriteRepository,
+            ISponsorDetailReadRepository sponsorDetailReadRepository,
+            ISponsorDetailWriteRepository sponsorDetailWriteRepository,
             ILanguageReadRepository languageReadRepository,
             IFileService fileService,
             IHostingEnvironment environment,
-             AppDbContext context)
+            IMapper mapper,
+            IValidator<CreateSponsorDTO> createSponsorValidator)
         {
+            _context = context;
             _sponsorReadRepository = sponsorReadRepository;
             _sponsorWriteRepository = sponsorWriteRepository;
+            _sponsorDetailReadRepository = sponsorDetailReadRepository;
+            _sponsorDetailWriteRepository = sponsorDetailWriteRepository;
             _languageReadRepository = languageReadRepository;
             _fileService = fileService;
             _environment = environment;
-            _context = context;
+            _mapper = mapper;
+            _createSponsorValidator = createSponsorValidator;
         }
 
         public async Task AddSponsor(CreateSponsorDTO addSponsorDTO)
         {
-            bool isSponsorExist = await _context.SponsorDetails.AnyAsync(x => x.SponsorName == addSponsorDTO.SponsorName && x.LanguageId == addSponsorDTO.LanguageId);
+            //bool isSponsorExist = await _context.SponsorDetails.AnyAsync(x => x.SponsorName == addSponsorDTO.SponsorName && x.LanguageId == addSponsorDTO.LanguageId);
 
-            if (addSponsorDTO.ImageFile == null)
+            //if (addSponsorDTO.ImageFile == null)
+            //{
+            //    throw new Exception("Image file is required.");
+            //}
+
+            var validationResult = await _createSponsorValidator.ValidateAsync(addSponsorDTO);
+            if (!validationResult.IsValid)
             {
-                throw new Exception("Image file is required.");
+                throw new ValidationException(validationResult.Errors);
             }
+
 
             var language = await _context.Languages.FirstOrDefaultAsync(l => l.Id == addSponsorDTO.LanguageId);
 
@@ -52,7 +72,6 @@ namespace EventEdu.Persistence.Services
             {
                 throw new Exception("Selected language not found.");
             }
-
 
 
             if (!addSponsorDTO.ImageFile.CheckFileType("image"))
@@ -69,36 +88,55 @@ namespace EventEdu.Persistence.Services
             string imagePath = await _fileService.SaveFilesAsync(addSponsorDTO.ImageFile, webRootPath, "client", "assets", "img", "sponsorMedias");
 
 
-            var sponsor = new Sponsor
-            {
-                Id = Guid.NewGuid(),
-                Email = addSponsorDTO.Email.Trim(),
-                PhoneNumber = addSponsorDTO.PhoneNumber.Trim(),
-                Website = addSponsorDTO.Website.Trim(),
-                ImagePath = imagePath.Trim(),
-                IsDeleted = false,
-                CreatedDate = DateTime.UtcNow.AddHours(4),
-                UpdatedDate = DateTime.UtcNow.AddHours(4)
-            };
+            //var sponsor = new Sponsor
+            //{
+            //    Id = Guid.NewGuid(),
+            //    Email = addSponsorDTO.Email.Trim(),
+            //    PhoneNumber = addSponsorDTO.PhoneNumber.Trim(),
+            //    Website = addSponsorDTO.Website.Trim(),
+            //    ImagePath = imagePath.Trim(),
+            //    IsDeleted = false,
+            //    CreatedDate = DateTime.UtcNow.AddHours(4),
+            //    UpdatedDate = DateTime.UtcNow.AddHours(4)
+            //};
 
-            _context.Sponsors.Add(sponsor);
-            await _context.SaveChangesAsync();
+            var sponsor = _mapper.Map<Sponsor>(addSponsorDTO);
+            sponsor.Id = Guid.NewGuid();
+            sponsor.ImagePath = imagePath;
+            sponsor.IsDeleted = false;
+            sponsor.CreatedDate = DateTime.UtcNow.AddHours(4);
+            sponsor.UpdatedDate = DateTime.UtcNow.AddHours(4);
+
+            ////////////var isSponsorExist = await _sponsorDetailReadRepository.GetBySpeakerIdAndLanguageIdAsync(sponsor.Id, addSponsorDTO.LanguageId);
+            ////////////if (isSponsorExist != null)
+            ////////////{
+            ////////////    throw new Exception("This speaker already exists for the selected language.");
+            ////////////}
+
+            _sponsorWriteRepository.AddAsync(sponsor);
+            await _sponsorWriteRepository.SaveChangeAsync();
 
 
-            var sponsorDetail = new SponsorDetail
-            {
-                Id = Guid.NewGuid(),
-                SponsorName = addSponsorDTO.SponsorName.Trim(),
-                SponsorDescription = addSponsorDTO.SponsorDescription.Trim(),
-                SponsorId = sponsor.Id,
-                LanguageId = addSponsorDTO.LanguageId,
-                IsDeleted = false,
-                CreatedDate = DateTime.UtcNow.AddHours(4),
-                UpdatedDate = DateTime.UtcNow.AddHours(4)
-            };
+            //var sponsorDetail = new SponsorDetail
+            //{
+            //    Id = Guid.NewGuid(),
+            //    SponsorName = addSponsorDTO.SponsorName.Trim(),
+            //    SponsorDescription = addSponsorDTO.SponsorDescription.Trim(),
+            //    SponsorId = sponsor.Id,
+            //    LanguageId = addSponsorDTO.LanguageId,
+            //    IsDeleted = false,
+            //    CreatedDate = DateTime.UtcNow.AddHours(4),
+            //    UpdatedDate = DateTime.UtcNow.AddHours(4)
+            //};
 
-            _context.SponsorDetails.Add(sponsorDetail);
-            await _context.SaveChangesAsync();
+            var sponsorDetail = _mapper.Map<SponsorDetail>(addSponsorDTO);
+            sponsorDetail.Id = Guid.NewGuid();
+            sponsorDetail.SponsorId = sponsor.Id;
+            sponsorDetail.CreatedDate = DateTime.UtcNow.AddHours(4);
+            sponsorDetail.UpdatedDate = DateTime.UtcNow.AddHours(4);
+
+            _sponsorDetailWriteRepository.AddAsync(sponsorDetail);
+            await _sponsorDetailWriteRepository.SaveChangeAsync();
         }
 
         public async Task<List<GetSponsorDTO>> GetAllSponsorsByLanguageAsync(string isoCode)
@@ -157,40 +195,54 @@ namespace EventEdu.Persistence.Services
 
         public async Task DeleteSponsor(Guid id)
         {
-            var sponsors = await _context.Sponsors.FirstOrDefaultAsync(x => x.Id == id);
+            var sponsors = await _sponsorReadRepository.GetByIdAsync(id);
             if (sponsors == null)
             {
                 throw new Exception("Sponsor not found");
             }
             sponsors.SoftDelete();
-            var sponsorDetails = await _context.SponsorDetails.Where(x => x.SponsorId == id).ToListAsync();
+            _sponsorWriteRepository.Update(sponsors);
+
+            var sponsorDetails = await _sponsorDetailReadRepository.GetAll().Where(x => x.SponsorId == id).ToListAsync();
             foreach (var detail in sponsorDetails)
             {
                 detail.SoftDelete();
+                _sponsorDetailWriteRepository.Update(detail);
             }
             await _sponsorWriteRepository.SaveChangeAsync();
         }
 
         public async Task RestoreSponsor(Guid id)
         {
-            var sponsors = await _context.Sponsors.FirstOrDefaultAsync(x => x.Id == id);
+            var sponsors = await _sponsorReadRepository.GetByIdAsync(id);
             if (sponsors == null)
             {
                 throw new Exception("Sponsor not found");
             }
             sponsors.Restore();
-            var sponsorDetails = await _context.SponsorDetails.Where(x => x.SponsorId == id).ToListAsync();
+            _sponsorWriteRepository.Update(sponsors);
+
+            var sponsorDetails = await _sponsorDetailReadRepository.GetAll().Where(x => x.SponsorId == id).ToListAsync();
             foreach (var detail in sponsorDetails)
             {
                 detail.Restore();
+                _sponsorDetailWriteRepository.Update(detail);
             }
             await _sponsorWriteRepository.SaveChangeAsync();
         }
 
         public async Task<GetSponsorDTO> EditSponsor(Guid id, CreateSponsorDTO updateSponsorDTO)
         {
+
+            var validationResult = await _createSponsorValidator.ValidateAsync(updateSponsorDTO);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
+
+
             var sponsor = _context.Sponsors
-            .Include(s => s.SponsorsDetail)  
+            .Include(s => s.SponsorsDetail)
             .FirstOrDefault(s => s.Id == updateSponsorDTO.Id);
 
             if (sponsor == null)

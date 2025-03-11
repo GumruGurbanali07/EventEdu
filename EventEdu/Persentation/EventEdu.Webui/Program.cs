@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
 using EventEdu.Application.Services;
 using EventEdu.Persistence.Services;
+using EventEdu.Application.Profiles;
+using EventEdu.Application.Validators.Sponsor;
+using FluentValidation;
+using EventEdu.Application.Validators.HeroSection;
 //using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,13 +27,22 @@ builder.Services.AddSession(options =>
 	options.Cookie.IsEssential = true; // For GDPR compliance
 });
 
+
+
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<ISponsorService, SponsorService>();
 builder.Services.AddScoped<IHeroSectionService, HeroSectionService>();
 builder.Services.AddScoped<IAboutSectionService, AboutSectionService>();
+
+
+
+builder.Services.AddValidatorsFromAssemblyContaining<CreateSponsorDTOValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateHeroSectionDTOValidator>();
+
+builder.Services.AddAutoMapper(typeof(AutoMapping));
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+//builder.Services.AddControllersWithViews();
 
 
 //Swagger services
@@ -55,6 +68,7 @@ if (!app.Environment.IsDevelopment())
 app.UseSession();
 
 app.UseHttpsRedirection();
+
 
 app.UseStaticFiles();
 

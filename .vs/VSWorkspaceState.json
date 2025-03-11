@@ -7,10 +7,10 @@
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views",
-    "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\HeroSection",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Shared",
+    "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Sponsor",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Controllers"
   ],
-  "SelectedNode": "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\HeroSection\\Index.cshtml",
+  "SelectedNode": "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Sponsor\\AddSponsor.cshtml",
   "PreviewInSolutionExplorer": false
 }

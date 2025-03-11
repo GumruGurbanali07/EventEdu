@@ -51,20 +51,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
             //    return View(addSponsorDTO);
             //}
 
-            //string patternOfNameAndSurname = @"^[a-zA-Z]+ [a-zA-Z]+$";
-            //if (!Regex.IsMatch(team.Name, patternOfNameAndSurname))
-            //{
-            //    ModelState.AddModelError("Name", "Komandanın adı və soyadı mütləqdir.");
-            //    return View(team);
-            //}
-
-            //string patternOfPhoneNumber = @"^(?:\+994|0)(50|51|55|70|77)[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}$";
-            //if (!Regex.IsMatch(team.PhoneNumber, patternOfPhoneNumber))
-            //{
-            //    ModelState.AddModelError("PhoneNumber", "Daxil etdiyiniz nömrə düzgün deyil.");
-            //    return View(team);
-            //}
-
+        
             try
             {
                 await _sponsorService.AddSponsor(addSponsorDTO);

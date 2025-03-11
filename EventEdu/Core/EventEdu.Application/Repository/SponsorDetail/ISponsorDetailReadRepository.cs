@@ -8,5 +8,7 @@ namespace EventEdu.Application.Repository
 {
     public interface ISponsorDetailReadRepository : IReadRepository<SponsorDetail>
     {
+        //Task<SponsorDetail> GetBySponsorIdAndLanguageIdAsync(Guid sponsorId, Guid languageId);
+        //Task<List<SponsorDetail>> GetByLanguageIdAsync(Guid languageId);
     }
 }

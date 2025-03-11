@@ -23,6 +23,9 @@ namespace EventEdu.Persistence.Extensions
 
         public static bool CheckFileType(this IFormFile file, string fileType)
         {
+            if (file == null || file.Length == 0)
+                return false;
+
             if (file.ContentType.StartsWith(fileType))
             {
                 return true;
@@ -32,7 +35,10 @@ namespace EventEdu.Persistence.Extensions
 
         public static bool CheckFileSize(this IFormFile file, int fileSize)
         {
-            if (file.Length < fileSize * 1024)
+            if (file == null || file.Length == 0)
+                return false;
+
+            if (file.Length < fileSize * 1024 * 1024)
             {
                 return true;
             }

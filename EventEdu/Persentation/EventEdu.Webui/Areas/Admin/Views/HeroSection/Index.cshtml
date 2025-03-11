@@ -14,6 +14,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th>Language</th>
                     <th>Slider image</th>
                     <th>Title</th>
                     <th>Description</th>
@@ -25,6 +26,7 @@
                 {
                     if (slider.IsDeleted)
                     {
+                         <td>@slider.IsoCode</td>
                         <tr class="sliderRow" style="background:plum; color:#fff;">
                             <td style="display:flex; gap:5px;align-items:center;"><div class="imgAsAnIconContent"><img class="imgAsAnIcon" src="@(string.IsNullOrEmpty(slider.ImagePath) ? "~/client/assets/img/default-jpg.jpg" : @slider.ImagePath)" /></div<td>
                             <td>@slider.Title</td>
@@ -44,6 +46,7 @@
                     else
                     {
                         <tr class="sliderRow">
+                            <td>@slider.IsoCode</td>
                             <td style="display:flex; gap:5px;align-items:center;"><div class="imgAsAnIconContent"><img class="imgAsAnIcon" src="@(string.IsNullOrEmpty(slider.ImagePath) ? "~/client/assets/img/default-jpg.jpg" : slider.ImagePath)" /></div></td>
                             <td>@slider.Title</td>
                             <td>@slider.Description</td>

@@ -1,11 +1,14 @@
-﻿using EventEdu.Application.DTOs.AboutSection;
+﻿using AutoMapper;
 using EventEdu.Application.DTOs.AboutSection;
 using EventEdu.Application.DTOs.AboutSection;
+using EventEdu.Application.DTOs.AboutSection;
+using EventEdu.Application.DTOs.HeroSection;
 using EventEdu.Application.Repository;
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
 using EventEdu.Persistence.Context;
 using EventEdu.Persistence.Extensions;
+using FluentValidation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,35 +21,53 @@ namespace EventEdu.Persistence.Services
 {
     public class AboutSectionService : IAboutSectionService
     {
+        private readonly AppDbContext _context;
         private readonly IAboutSectionReadRepository _aboutReadRepository;
         private readonly IAboutSectionWriteRepository _aboutWriteRepository;
+        private readonly IAboutSectionDetailReadRepository _aboutDetailReadRepository;
+        private readonly IAboutSectionDetailWriteRepository _aboutDetailWriteRepository;
         private readonly ILanguageReadRepository _languageReadRepository;
         private readonly IFileService _fileService;
         private readonly IHostingEnvironment _environment;
-        private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
+        private readonly IValidator<CreateAboutSectionDTO> _createAboutSectionValidator;
 
-        public AboutSectionService(IAboutSectionReadRepository aboutReadRepository,
+        public AboutSectionService(AppDbContext context,
+            IAboutSectionReadRepository aboutReadRepository,
             IAboutSectionWriteRepository aboutWriteRepository,
+            IAboutSectionDetailReadRepository aboutDetailReadRepository,
+            IAboutSectionDetailWriteRepository aboutDetailWriteRepository,
             ILanguageReadRepository languageReadRepository,
             IFileService fileService,
             IHostingEnvironment environment,
-             AppDbContext context)
+            IMapper mapper,
+            IValidator<CreateAboutSectionDTO> createAboutSectionValidator)
         {
+            _context = context;
             _aboutReadRepository = aboutReadRepository;
             _aboutWriteRepository = aboutWriteRepository;
+            _aboutDetailReadRepository = aboutDetailReadRepository;
+            _aboutDetailWriteRepository = aboutDetailWriteRepository;
             _languageReadRepository = languageReadRepository;
             _fileService = fileService;
             _environment = environment;
-            _context = context;
+            _mapper = mapper;
+            _createAboutSectionValidator = createAboutSectionValidator;
         }
         public async Task AddAboutSection(CreateAboutSectionDTO addAboutSectionDTO)
         {
-            bool isAboutSectionExist = await _context.AboutSectionDetails.AnyAsync(x => x.AboutSectionId == addAboutSectionDTO.Id && x.LanguageId == addAboutSectionDTO.LanguageId);
+            //bool isAboutSectionExist = await _context.AboutSectionDetails.AnyAsync(x => x.AboutSectionId == addAboutSectionDTO.Id && x.LanguageId == addAboutSectionDTO.LanguageId);
 
-            if (isAboutSectionExist)
+            //if (isAboutSectionExist)
+            //{
+            //    throw new Exception("This about section already exists for the selected language.");
+
+            //}
+
+            var validationResult = await _createAboutSectionValidator.ValidateAsync(addAboutSectionDTO);
+            if (!validationResult.IsValid)
             {
-                throw new Exception("This about section already exists for the selected language.");
-
+                throw new ValidationException(validationResult.Errors);
             }
 
             var language = await _context.Languages.FirstOrDefaultAsync(l => l.Id == addAboutSectionDTO.LanguageId);
@@ -75,33 +96,46 @@ namespace EventEdu.Persistence.Services
             string imagePath = await _fileService.SaveFilesAsync(addAboutSectionDTO.ImageFile, webRootPath, "client", "assets", "img", "AboutSectionMedias");
 
 
-            var aboutSection = new AboutSection
-            {
-                Id = Guid.NewGuid(),
-                ImagePath = imagePath.Trim(),
-                IsDeleted = false,
-                CreatedDate = DateTime.UtcNow.AddHours(4),
-                UpdatedDate = DateTime.UtcNow.AddHours(4)
-            };
+            //var aboutSection = new AboutSection
+            //{
+            //    Id = Guid.NewGuid(),
+            //    ImagePath = imagePath.Trim(),
+            //    IsDeleted = false,
+            //    CreatedDate = DateTime.UtcNow.AddHours(4),
+            //    UpdatedDate = DateTime.UtcNow.AddHours(4)
+            //};
 
-            _context.AboutSections.Add(aboutSection);
-            await _context.SaveChangesAsync();
+            var aboutSection = _mapper.Map<AboutSection>(addAboutSectionDTO);
+            aboutSection.Id = Guid.NewGuid();
+            aboutSection.ImagePath = imagePath;
+            aboutSection.IsDeleted = false;
+            aboutSection.CreatedDate = DateTime.UtcNow.AddHours(4);
+            aboutSection.UpdatedDate = DateTime.UtcNow.AddHours(4);
+
+            _aboutWriteRepository.AddAsync(aboutSection);
+            await _aboutWriteRepository.SaveChangeAsync();
 
 
-            var aboutSectionDetail = new AboutSectionDetail
-            {
-                Id = Guid.NewGuid(),
-                Title = addAboutSectionDTO.Title.Trim(),
-                Description = addAboutSectionDTO.Description.Trim(),
-                AboutSectionId = aboutSection.Id,
-                LanguageId = addAboutSectionDTO.LanguageId,
-                IsDeleted = false,
-                CreatedDate = DateTime.UtcNow.AddHours(4),
-                UpdatedDate = DateTime.UtcNow.AddHours(4)
-            };
+            //var aboutSectionDetail = new AboutSectionDetail
+            //{
+            //    Id = Guid.NewGuid(),
+            //    Title = addAboutSectionDTO.Title.Trim(),
+            //    Description = addAboutSectionDTO.Description.Trim(),
+            //    AboutSectionId = aboutSection.Id,
+            //    LanguageId = addAboutSectionDTO.LanguageId,
+            //    IsDeleted = false,
+            //    CreatedDate = DateTime.UtcNow.AddHours(4),
+            //    UpdatedDate = DateTime.UtcNow.AddHours(4)
+            //};
 
-            _context.AboutSectionDetails.Add(aboutSectionDetail);
-            await _context.SaveChangesAsync();
+            var aboutSectionDetail = _mapper.Map<AboutSectionDetail>(addAboutSectionDTO);
+            aboutSectionDetail.Id = Guid.NewGuid();
+            aboutSectionDetail.AboutSectionId = aboutSection.Id;
+            aboutSectionDetail.CreatedDate = DateTime.UtcNow.AddHours(4);
+            aboutSectionDetail.UpdatedDate = DateTime.UtcNow.AddHours(4);
+
+            _aboutDetailWriteRepository.AddAsync(aboutSectionDetail);
+            await _aboutDetailWriteRepository.SaveChangeAsync();
         }
 
         public async Task<List<GetAboutSectionDTO>> GetAllAboutSectionsAsync()
@@ -112,6 +146,7 @@ namespace EventEdu.Persistence.Services
                 .Select(s => new GetAboutSectionDTO
                 {
                     Id = s.Id,
+                    IsoCode = s.AboutSectionDetails.FirstOrDefault().Language.Name,
                     Title = s.AboutSectionDetails.FirstOrDefault().Title,
                     Description = s.AboutSectionDetails.FirstOrDefault().Description,
                     ImagePath = s.ImagePath,
@@ -130,6 +165,7 @@ namespace EventEdu.Persistence.Services
                  .Select(s => new GetAboutSectionDTO
                  {
                      Id = s.Id,
+                     IsoCode = s.AboutSectionDetails.FirstOrDefault().Language.IsoCode,
                      Title = s.AboutSectionDetails.FirstOrDefault().Title,
                      Description = s.AboutSectionDetails.FirstOrDefault().Description,
                      ImagePath = s.ImagePath,
@@ -148,10 +184,13 @@ namespace EventEdu.Persistence.Services
                 throw new Exception("About Section not found");
             }
             aboutSection.SoftDelete();
+            _aboutWriteRepository.Update(aboutSection);
+
             var aboutSectionDetails = await _context.AboutSectionDetails.Where(x => x.AboutSectionId == id).ToListAsync();
             foreach (var detail in aboutSectionDetails)
             {
                 detail.SoftDelete();
+                _aboutDetailWriteRepository.Update(detail);
             }
             await _aboutWriteRepository.SaveChangeAsync();
         }
@@ -164,10 +203,13 @@ namespace EventEdu.Persistence.Services
                 throw new Exception("About Section not found");
             }
             aboutSection.Restore();
+            _aboutWriteRepository.Update(aboutSection);
+
             var aboutSectionDetails = await _context.AboutSectionDetails.Where(x => x.AboutSectionId == id).ToListAsync();
             foreach (var detail in aboutSectionDetails)
             {
                 detail.Restore();
+                _aboutDetailWriteRepository.Update(detail);
             }
             await _aboutWriteRepository.SaveChangeAsync();
         }
@@ -228,7 +270,6 @@ namespace EventEdu.Persistence.Services
 
             return updateAboutSectionDTO;
         }
-
 
     }
 }

@@ -11,6 +11,6 @@
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Sponsor",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Controllers"
   ],
-  "SelectedNode": "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Sponsor\\AddSponsor.cshtml",
+  "SelectedNode": "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Sponsor\\EditSponsor.cshtml",
   "PreviewInSolutionExplorer": false
 }

@@ -15,16 +15,11 @@ namespace EventEdu.Domain.Entities
 		public ICollection<EventDetail> EventDetails { get; set; }
 		public Guid CategoryId { get; set; }
 		public Category Category { get; set; }
-
+		public ICollection<SubsEvent> SubsEvents { get; set; } 
 		public ICollection<EventSpeaker> EventSpeakers { get; set; }
-
 		public ICollection<EventSponsor> EventSponsors { get; set; }
-
-		public ICollection<UserEvent> UserEvents { get; set; }
-
 		public ICollection<FeedBack> FeedBacks { get; set; }
 
-		public ICollection<Notification> Notifications { get; set; }
 
 
 

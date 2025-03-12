@@ -6,6 +6,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="DTOs\Feature\" />
+    <Compile Remove="Validator\**" />
+    <EmbeddedResource Remove="Validator\**" />
+    <None Remove="Validator\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="Repository\Category\" />
     <Folder Include="Repository\CategoryDetail\" />
     <Folder Include="Token\" />

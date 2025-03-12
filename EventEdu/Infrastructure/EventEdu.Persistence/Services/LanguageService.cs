@@ -1,16 +1,19 @@
 ﻿using AutoMapper;
 using EventEdu.Application.DTOs.Language;
+using EventEdu.Application.Exceptions;
 using EventEdu.Application.Repository;
 using EventEdu.Application.Services;
 using EventEdu.Application.ViewModel;
 using EventEdu.Domain.Entities;
 using EventEdu.Persistence.Context;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ValidationException = FluentValidation.ValidationException;
 
 namespace EventEdu.Persistence.Services
 {
@@ -18,56 +21,133 @@ namespace EventEdu.Persistence.Services
 	{
 		private readonly ILanguageReadRepository _languageReadRepository;
 		private readonly ILanguageWriteRepository _languageWriteRepository;
-		private readonly AppDbContext _context;
+		private readonly IValidator<CreateLanguageDTO> _createLanguageValidator;
+		private readonly IValidator<UpdateLanguageDTO> _updateLanguageValidator;
 		private readonly IMapper _mapper;
-		public LanguageService(ILanguageReadRepository languageReadRepository, ILanguageWriteRepository languageWriteRepository, IMapper mapper, AppDbContext context)
+		public LanguageService(ILanguageReadRepository languageReadRepository, ILanguageWriteRepository languageWriteRepository, IMapper mapper, IValidator<CreateLanguageDTO> createLanguageValidator, IValidator<UpdateLanguageDTO> updateLanguageValidator)
 		{
 			_languageReadRepository = languageReadRepository;
 			_languageWriteRepository = languageWriteRepository;
 			_mapper = mapper;
-			_context = context;
+			_createLanguageValidator = createLanguageValidator;
+			_updateLanguageValidator = updateLanguageValidator;
 		}
 
 		public async Task<Language> CreateAsync(CreateLanguageDTO languageDTO)
 		{
-			if (_context.Languages.Any(x => x.IsoCode == languageDTO.IsoCode))
+			//if (_context.Languages.Any(x => x.IsoCode == languageDTO.IsoCode))
+			//{
+			//	throw new InvalidOperationException("Bu ISO kodlu dil artıq mövcuddur.");
+			//}
+			var validationResult = await _createLanguageValidator.ValidateAsync(languageDTO);
+			if (!validationResult.IsValid)
 			{
-				throw new InvalidOperationException("Bu ISO kodlu dil artıq mövcuddur.");
+				throw new ValidationException(validationResult.Errors);
 			}
-			var newLang = new Language
+
+			if (await _languageReadRepository.GetByIsoCodeAsync(languageDTO.IsoCode) != null)
 			{
-				IsoCode = languageDTO.IsoCode,
-				ImagePath = languageDTO.ImagePath,
-				Name = languageDTO.Name
-			};
+				throw new BadRequestException("Bu ISO kodlu dil artıq mövcuddur.");
+
+			}
+			//var newLang = new Language
+			//{
+			//	IsoCode = languageDTO.IsoCode,
+			//	ImagePath = languageDTO.ImagePath,
+			//	Name = languageDTO.Name
+			//};
+
+			var newLang = _mapper.Map<Language>(languageDTO);
 			await _languageWriteRepository.AddAsync(newLang);
 			await _languageWriteRepository.SaveChangeAsync();
 			return newLang;
 		}
 
-		public async Task AddLanguageAsync(LanguageViewModel languageViewModel)
+
+		public async Task<LanguageGetDTO> GetLanguageAsync(string isoCode)
 		{
-			var language = _mapper.Map<Language>(languageViewModel);
-			await _languageWriteRepository.AddAsync(language);
+			//var languages = _languageReadRepository.GetAll();
+
+			//var language = languages.FirstOrDefault(x => x.IsoCode.ToLower() == isoCode.ToLower());
+
+			//return _mapper.Map<LanguageViewModel>(language);
+
+			var language = await _languageReadRepository.GetByIsoCodeAsync(isoCode);
+			if (language == null)
+			{
+				throw new NotFoundException("Dil tapılmadı.");
+			}
+			//return new LanguageGetDTO
+			//{
+			//	Id = language.Id,
+			//	Name = language.Name,
+			//	IsoCode = language.IsoCode,
+			//	ImagePath = language.ImagePath
+			//};
+			return _mapper.Map<LanguageGetDTO>(language);
+		}
+
+		public async Task<List<LanguageGetDTO>> GetLanguagesAsync()
+		{
+			var languages = await _languageReadRepository.GetAll().ToListAsync();
+			//return languages.Select(x => new LanguageGetDTO
+			//{
+			//	Id = x.Id,
+			//	Name = x.Name,
+			//	IsoCode = x.IsoCode,
+			//	ImagePath = x.ImagePath
+			//}).ToList();
+			return _mapper.Map<List<LanguageGetDTO>>(languages);
+		}
+
+		public async Task UpdateLanguageAsync(Guid id, UpdateLanguageDTO updateLanguageDTO)
+		{
+			var validationResult = await _updateLanguageValidator.ValidateAsync(updateLanguageDTO);
+			if (!validationResult.IsValid)
+			{
+				throw new ValidationException(validationResult.Errors);
+			}
+
+			var language = await _languageReadRepository.GetByIdAsync(id.ToString());
+			if (language == null)
+			{
+				throw new NotFoundException("Dil tapılmadı.");
+			}
+
+			//language.Name = updateLanguageDTO.Name;
+			//language.IsoCode = updateLanguageDTO.IsoCode;
+			//language.ImagePath = updateLanguageDTO.ImagePath;
+
+			_mapper.Map(updateLanguageDTO, language);
+			_languageWriteRepository.Update(language);
 			await _languageWriteRepository.SaveChangeAsync();
 		}
 
-		
-
-		public async Task<LanguageViewModel> GetLanguageAsync(string isoCode)
+		public async Task SoftDeleteLanguageAsync(Guid languageId)
 		{
-			var languages = _languageReadRepository.GetAll();
-
-			var language = languages.FirstOrDefault(x => x.IsoCode.ToLower() == isoCode.ToLower());
-
-			return _mapper.Map<LanguageViewModel>(language);
+			var language = await _languageReadRepository.GetByIdAsync(languageId.ToString());
+			if (language == null)
+			{
+				throw new NotFoundException("Dil tapılmadı.");
+			}
+			language.SoftDelete();
+			await _languageWriteRepository.SaveChangeAsync();
 		}
 
-		public async Task<List<LanguageViewModel>> GetLanguagesAsync()
+		public async Task RestoreLanguageAsync(Guid languageId)
 		{
-			var languages = await _languageReadRepository.GetAll().ToListAsync();
-			var languageViewModels = _mapper.Map<List<LanguageViewModel>>(languages);
-			return languageViewModels;
+			var language = await _languageReadRepository.GetByIdAsync(languageId.ToString());
+			if (language == null)
+			{
+				throw new NotFoundException("Dil tapılmadı.");
+			}
+			language.Restore();
+			await _languageWriteRepository.SaveChangeAsync();
+
 		}
+
+
+
+
 	}
 }

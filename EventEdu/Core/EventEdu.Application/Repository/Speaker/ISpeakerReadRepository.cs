@@ -9,5 +9,6 @@ namespace EventEdu.Application.Repository
 {
     public interface ISpeakerReadRepository : IReadRepository<Speaker>
     {
-    }
+		Task<List<Speaker>> GetSpeakersByLanguageAsync(Guid languageId);
+	}
 }

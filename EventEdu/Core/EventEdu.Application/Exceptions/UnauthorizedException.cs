@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Application.Exceptions
 {
-    public class UnauthorizedException : Exception
-    {
-        public UnauthorizedException() : base("Giriş icazəsi tələb olunur.")
-        {
-        }
-        public UnauthorizedException(string? message) : base(message)
-        {
-        }
+	public class UnauthorizedException : Exception
+	{
+		public UnauthorizedException() : base("Giriş icazəsi tələb olunur.")
+		{
+		}
+		public UnauthorizedException(string? message):base(message)
+		{
+		}
 
-        public UnauthorizedException(string? message, Exception? innerException) : base(message, innerException)
-        {
-        }
-    }
+		public UnauthorizedException(string? message, Exception? innerException) : base(message, innerException)
+		{
+		}
+	}
 }

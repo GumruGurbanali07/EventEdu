@@ -8,11 +8,12 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Domain.Entities
 {
-	public class UserEvent :BaseEntity
+	public class SubsEvent : BaseEntity
 	{
-		public string UserId { get; set; }
-		public AppUser User { get; set; }
-		public Guid EventId { get; set; }
-		public Event Event { get; set; }
+		public Guid EventId { get; set; }  
+		public Event Event { get; set; }  
+
+		public Guid SubscriptionId { get; set; }  
+		public Subscription Subscription { get; set; }
 	}
 }

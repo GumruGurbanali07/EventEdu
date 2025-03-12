@@ -16,6 +16,5 @@ namespace EventEdu.Domain.Entities.Identity
 		public DateTime RefreshTokenDate { get; set; }
 
 		public ICollection<FeedBack> FeedBacks { get; set; }
-		public ICollection<UserEvent> UserEvents { get; set; }
 	}
 }

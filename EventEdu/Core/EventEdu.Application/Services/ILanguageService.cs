@@ -13,8 +13,10 @@ namespace EventEdu.Application.Services
 	public interface ILanguageService
 	{
 		Task<Language> CreateAsync(CreateLanguageDTO languageDTO);
-		Task AddLanguageAsync(LanguageViewModel languageViewModel);
-		Task<List<LanguageViewModel>> GetLanguagesAsync();
-		Task<LanguageViewModel> GetLanguageAsync(string isoCode);
+		Task<List<LanguageGetDTO>> GetLanguagesAsync();
+		Task<LanguageGetDTO> GetLanguageAsync(string isoCode);
+		Task UpdateLanguageAsync(Guid id, UpdateLanguageDTO updateLanguageDTO);
+		Task SoftDeleteLanguageAsync(Guid languageId);
+		Task RestoreLanguageAsync(Guid languageId);
 	}
 }

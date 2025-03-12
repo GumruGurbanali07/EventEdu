@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Application.Exceptions
 {
-    public class ValidationException : Exception
-    {
-        public ValidationException() : base("Doğrulama səhv oldu, məlumat düzgün deyil.")
-        {
-        }
-        public ValidationException(string? message) : base(message)
-        {
-        }
+	public class ValidationException : Exception
+	{
+		public ValidationException() : base("Doğrulama səhv oldu, məlumat düzgün deyil.")
+		{
+		}
+		public ValidationException(string? message) : base(message)
+		{
+		}
 
-        public ValidationException(string? message, Exception? innerException) : base(message, innerException)
-        {
-        }
-    }
+		public ValidationException(string? message, Exception? innerException) : base(message, innerException)
+		{
+		}
+	}
 }

@@ -8,7 +8,6 @@ using EventEdu.Domain.Entities;
 using EventEdu.Domain.Entities.Identity;
 using EventEdu.Persistence.Context;
 using EventEdu.Persistence.Repository;
-using EventEdu.Persistence.Repository.Notfication;
 using EventEdu.Persistence.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -40,7 +39,7 @@ namespace EventEdu.Persistence
 			.AddEntityFrameworkStores<AppDbContext>()
 			.AddDefaultTokenProviders();
 			//Services
-			services.AddAutoMapper(Assembly.GetExecutingAssembly());
+			//services.AddAutoMapper(Assembly.GetExecutingAssembly());
 			services.AddScoped<ILanguageService, LanguageService>();
 			services.AddScoped<ICategoryService, CategoryService>();
 			services.AddScoped<ISpeakerService, SpeakerService>();
@@ -76,10 +75,7 @@ namespace EventEdu.Persistence
 
 
 
-			services.AddScoped<INotficationReadRepository, NotficationReadRepository>();
-			services.AddScoped<INotficationWriteRepository, NotficationWriteRepository>();
-			services.AddScoped<INotficationDetailReadRepository, NotficationDetailReadRepository>();
-			services.AddScoped<INotficationDetailWriteRepository, NotficationDetailWriteRepository>();
+			
 
 			services.AddScoped<ISpeakerReadRepository, SpeakerReadRepository>();
 			services.AddScoped<ISpeakerWriteRepository, SpeakerWriteRepository>();
@@ -91,8 +87,7 @@ namespace EventEdu.Persistence
 			services.AddScoped<ISponsorDetailReadRepository, SponsorDetailReadRepository>();
 			services.AddScoped<ISponsorDetailWriteRepository, SponsorDetailWriteRepository>();
 
-			services.AddScoped<IUserEventReadRepository, UserEventReadRepository>();
-			services.AddScoped<IUserEventWriteRepository, UserEventWriteRepository>();
+			
 
 			services.AddScoped<IHeroSectionReadRepository, HeroSectionReadRepository>();
 			services.AddScoped<IHeroSectionWriteRepository, HeroSectionWriteRepository>();

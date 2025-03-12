@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Application.Repository
 {
-    public interface ICategoryReadRepository:IReadRepository<Category>
+    public interface ICategoryReadRepository : IReadRepository<Category>
     {
-        
     }
 }

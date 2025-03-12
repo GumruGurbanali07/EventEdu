@@ -56,7 +56,7 @@ namespace EventEdu.Persistence.Services
 				throw new ValidationException(validationResult.Errors);
 			}
 
-			var language = await _languageReadRepository.GetByIdAsync(createSpeakerDTO.LanguageId.ToString());
+			var language = await _languageReadRepository.GetByIdAsync(createSpeakerDTO.LanguageId);
 			if (language == null)
 			{
 				throw new NotFoundException("Selected language not found");
@@ -254,7 +254,7 @@ namespace EventEdu.Persistence.Services
 			speakerDetail.UpdatedDate = DateTime.UtcNow;
 
 			//var speaker = await _context.Speakers.FirstOrDefaultAsync(x => x.Id == speakerDetail.SpeakerId);
-			var speaker = await _speakerReadRepository.GetByIdAsync(speakerId.ToString());
+			var speaker = await _speakerReadRepository.GetByIdAsync(speakerId);
 			if (speaker != null)
 			{
 				//speaker.ImageUrl = updateSpeakerDTO.ImageUrl;
@@ -273,7 +273,7 @@ namespace EventEdu.Persistence.Services
 
 		public async Task SoftDeleteSpeakerAsync(Guid speakerId)
 		{
-			var speaker = await _speakerReadRepository.GetByIdAsync(speakerId.ToString());
+			var speaker = await _speakerReadRepository.GetByIdAsync(speakerId);
 			if (speaker == null)
 			{
 				throw new NotFoundException("Speaker not found");
@@ -295,7 +295,7 @@ namespace EventEdu.Persistence.Services
 
 		public async Task RestoreSpeakerAsync(Guid speakerId)
 		{
-			var speaker = await _speakerReadRepository.GetByIdAsync(speakerId.ToString());
+			var speaker = await _speakerReadRepository.GetByIdAsync(speakerId);
 			if (speaker == null)
 			{
 				throw new NotFoundException("Speaker not found");

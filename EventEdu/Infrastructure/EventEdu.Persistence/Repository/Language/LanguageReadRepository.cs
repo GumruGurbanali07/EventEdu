@@ -15,7 +15,8 @@ namespace EventEdu.Persistence.Repository
 		public LanguageReadRepository(AppDbContext context) : base(context)
 		{
 		}
-		public async Task<Language> GetByIsoCodeAsync(string isoCode)
+
+        public async Task<Language> GetByIsoCodeAsync(string isoCode)
 		{
 			return await _context.Languages.FirstOrDefaultAsync(x => x.IsoCode == isoCode);
 		}

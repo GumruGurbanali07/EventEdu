@@ -14,5 +14,6 @@ namespace EventEdu.Persistence.Repository
 		public CategoryReadRepository(AppDbContext context) : base(context)
 		{
 		}
-	}
+
+    }
 }

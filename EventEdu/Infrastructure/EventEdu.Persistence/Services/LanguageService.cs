@@ -108,7 +108,7 @@ namespace EventEdu.Persistence.Services
 				throw new ValidationException(validationResult.Errors);
 			}
 
-			var language = await _languageReadRepository.GetByIdAsync(id.ToString());
+			var language = await _languageReadRepository.GetByIdAsync(id);
 			if (language == null)
 			{
 				throw new NotFoundException("Dil tapılmadı.");
@@ -125,7 +125,7 @@ namespace EventEdu.Persistence.Services
 
 		public async Task SoftDeleteLanguageAsync(Guid languageId)
 		{
-			var language = await _languageReadRepository.GetByIdAsync(languageId.ToString());
+			var language = await _languageReadRepository.GetByIdAsync(languageId);
 			if (language == null)
 			{
 				throw new NotFoundException("Dil tapılmadı.");
@@ -136,7 +136,7 @@ namespace EventEdu.Persistence.Services
 
 		public async Task RestoreLanguageAsync(Guid languageId)
 		{
-			var language = await _languageReadRepository.GetByIdAsync(languageId.ToString());
+			var language = await _languageReadRepository.GetByIdAsync(languageId);
 			if (language == null)
 			{
 				throw new NotFoundException("Dil tapılmadı.");

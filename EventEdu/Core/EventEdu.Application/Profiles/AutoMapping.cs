@@ -15,10 +15,10 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Application.Profiles
 {
-	public class AutoMapping : Profile
-	{
-		public AutoMapping()
-		{
+    public class AutoMapping : Profile
+    {
+        public AutoMapping()
+        {
             //Sponsor
             CreateMap<Sponsor, CreateSponsorDTO>().ReverseMap();
             CreateMap<Sponsor, GetSponsorDTO>().ReverseMap();
@@ -46,39 +46,38 @@ namespace EventEdu.Application.Profiles
            .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
            .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow.AddHours(4)));
 
+            //Language
+            CreateMap<Language, CreateLanguageDTO>().ReverseMap();
+            CreateMap<Language, LanguageGetDTO>().ReverseMap();
+            CreateMap<UpdateLanguageDTO, Language>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+            //Category
+            CreateMap<Category, CreateCategoryDTO>().ReverseMap();
+            CreateMap<Category, UpdateCategoryDTO>().ReverseMap();
+            CreateMap<Category, GetCategoryDTO>().ReverseMap();
+            CreateMap<CategoryDetail, GetCategoryDTO>().ReverseMap();
+            CreateMap<CategoryDetail, CreateCategoryDTO>().ReverseMap();
+            CreateMap<UpdateCategoryDTO, CategoryDetail>()
+           .ForMember(dest => dest.Id, opt => opt.Ignore())
+           .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
+           .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+            //Speaker
+            CreateMap<Speaker, CreateSpeakerDTO>().ReverseMap();
+            CreateMap<Speaker, UpdateSpeakerDTO>().ReverseMap();
+            CreateMap<Speaker, GetSpeakerDTO>().ReverseMap();
+            CreateMap<SpeakerDetail, GetSpeakerDTO>().ReverseMap();
+            CreateMap<SpeakerDetail, CreateSpeakerDTO>().ReverseMap();
+            CreateMap<UpdateSpeakerDTO, SpeakerDetail>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+           .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
+           .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
         }
     }
-			//Language
-			CreateMap<Language, CreateLanguageDTO>().ReverseMap();
-			CreateMap<Language, LanguageGetDTO>().ReverseMap();
-			CreateMap<UpdateLanguageDTO, Language>()
-	        .ForMember(dest => dest.Id, opt => opt.Ignore()) 
-	        .ForMember(dest => dest.CreatedDate, opt => opt.Ignore()) 
-	        .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); 
-
-			//Category
-			CreateMap<Category, CreateCategoryDTO>().ReverseMap();
-			CreateMap<Category, UpdateCategoryDTO>().ReverseMap();
-			CreateMap<Category, GetCategoryDTO>().ReverseMap();
-			CreateMap<CategoryDetail, GetCategoryDTO>().ReverseMap();
-			CreateMap<CategoryDetail, CreateCategoryDTO>().ReverseMap();
-			CreateMap<UpdateCategoryDTO, CategoryDetail>()
-	       .ForMember(dest => dest.Id, opt => opt.Ignore())
-	       .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
-	       .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
-
-			//Speaker
-			CreateMap<Speaker, CreateSpeakerDTO>().ReverseMap();
-			CreateMap<Speaker, UpdateSpeakerDTO>().ReverseMap();
-			CreateMap<Speaker, GetSpeakerDTO>().ReverseMap();
-			CreateMap<SpeakerDetail, GetSpeakerDTO>().ReverseMap();
-			CreateMap<SpeakerDetail, CreateSpeakerDTO>().ReverseMap();
-			CreateMap<UpdateSpeakerDTO,SpeakerDetail>()
-			.ForMember(dest => dest.Id, opt => opt.Ignore())
-		   .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
-		   .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
 
 
-		}
-	}
 }

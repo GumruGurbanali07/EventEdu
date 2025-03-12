@@ -9,5 +9,7 @@ namespace EventEdu.Application.Repository
 {
    public interface ICategoryDetailReadRepository:IReadRepository<CategoryDetail>
     {
-    }
+		
+
+	}
 }

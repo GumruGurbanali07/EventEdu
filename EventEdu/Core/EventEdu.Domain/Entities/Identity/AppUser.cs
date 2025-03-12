@@ -14,10 +14,8 @@ namespace EventEdu.Domain.Entities.Identity
 		public string? ResetPassword { get; set; }
 		public string? RefreshToken { get; set; }
 		public DateTime RefreshTokenDate { get; set; }
+
 		public ICollection<FeedBack> FeedBacks { get; set; }
-
-		public ICollection<Comment> Comments { get; set; }
-
 		public ICollection<UserEvent> UserEvents { get; set; }
 	}
 }

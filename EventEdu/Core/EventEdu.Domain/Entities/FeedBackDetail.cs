@@ -10,10 +10,8 @@ namespace EventEdu.Domain.Entities
     public class FeedBackDetail:BaseEntity
     {
 		public string? Comment { get; set; }
-
 		public Guid FeedBackId { get; set; }
 		public FeedBack FeedBack { get; set; }
-
 		public Guid LanguageId { get; set; }
 		public Language Language { get; set; }
 	}

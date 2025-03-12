@@ -9,5 +9,6 @@ namespace EventEdu.Application.Repository
 {
     public interface ICategoryWriteRepository:IWriteRepository<Category>
     {
-    }
+		
+	}
 }

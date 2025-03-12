@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EventEdu.Application.DTOs.Category;
+using EventEdu.Application.Exceptions;
 using EventEdu.Application.Repository;
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
@@ -11,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ValidationException = FluentValidation.ValidationException;
+
 
 namespace EventEdu.Persistence.Services
 {
@@ -68,7 +71,7 @@ namespace EventEdu.Persistence.Services
 			bool isCategoryExist = await _categoryDetailReadRepository.GetAll().AnyAsync(x => x.CategoryName == createCategoryDTO.CategoryName && x.LanguageId == createCategoryDTO.LanguageId);
 			if (isCategoryExist)
 			{
-				throw new Exception("This category already exists for the selected language.");
+				throw new BadRequestException("This category already exists for the selected language.");
 			}
 
 
@@ -76,7 +79,7 @@ namespace EventEdu.Persistence.Services
 			var language = await _languageReadRepository.GetByIdAsync(createCategoryDTO.LanguageId.ToString());
 			if (language == null)
 			{
-				throw new Exception("Selected language not found.");
+				throw new NotFoundException("Selected language not found.");
 			}
 
 			//var category = new Category
@@ -139,6 +142,11 @@ namespace EventEdu.Persistence.Services
 				})
 				.ToListAsync();
 
+			if (categories == null || categories.Count == 0)
+			{
+				throw new NotFoundException("No categories found for the selected language.");
+			}
+
 			return categories;
 		}
 
@@ -154,7 +162,7 @@ namespace EventEdu.Persistence.Services
 				.FirstOrDefaultAsync(x => x.Id == categoryId);
 			if (categoryDetail == null)
 			{
-				throw new Exception("Category not found");
+				throw new NotFoundException("Category not found.");
 			}
 			bool isCategoryExist = await _context.CategoryDetails
 				.AnyAsync(x => x.CategoryName == updateCategoryDTO.CategoryName && x.LanguageId == updateCategoryDTO.LanguageId
@@ -162,7 +170,7 @@ namespace EventEdu.Persistence.Services
 
 			if (isCategoryExist)
 			{
-				throw new Exception("This category name already exists for the selected language.");
+				throw new BadRequestException("This category name already exists for the selected language.");
 			}
 
 			//categoryDetail.CategoryName = updateCategoryDTO.CategoryName;
@@ -181,7 +189,7 @@ namespace EventEdu.Persistence.Services
 			var categories = await _categoryReadRepository.GetByIdAsync(categoryId.ToString());
 			if (categories == null)
 			{
-				throw new Exception("Category not found");
+				throw new NotFoundException("Category not found.");
 			}
 			categories.SoftDelete();
 			_categoryWriteRepository.Update(categories);
@@ -203,7 +211,7 @@ namespace EventEdu.Persistence.Services
 			var categories = await _categoryReadRepository.GetByIdAsync(categoryId.ToString());
 			if (categories == null)
 			{
-				throw new Exception("Category not found");
+				throw new NotFoundException("Category not found.");
 			}
 			categories.Restore();
 			_categoryWriteRepository.Update(categories);
@@ -245,6 +253,11 @@ namespace EventEdu.Persistence.Services
 					ImagePath = language.ImagePath
 				})
 				.FirstOrDefaultAsync();
+
+			if (category == null)
+			{
+				throw new NotFoundException("Category not found.");
+			}
 
 			return category;
 		}

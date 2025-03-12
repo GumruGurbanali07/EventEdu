@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EventEdu.Application.DTOs.Language;
+using EventEdu.Application.Exceptions;
 using EventEdu.Application.Repository;
 using EventEdu.Application.Services;
 using EventEdu.Application.ViewModel;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ValidationException = FluentValidation.ValidationException;
 
 namespace EventEdu.Persistence.Services
 {
@@ -45,7 +47,7 @@ namespace EventEdu.Persistence.Services
 
 			if (await _languageReadRepository.GetByIsoCodeAsync(languageDTO.IsoCode) != null)
 			{
-				throw new InvalidOperationException("Bu ISO kodlu dil artıq mövcuddur.");
+				throw new BadRequestException("Bu ISO kodlu dil artıq mövcuddur.");
 
 			}
 			//var newLang = new Language
@@ -73,7 +75,7 @@ namespace EventEdu.Persistence.Services
 			var language = await _languageReadRepository.GetByIsoCodeAsync(isoCode);
 			if (language == null)
 			{
-				throw new Exception("Language not found");
+				throw new NotFoundException("Dil tapılmadı.");
 			}
 			//return new LanguageGetDTO
 			//{
@@ -109,7 +111,7 @@ namespace EventEdu.Persistence.Services
 			var language = await _languageReadRepository.GetByIdAsync(id.ToString());
 			if (language == null)
 			{
-				throw new Exception("Language not found");
+				throw new NotFoundException("Dil tapılmadı.");
 			}
 
 			//language.Name = updateLanguageDTO.Name;
@@ -126,7 +128,7 @@ namespace EventEdu.Persistence.Services
 			var language = await _languageReadRepository.GetByIdAsync(languageId.ToString());
 			if (language == null)
 			{
-				throw new Exception("Language not found");
+				throw new NotFoundException("Dil tapılmadı.");
 			}
 			language.SoftDelete();
 			await _languageWriteRepository.SaveChangeAsync();
@@ -137,7 +139,7 @@ namespace EventEdu.Persistence.Services
 			var language = await _languageReadRepository.GetByIdAsync(languageId.ToString());
 			if (language == null)
 			{
-				throw new Exception("Language not found");
+				throw new NotFoundException("Dil tapılmadı.");
 			}
 			language.Restore();
 			await _languageWriteRepository.SaveChangeAsync();

@@ -19,7 +19,7 @@ namespace EventEdu.Persistence.Context
 		}
 
 		public DbSet<Category> Categories { get; set; }
-		public DbSet<CategoryDetail> CategoryDetails { get; set; }		
+		public DbSet<CategoryDetail> CategoryDetails { get; set; }
 		public DbSet<Event> Events { get; set; }
 		public DbSet<EventDetail> EventDetails { get; set; }
 		public DbSet<EventSpeaker> EventSpeakers { get; set; }
@@ -27,13 +27,11 @@ namespace EventEdu.Persistence.Context
 		public DbSet<FeedBack> FeedBacks { get; set; }
 		public DbSet<FeedBackDetail> FeedBackDetails { get; set; }
 		public DbSet<Language> Languages { get; set; }
-		public DbSet<Notification> Notifications { get; set; }
-		public DbSet<NotificationDetail> NotificationDetails { get; set; }
+
 		public DbSet<Speaker> Speakers { get; set; }
 		public DbSet<SpeakerDetail> SpeakerDetails { get; set; }
 		public DbSet<Sponsor> Sponsors { get; set; }
 		public DbSet<SponsorDetail> SponsorDetails { get; set; }
-		public DbSet<UserEvent> UserEvents { get; set; }
 		public DbSet<HeroSection> HeroSections { get; set; }
 		public DbSet<HeroSectionDetail> HeroSectionDetails { get; set; }
 		public DbSet<AboutSection> AboutSections { get; set; }
@@ -48,42 +46,44 @@ namespace EventEdu.Persistence.Context
 				.HasKey(es => new { es.EventId, es.SpeakerId }); //composite key
 
 			modelBuilder.Entity<EventSpeaker>()
-				.HasOne(es => es.Event) 
-				.WithMany(e => e.EventSpeakers) 
-				.HasForeignKey(es => es.EventId); 
+				.HasOne(es => es.Event)
+				.WithMany(e => e.EventSpeakers)
+				.HasForeignKey(es => es.EventId);
 
 			modelBuilder.Entity<EventSpeaker>()
-				.HasOne(es => es.Speaker) 
-				.WithMany(s => s.EventSpeakers) 
-				.HasForeignKey(es => es.SpeakerId); 
+				.HasOne(es => es.Speaker)
+				.WithMany(s => s.EventSpeakers)
+				.HasForeignKey(es => es.SpeakerId);
 
 			// EventSponsor əlaqəsi
 			modelBuilder.Entity<EventSponsor>()
-				.HasKey(es => new { es.EventId, es.SponsorId }); 
+				.HasKey(es => new { es.EventId, es.SponsorId });
 
 			modelBuilder.Entity<EventSponsor>()
-				.HasOne(es => es.Event) 
-				.WithMany(e => e.EventSponsors) 
-				.HasForeignKey(es => es.EventId); 
+				.HasOne(es => es.Event)
+				.WithMany(e => e.EventSponsors)
+				.HasForeignKey(es => es.EventId);
 
 			modelBuilder.Entity<EventSponsor>()
-				.HasOne(es => es.Sponsor) 
-				.WithMany(s => s.EventSponsors) 
-				.HasForeignKey(es => es.SponsorId); 
+				.HasOne(es => es.Sponsor)
+				.WithMany(s => s.EventSponsors)
+				.HasForeignKey(es => es.SponsorId);
 
-			// UserEvent əlaqəsi
-			modelBuilder.Entity<UserEvent>()
-				.HasKey(ue => new { ue.UserId, ue.EventId });
+			//SubsEvent
+			modelBuilder.Entity<SubsEvent>()
+	            .HasKey(se => new { se.EventId, se.SubscriptionId });
 
-			modelBuilder.Entity<UserEvent>()
-				.HasOne(ue => ue.User) 
-				.WithMany(u => u.UserEvents) 
-				.HasForeignKey(ue => ue.UserId); 
+			modelBuilder.Entity<SubsEvent>()
+				.HasOne(se => se.Event)
+				.WithMany(e => e.SubsEvents)
+				.HasForeignKey(se => se.EventId);
 
-			modelBuilder.Entity<UserEvent>()
-				.HasOne(ue => ue.Event) 
-				.WithMany(e => e.UserEvents) 
-				.HasForeignKey(ue => ue.EventId); 
+			modelBuilder.Entity<SubsEvent>()
+				.HasOne(se => se.Subscription)
+				.WithMany(s => s.SubsEvents)
+				.HasForeignKey(se => se.SubscriptionId);
+
+
 		}
 
 		public override async Task<int> SaveChangesAsync(CancellationToken token = default)

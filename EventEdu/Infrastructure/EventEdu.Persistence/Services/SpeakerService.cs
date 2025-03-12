@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EventEdu.Application.DTOs.Category;
 using EventEdu.Application.DTOs.Speaker;
+using EventEdu.Application.Exceptions;
 using EventEdu.Application.Repository;
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ValidationException = FluentValidation.ValidationException;
 
 namespace EventEdu.Persistence.Services
 {
@@ -57,7 +59,7 @@ namespace EventEdu.Persistence.Services
 			var language = await _languageReadRepository.GetByIdAsync(createSpeakerDTO.LanguageId.ToString());
 			if (language == null)
 			{
-				throw new Exception("Selected language not found");
+				throw new NotFoundException("Selected language not found");
 			}
 
 			//bool isSpeakerExist = await _context.SpeakerDetails.AnyAsync(x => x.FullName == createSpeakerDTO.FullName && x.LanguageId == createSpeakerDTO.LanguageId);
@@ -91,7 +93,7 @@ namespace EventEdu.Persistence.Services
 			var isSpeakerExist = await _speakerDetailReadRepository.GetBySpeakerIdAndLanguageIdAsync(speaker.Id, createSpeakerDTO.LanguageId);
 			if (isSpeakerExist != null)
 			{
-				throw new Exception("This speaker already exists for the selected language.");
+				throw new BadRequestException("This speaker already exists for the selected language.");
 			}
 
 			//_context.Speakers.Add(speaker);
@@ -134,7 +136,7 @@ namespace EventEdu.Persistence.Services
 			var language = await _languageReadRepository.GetByIsoCodeAsync(isoCode);
 			if (language == null)
 			{
-				throw new Exception("Language not found");
+				throw new NotFoundException("Language not found");
 			}
 			var speakers = await _speakerReadRepository.GetSpeakersByLanguageAsync(language.Id);
 			var speakerDetails = await _speakerDetailReadRepository.GetByLanguageIdAsync(language.Id);
@@ -214,7 +216,7 @@ namespace EventEdu.Persistence.Services
 			var speakerDetail = await _speakerDetailReadRepository.GetBySpeakerIdAndLanguageIdAsync(speakerId, updateSpeakerDTO.LanguageId);
 			if (speakerDetail == null)
 			{
-				throw new Exception("Speaker not found.");
+				throw new NotFoundException("Speaker not found.");
 			}
 
 			//	bool isSpeakerExist = await _context.SpeakerDetails
@@ -230,7 +232,7 @@ namespace EventEdu.Persistence.Services
 			var isSpeakerExist = await _speakerDetailReadRepository.GetBySpeakerIdAndLanguageIdAsync(speakerId, updateSpeakerDTO.LanguageId);
 			if (isSpeakerExist != null && isSpeakerExist.Id != speakerId)
 			{
-				throw new Exception("This speaker name already exists for the selected language.");
+				throw new BadRequestException("This speaker name already exists for the selected language.");
 			}
 
 			//	bool isSpeakerExist = await _speakerDetailReadRepository.Table
@@ -274,7 +276,7 @@ namespace EventEdu.Persistence.Services
 			var speaker = await _speakerReadRepository.GetByIdAsync(speakerId.ToString());
 			if (speaker == null)
 			{
-				throw new Exception("Speaker not found");
+				throw new NotFoundException("Speaker not found");
 			}
 
 			speaker.SoftDelete();
@@ -296,7 +298,7 @@ namespace EventEdu.Persistence.Services
 			var speaker = await _speakerReadRepository.GetByIdAsync(speakerId.ToString());
 			if (speaker == null)
 			{
-				throw new Exception("Speaker not found");
+				throw new NotFoundException("Speaker not found");
 			}
 			speaker.Restore();
 			_speakerWriteRepository.Update(speaker);

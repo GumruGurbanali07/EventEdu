@@ -11,5 +11,6 @@ namespace EventEdu.Application.Repository
     {
         Task<SpeakerDetail> GetBySpeakerIdAndLanguageIdAsync(Guid speakerId, Guid languageId);
         Task<List<SpeakerDetail>> GetByLanguageIdAsync(Guid languageId);
+        Task<SpeakerDetail> GetBySpeakerIdAsync(Guid speakerId);
 	}
 }

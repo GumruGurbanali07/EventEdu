@@ -229,11 +229,20 @@ namespace EventEdu.Persistence.Services
 			//		throw new Exception("This speaker name already exists for the selected language.");
 			//	}
 
-			var isSpeakerExist = await _speakerDetailReadRepository.GetBySpeakerIdAndLanguageIdAsync(speakerId, updateSpeakerDTO.LanguageId);
-			if (isSpeakerExist != null && isSpeakerExist.Id != speakerId)
+
+			//var isSpeakerExist = await _speakerDetailReadRepository.GetBySpeakerIdAndLanguageIdAsync(speakerId, updateSpeakerDTO.LanguageId);
+			//if (isSpeakerExist != null && isSpeakerExist.Id != speakerId)
+			//{
+			//	throw new BadRequestException("This speaker name already exists for the selected language.");
+			//}
+
+			////
+			var isSpeakerExist = await _speakerDetailReadRepository.GetBySpeakerIdAsync(speakerId);
+			if (isSpeakerExist == null)
 			{
-				throw new BadRequestException("This speaker name already exists for the selected language.");
+				throw new NotFoundException("Speaker not found.");
 			}
+
 
 			//	bool isSpeakerExist = await _speakerDetailReadRepository.Table
 			//.AnyAsync(x => x.FullName == updateSpeakerDTO.FullName &&

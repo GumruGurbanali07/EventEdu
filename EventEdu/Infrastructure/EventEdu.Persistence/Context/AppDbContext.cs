@@ -27,7 +27,7 @@ namespace EventEdu.Persistence.Context
 		public DbSet<FeedBack> FeedBacks { get; set; }
 		public DbSet<FeedBackDetail> FeedBackDetails { get; set; }
 		public DbSet<Language> Languages { get; set; }
-
+		public DbSet<Subscription> Subscriptions { get; set; }
 		public DbSet<Speaker> Speakers { get; set; }
 		public DbSet<SpeakerDetail> SpeakerDetails { get; set; }
 		public DbSet<Sponsor> Sponsors { get; set; }
@@ -71,7 +71,7 @@ namespace EventEdu.Persistence.Context
 
 			//SubsEvent
 			modelBuilder.Entity<SubsEvent>()
-	            .HasKey(se => new { se.EventId, se.SubscriptionId });
+				.HasKey(se => new { se.EventId, se.SubscriptionId });
 
 			modelBuilder.Entity<SubsEvent>()
 				.HasOne(se => se.Event)

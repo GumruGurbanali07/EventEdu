@@ -1,10 +1,4 @@
-﻿using EventEdu.Application.DTOs.Category;
-using EventEdu.Application.DTOs.Speaker;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EventEdu.Application.DTOs.Speaker;
 
 namespace EventEdu.Application.Services
 {
@@ -17,3 +11,10 @@ namespace EventEdu.Application.Services
 		Task RestoreSpeakerAsync(Guid speakerId);
 	}
 }
+
+
+
+
+
+
+

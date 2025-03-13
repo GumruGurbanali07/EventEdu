@@ -55,8 +55,9 @@ namespace EventEdu.Persistence
 			services.AddScoped<ICategoryWriteRepository, CategoryWriteRepository>();
 			services.AddScoped<ICategoryDetailReadRepository, CategoryDetailReadRepository>();
 			services.AddScoped<ICategoryDetailWriteRepository, CategoryDetailWriteRepository>();
-			
 
+			services.AddScoped<ISubscriptionReadRepository, SubscriptionReadRepository>();
+			services.AddScoped<ISubscriptionWriteRepository, SubscriptionWriteRepository>();
 
 
 			services.AddScoped<IEventReadRepository, EventReadRepository>();

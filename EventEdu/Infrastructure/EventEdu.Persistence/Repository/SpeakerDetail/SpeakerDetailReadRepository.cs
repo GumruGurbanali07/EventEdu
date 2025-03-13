@@ -20,7 +20,10 @@ namespace EventEdu.Persistence.Repository
 		{
 			return await Table.FirstOrDefaultAsync(x => x.SpeakerId == speakerId && x.LanguageId == languageId);
 		}
-
+		public async Task<SpeakerDetail> GetBySpeakerIdAsync(Guid speakerId)
+		{
+			return await Table.FirstOrDefaultAsync(x => x.SpeakerId == speakerId);
+		}
 		public async Task<List<SpeakerDetail>> GetByLanguageIdAsync(Guid languageId)
 		{
 			return await Table.Where(x => x.LanguageId == languageId).ToListAsync();

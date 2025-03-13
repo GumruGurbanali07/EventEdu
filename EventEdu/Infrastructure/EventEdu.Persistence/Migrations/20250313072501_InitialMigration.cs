@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EventEdu.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class AfterMergingProcessMig : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -155,7 +155,7 @@ namespace EventEdu.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Subscription",
+                name: "Subscriptions",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -168,7 +168,7 @@ namespace EventEdu.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Subscription", x => x.Id);
+                    table.PrimaryKey("PK_Subscriptions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -536,45 +536,14 @@ namespace EventEdu.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SubsEvent",
-                columns: table => new
-                {
-                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SubscriptionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SubsEvent", x => new { x.EventId, x.SubscriptionId });
-                    table.ForeignKey(
-                        name: "FK_SubsEvent_Events_EventId",
-                        column: x => x.EventId,
-                        principalTable: "Events",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SubsEvent_Subscription_SubscriptionId",
-                        column: x => x.SubscriptionId,
-                        principalTable: "Subscription",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "FeedBacks",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Rating = table.Column<double>(type: "float", nullable: false),
                     EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SubsEventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SubsEventEventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SubsEventSubscriptionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SubscriptionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    SubscriptionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -594,16 +563,39 @@ namespace EventEdu.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_FeedBacks_SubsEvent_SubsEventEventId_SubsEventSubscriptionId",
-                        columns: x => new { x.SubsEventEventId, x.SubsEventSubscriptionId },
-                        principalTable: "SubsEvent",
-                        principalColumns: new[] { "EventId", "SubscriptionId" },
+                        name: "FK_FeedBacks_Subscriptions_SubscriptionId",
+                        column: x => x.SubscriptionId,
+                        principalTable: "Subscriptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SubsEvents",
+                columns: table => new
+                {
+                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SubscriptionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubsEvents", x => new { x.EventId, x.SubscriptionId });
+                    table.ForeignKey(
+                        name: "FK_SubsEvents_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_FeedBacks_Subscription_SubscriptionId",
+                        name: "FK_SubsEvents_Subscriptions_SubscriptionId",
                         column: x => x.SubscriptionId,
-                        principalTable: "Subscription",
-                        principalColumn: "Id");
+                        principalTable: "Subscriptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -745,11 +737,6 @@ namespace EventEdu.Persistence.Migrations
                 column: "SubscriptionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FeedBacks_SubsEventEventId_SubsEventSubscriptionId",
-                table: "FeedBacks",
-                columns: new[] { "SubsEventEventId", "SubsEventSubscriptionId" });
-
-            migrationBuilder.CreateIndex(
                 name: "IX_HeroSectionDetails_HeroSectionId",
                 table: "HeroSectionDetails",
                 column: "HeroSectionId");
@@ -780,8 +767,8 @@ namespace EventEdu.Persistence.Migrations
                 column: "SponsorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SubsEvent_SubscriptionId",
-                table: "SubsEvent",
+                name: "IX_SubsEvents_SubscriptionId",
+                table: "SubsEvents",
                 column: "SubscriptionId");
         }
 
@@ -831,6 +818,9 @@ namespace EventEdu.Persistence.Migrations
                 name: "SponsorDetails");
 
             migrationBuilder.DropTable(
+                name: "SubsEvents");
+
+            migrationBuilder.DropTable(
                 name: "AboutSections");
 
             migrationBuilder.DropTable(
@@ -855,13 +845,10 @@ namespace EventEdu.Persistence.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "SubsEvent");
-
-            migrationBuilder.DropTable(
                 name: "Events");
 
             migrationBuilder.DropTable(
-                name: "Subscription");
+                name: "Subscriptions");
 
             migrationBuilder.DropTable(
                 name: "Categories");

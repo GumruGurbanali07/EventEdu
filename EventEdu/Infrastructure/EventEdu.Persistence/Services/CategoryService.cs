@@ -143,10 +143,7 @@ namespace EventEdu.Persistence.Services
 				})
 				.ToListAsync();
 
-			if (categories == null || categories.Count == 0)
-			{
-				throw new NotFoundException("No categories found for the selected language.");
-			}
+			
 
 			return categories;
 		}

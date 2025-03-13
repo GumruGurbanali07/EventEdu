@@ -38,15 +38,12 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("AboutSections", (string)null);
+                    b.ToTable("AboutSections");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.AboutSectionDetail", b =>
@@ -68,9 +65,6 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<Guid>("LanguageId")
                         .HasColumnType("uniqueidentifier");
 
@@ -87,7 +81,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("AboutSectionDetails", (string)null);
+                    b.ToTable("AboutSectionDetails");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Category", b =>
@@ -107,7 +101,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.CategoryDetail", b =>
@@ -141,111 +135,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("CategoryDetails", (string)null);
-                });
-
-            modelBuilder.Entity("EventEdu.Domain.Entities.Comment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AppUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
-
-                    b.ToTable("Comments", (string)null);
-                });
-
-            modelBuilder.Entity("EventEdu.Domain.Entities.CommentDetail", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CommentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("LanguageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CommentId");
-
-                    b.HasIndex("LanguageId");
-
-                    b.ToTable("CommentDetails", (string)null);
-                });
-
-            modelBuilder.Entity("EventEdu.Domain.Entities.ContactInfo", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FacebookLink")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InstagramLink")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LinkedInLink")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("SpeakerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SpeakerId");
-
-                    b.ToTable("ContactInfos", (string)null);
+                    b.ToTable("CategoryDetails");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Event", b =>
@@ -276,7 +166,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Events", (string)null);
+                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.EventDetail", b =>
@@ -314,7 +204,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("EventDetails", (string)null);
+                    b.ToTable("EventDetails");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.EventSpeaker", b =>
@@ -341,7 +231,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("SpeakerId");
 
-                    b.ToTable("EventSpeakers", (string)null);
+                    b.ToTable("EventSpeakers");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.EventSponsor", b =>
@@ -368,7 +258,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("SponsorId");
 
-                    b.ToTable("EventSponsors", (string)null);
+                    b.ToTable("EventSponsors");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.FeedBack", b =>
@@ -406,7 +296,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("SubscriptionId");
 
-                    b.ToTable("FeedBacks", (string)null);
+                    b.ToTable("FeedBacks");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.FeedBackDetail", b =>
@@ -439,7 +329,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("FeedBackDetails", (string)null);
+                    b.ToTable("FeedBackDetails");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.HeroSection", b =>
@@ -457,19 +347,13 @@ namespace EventEdu.Persistence.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("HeroSections", (string)null);
+                    b.ToTable("HeroSections");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.HeroSectionDetails", b =>
@@ -507,7 +391,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("HeroSectionDetails", (string)null);
+                    b.ToTable("HeroSectionDetails");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Identity.AppRole", b =>
@@ -651,7 +535,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Languages", (string)null);
+                    b.ToTable("Languages");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Speaker", b =>
@@ -662,9 +546,6 @@ namespace EventEdu.Persistence.Migrations
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -694,7 +575,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Speakers", (string)null);
+                    b.ToTable("Speakers");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.SpeakerDetail", b =>
@@ -732,7 +613,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("SpeakerId");
 
-                    b.ToTable("SpeakerDetails", (string)null);
+                    b.ToTable("SpeakerDetails");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Sponsor", b =>
@@ -759,9 +640,6 @@ namespace EventEdu.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
@@ -771,7 +649,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sponsors", (string)null);
+                    b.ToTable("Sponsors");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.SponsorDetail", b =>
@@ -809,7 +687,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("SponsorId");
 
-                    b.ToTable("SponsorDetails", (string)null);
+                    b.ToTable("SponsorDetails");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.SubsEvent", b =>
@@ -1013,17 +891,6 @@ namespace EventEdu.Persistence.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Language");
-                });
-
-            modelBuilder.Entity("EventEdu.Domain.Entities.ContactInfo", b =>
-                {
-                    b.HasOne("EventEdu.Domain.Entities.Speaker", "Speaker")
-                        .WithMany("ContactInfos")
-                        .HasForeignKey("SpeakerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Speaker");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Event", b =>

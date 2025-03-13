@@ -12,5 +12,6 @@ namespace EventEdu.Application.DTOs.Category
 		public string CategoryName { get; set; }
 		public string IsoCode { get; set; }  // ISO code (az-AZ, en-US, ru-RU)
 		public string ImagePath { get; set; }
+		public bool IsDeleted { get; set; }	
 	}
 }

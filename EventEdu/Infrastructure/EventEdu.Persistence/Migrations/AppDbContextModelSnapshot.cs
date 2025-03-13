@@ -267,10 +267,13 @@ namespace EventEdu.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("EventId")
+                    b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
@@ -279,18 +282,19 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
+                    b.Property<Guid>("SubscriptionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.HasIndex("EventId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("SubscriptionId");
 
                     b.ToTable("FeedBacks");
                 });
@@ -538,65 +542,6 @@ namespace EventEdu.Persistence.Migrations
                     b.ToTable("Languages");
                 });
 
-            modelBuilder.Entity("EventEdu.Domain.Entities.Notification", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("EventId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EventId");
-
-                    b.ToTable("Notifications");
-                });
-
-            modelBuilder.Entity("EventEdu.Domain.Entities.NotificationDetail", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("LanguageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("NotificationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LanguageId");
-
-                    b.HasIndex("NotificationId");
-
-                    b.ToTable("NotificationDetails");
-                });
-
             modelBuilder.Entity("EventEdu.Domain.Entities.Speaker", b =>
                 {
                     b.Property<Guid>("Id")
@@ -733,12 +678,12 @@ namespace EventEdu.Persistence.Migrations
                     b.ToTable("SponsorDetails");
                 });
 
-            modelBuilder.Entity("EventEdu.Domain.Entities.UserEvent", b =>
+            modelBuilder.Entity("EventEdu.Domain.Entities.SubsEvent", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SubscriptionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedDate")
@@ -753,11 +698,43 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("UserId", "EventId");
+                    b.HasKey("EventId", "SubscriptionId");
 
-                    b.HasIndex("EventId");
+                    b.HasIndex("SubscriptionId");
 
-                    b.ToTable("UserEvents");
+                    b.ToTable("SubsEvents");
+                });
+
+            modelBuilder.Entity("EventEdu.Domain.Entities.Subscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Subscriptions");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -974,17 +951,25 @@ namespace EventEdu.Persistence.Migrations
 
             modelBuilder.Entity("EventEdu.Domain.Entities.FeedBack", b =>
                 {
-                    b.HasOne("EventEdu.Domain.Entities.Event", null)
+                    b.HasOne("EventEdu.Domain.Entities.Identity.AppUser", null)
                         .WithMany("FeedBacks")
-                        .HasForeignKey("EventId");
+                        .HasForeignKey("AppUserId");
 
-                    b.HasOne("EventEdu.Domain.Entities.Identity.AppUser", "User")
+                    b.HasOne("EventEdu.Domain.Entities.Event", "Event")
                         .WithMany("FeedBacks")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.HasOne("EventEdu.Domain.Entities.Subscription", "Subscription")
+                        .WithMany("FeedBacks")
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.FeedBackDetail", b =>
@@ -1025,32 +1010,6 @@ namespace EventEdu.Persistence.Migrations
                     b.Navigation("Language");
                 });
 
-            modelBuilder.Entity("EventEdu.Domain.Entities.Notification", b =>
-                {
-                    b.HasOne("EventEdu.Domain.Entities.Event", null)
-                        .WithMany("Notifications")
-                        .HasForeignKey("EventId");
-                });
-
-            modelBuilder.Entity("EventEdu.Domain.Entities.NotificationDetail", b =>
-                {
-                    b.HasOne("EventEdu.Domain.Entities.Language", "Language")
-                        .WithMany()
-                        .HasForeignKey("LanguageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EventEdu.Domain.Entities.Notification", "Notification")
-                        .WithMany("NotificationDetails")
-                        .HasForeignKey("NotificationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Language");
-
-                    b.Navigation("Notification");
-                });
-
             modelBuilder.Entity("EventEdu.Domain.Entities.SpeakerDetail", b =>
                 {
                     b.HasOne("EventEdu.Domain.Entities.Language", "Language")
@@ -1089,23 +1048,23 @@ namespace EventEdu.Persistence.Migrations
                     b.Navigation("Sponsor");
                 });
 
-            modelBuilder.Entity("EventEdu.Domain.Entities.UserEvent", b =>
+            modelBuilder.Entity("EventEdu.Domain.Entities.SubsEvent", b =>
                 {
                     b.HasOne("EventEdu.Domain.Entities.Event", "Event")
-                        .WithMany("UserEvents")
+                        .WithMany("SubsEvents")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EventEdu.Domain.Entities.Identity.AppUser", "User")
-                        .WithMany("UserEvents")
-                        .HasForeignKey("UserId")
+                    b.HasOne("EventEdu.Domain.Entities.Subscription", "Subscription")
+                        .WithMany("SubsEvents")
+                        .HasForeignKey("SubscriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Event");
 
-                    b.Navigation("User");
+                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1179,9 +1138,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.Navigation("FeedBacks");
 
-                    b.Navigation("Notifications");
-
-                    b.Navigation("UserEvents");
+                    b.Navigation("SubsEvents");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.FeedBack", b =>
@@ -1197,13 +1154,6 @@ namespace EventEdu.Persistence.Migrations
             modelBuilder.Entity("EventEdu.Domain.Entities.Identity.AppUser", b =>
                 {
                     b.Navigation("FeedBacks");
-
-                    b.Navigation("UserEvents");
-                });
-
-            modelBuilder.Entity("EventEdu.Domain.Entities.Notification", b =>
-                {
-                    b.Navigation("NotificationDetails");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Speaker", b =>
@@ -1216,6 +1166,13 @@ namespace EventEdu.Persistence.Migrations
             modelBuilder.Entity("EventEdu.Domain.Entities.Sponsor", b =>
                 {
                     b.Navigation("EventSponsors");
+                });
+
+            modelBuilder.Entity("EventEdu.Domain.Entities.Subscription", b =>
+                {
+                    b.Navigation("FeedBacks");
+
+                    b.Navigation("SubsEvents");
                 });
 #pragma warning restore 612, 618
         }

@@ -10,7 +10,7 @@ namespace EventEdu.Domain.Entities
 		public Guid EventId { get; set; } 
 		public Event Event { get; set; }
 
-		public Guid SubsEventId { get; set; } 
-		public SubsEvent SubsEvent { get; set; }
+		public Guid SubscriptionId { get; set; }
+		public Subscription Subscription { get; set; }
 	}
 }

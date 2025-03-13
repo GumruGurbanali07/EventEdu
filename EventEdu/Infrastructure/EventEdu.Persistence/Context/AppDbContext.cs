@@ -1,4 +1,5 @@
-﻿using EventEdu.Domain.Entities;
+﻿
+using EventEdu.Domain.Entities;
 using EventEdu.Domain.Entities.Common;
 using EventEdu.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.Pkcs;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,6 +22,7 @@ namespace EventEdu.Persistence.Context
 
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<CategoryDetail> CategoryDetails { get; set; }
+		
 		public DbSet<Event> Events { get; set; }
 		public DbSet<EventDetail> EventDetails { get; set; }
 		public DbSet<EventSpeaker> EventSpeakers { get; set; }
@@ -27,11 +30,13 @@ namespace EventEdu.Persistence.Context
 		public DbSet<FeedBack> FeedBacks { get; set; }
 		public DbSet<FeedBackDetail> FeedBackDetails { get; set; }
 		public DbSet<Language> Languages { get; set; }
-		public DbSet<Subscription> Subscriptions { get; set; }
+	
 		public DbSet<Speaker> Speakers { get; set; }
 		public DbSet<SpeakerDetail> SpeakerDetails { get; set; }
 		public DbSet<Sponsor> Sponsors { get; set; }
 		public DbSet<SponsorDetail> SponsorDetails { get; set; }
+		public DbSet<Subscription> Subscriptions { get; set; }
+		public DbSet<SubsEvent> SubsEvents { get; set; }
 		public DbSet<HeroSection> HeroSections { get; set; }
 		public DbSet<HeroSectionDetail> HeroSectionDetails { get; set; }
 		public DbSet<AboutSection> AboutSections { get; set; }
@@ -69,9 +74,9 @@ namespace EventEdu.Persistence.Context
 				.WithMany(s => s.EventSponsors)
 				.HasForeignKey(es => es.SponsorId);
 
-			//SubsEvent
+			//SubsEvent əlaqəsi
 			modelBuilder.Entity<SubsEvent>()
-				.HasKey(se => new { se.EventId, se.SubscriptionId });
+			   .HasKey(se => new { se.EventId, se.SubscriptionId });
 
 			modelBuilder.Entity<SubsEvent>()
 				.HasOne(se => se.Event)
@@ -82,9 +87,8 @@ namespace EventEdu.Persistence.Context
 				.HasOne(se => se.Subscription)
 				.WithMany(s => s.SubsEvents)
 				.HasForeignKey(se => se.SubscriptionId);
-
-
 		}
+
 
 		public override async Task<int> SaveChangesAsync(CancellationToken token = default)
 		{

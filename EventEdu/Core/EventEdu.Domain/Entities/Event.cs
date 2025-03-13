@@ -8,13 +8,12 @@ using System.Threading.Tasks;
 namespace EventEdu.Domain.Entities
 {
 	public class Event:BaseEntity
-	{
-	
+	{	
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
-		public ICollection<EventDetail> EventDetails { get; set; }
 		public Guid CategoryId { get; set; }
 		public Category Category { get; set; }
+		public ICollection<EventDetail> EventDetails { get; set; }
 		public ICollection<SubsEvent> SubsEvents { get; set; } 
 		public ICollection<EventSpeaker> EventSpeakers { get; set; }
 		public ICollection<EventSponsor> EventSponsors { get; set; }

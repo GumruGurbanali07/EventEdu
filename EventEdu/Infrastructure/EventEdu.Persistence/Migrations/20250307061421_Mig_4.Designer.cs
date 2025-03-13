@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventEdu.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250309195426_AddedImagePathToHeroSectionMig")]
-    partial class AddedImagePathToHeroSectionMig
+    [Migration("20250307061421_Mig_4")]
+    partial class Mig_4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -139,110 +139,6 @@ namespace EventEdu.Persistence.Migrations
                     b.HasIndex("LanguageId");
 
                     b.ToTable("CategoryDetails");
-                });
-
-            modelBuilder.Entity("EventEdu.Domain.Entities.Comment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AppUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
-
-                    b.ToTable("Comments");
-                });
-
-            modelBuilder.Entity("EventEdu.Domain.Entities.CommentDetail", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CommentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("LanguageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CommentId");
-
-                    b.HasIndex("LanguageId");
-
-                    b.ToTable("CommentDetails");
-                });
-
-            modelBuilder.Entity("EventEdu.Domain.Entities.ContactInfo", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FacebookLink")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InstagramLink")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LinkedInLink")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("SpeakerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SpeakerId");
-
-                    b.ToTable("ContactInfos");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Event", b =>
@@ -374,9 +270,6 @@ namespace EventEdu.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AppUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -392,11 +285,15 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AppUserId");
-
                     b.HasIndex("EventId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("FeedBacks");
                 });
@@ -444,10 +341,6 @@ namespace EventEdu.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImagePath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -716,8 +609,28 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FacebookLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InstagramLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<string>("TwitterLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -774,20 +687,8 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImagePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -815,10 +716,6 @@ namespace EventEdu.Persistence.Migrations
 
                     b.Property<Guid>("LanguageId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("SponsorDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("SponsorId")
                         .HasColumnType("uniqueidentifier");
@@ -1010,43 +907,6 @@ namespace EventEdu.Persistence.Migrations
                     b.Navigation("Language");
                 });
 
-            modelBuilder.Entity("EventEdu.Domain.Entities.Comment", b =>
-                {
-                    b.HasOne("EventEdu.Domain.Entities.Identity.AppUser", null)
-                        .WithMany("Comments")
-                        .HasForeignKey("AppUserId");
-                });
-
-            modelBuilder.Entity("EventEdu.Domain.Entities.CommentDetail", b =>
-                {
-                    b.HasOne("EventEdu.Domain.Entities.Comment", "Comment")
-                        .WithMany("CommentDetails")
-                        .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EventEdu.Domain.Entities.Language", "Language")
-                        .WithMany()
-                        .HasForeignKey("LanguageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Comment");
-
-                    b.Navigation("Language");
-                });
-
-            modelBuilder.Entity("EventEdu.Domain.Entities.ContactInfo", b =>
-                {
-                    b.HasOne("EventEdu.Domain.Entities.Speaker", "Speaker")
-                        .WithMany("ContactInfos")
-                        .HasForeignKey("SpeakerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Speaker");
-                });
-
             modelBuilder.Entity("EventEdu.Domain.Entities.Event", b =>
                 {
                     b.HasOne("EventEdu.Domain.Entities.Category", "Category")
@@ -1117,13 +977,17 @@ namespace EventEdu.Persistence.Migrations
 
             modelBuilder.Entity("EventEdu.Domain.Entities.FeedBack", b =>
                 {
-                    b.HasOne("EventEdu.Domain.Entities.Identity.AppUser", null)
-                        .WithMany("FeedBacks")
-                        .HasForeignKey("AppUserId");
-
                     b.HasOne("EventEdu.Domain.Entities.Event", null)
                         .WithMany("FeedBacks")
                         .HasForeignKey("EventId");
+
+                    b.HasOne("EventEdu.Domain.Entities.Identity.AppUser", "User")
+                        .WithMany("FeedBacks")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.FeedBackDetail", b =>
@@ -1218,7 +1082,7 @@ namespace EventEdu.Persistence.Migrations
                         .IsRequired();
 
                     b.HasOne("EventEdu.Domain.Entities.Sponsor", "Sponsor")
-                        .WithMany("SponsorsDetail")
+                        .WithMany()
                         .HasForeignKey("SponsorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1308,11 +1172,6 @@ namespace EventEdu.Persistence.Migrations
                     b.Navigation("CategoryDetail");
                 });
 
-            modelBuilder.Entity("EventEdu.Domain.Entities.Comment", b =>
-                {
-                    b.Navigation("CommentDetails");
-                });
-
             modelBuilder.Entity("EventEdu.Domain.Entities.Event", b =>
                 {
                     b.Navigation("EventDetails");
@@ -1340,8 +1199,6 @@ namespace EventEdu.Persistence.Migrations
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Identity.AppUser", b =>
                 {
-                    b.Navigation("Comments");
-
                     b.Navigation("FeedBacks");
 
                     b.Navigation("UserEvents");
@@ -1354,8 +1211,6 @@ namespace EventEdu.Persistence.Migrations
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Speaker", b =>
                 {
-                    b.Navigation("ContactInfos");
-
                     b.Navigation("EventSpeakers");
 
                     b.Navigation("SpeakerDetails");
@@ -1364,8 +1219,6 @@ namespace EventEdu.Persistence.Migrations
             modelBuilder.Entity("EventEdu.Domain.Entities.Sponsor", b =>
                 {
                     b.Navigation("EventSponsors");
-
-                    b.Navigation("SponsorsDetail");
                 });
 #pragma warning restore 612, 618
         }

@@ -7,7 +7,13 @@
     <div class="addOrEditCard card">
         <!-- Image Preview -->
         <div class="chosenImage">
-            <img id="imagePreview" src="@Model.ImagePath" alt="Sponsor Image" />
+            @if (Model.ImagePath == null || Model.ImagePath.Length == 0)
+            {
+                <img src="~/admin/assets/img/avatars/default.jpg" />
+            }
+           else{
+                <img id="imagePreview" src="@Model.ImagePath" alt="Sponsor Image" />
+           }
         </div>
 
         <div class="card-body">
@@ -26,11 +32,7 @@
             <!-- File Input for Image -->
             <div class="mb-3">
                 <label asp-for="ImageFile" class="form-label">Sponsor's Image</label>
-                <!-- Readonly Text Input to Show Image Path -->
-                <input class="form-control" type="text" id="ImagePath" name="ImagePath" value="@Model.ImagePath" readonly onclick="document.getElementById('ImageFile').click()">
-
-                <!-- Hidden File Input for Upload -->
-                <input class="form-control mt-2" type="file" asp-for="ImageFile" name="ImageFile" id="ImageFile" accept="image/*" onchange="previewImage(event)" style="display: none;">
+                <input class="form-control mt-2" type="file" asp-for="ImageFile" name="ImageFile" id="ImageFile" accept="image/*" onchange="previewImage(event)" >
                 <span class="form-text text-danger" asp-validation-for="ImageFile"></span>
             </div>
             <!-- Sponsor Name (inside SponsorDetails) -->
@@ -84,21 +86,5 @@
         };
         reader.readAsDataURL(event.target.files[0]);
     }
-
-    function previewImage(event) {
-        var fileInput = event.target;
-        var file = fileInput.files[0];
-
-        if (file) {
-            var reader = new FileReader();
-            reader.onload = function () {
-                var output = document.getElementById('preview');
-                output.src = reader.result;
-
-                // Update the text input with the new file name (optional)
-                document.getElementById('ImagePath').value = file.name;
-            };
-            reader.readAsDataURL(file);
-        }
 
 </script>

@@ -123,7 +123,6 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
                     LanguageId = sponsor.LanguageId
                 };
 
-
                 return View(updateSponsorDTO);
             }
             catch (Exception ex)

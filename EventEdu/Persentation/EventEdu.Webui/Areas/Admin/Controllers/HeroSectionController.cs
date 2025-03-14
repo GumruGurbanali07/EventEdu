@@ -88,25 +88,22 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         {
             try
             {
-                var slider = await _sliderService.GetSLiderById(id);
+                var slider = await _sliderService.GetSLiderById(id, "az-AZ");
 
                 if (slider == null)
                 {
-                    return NotFound();
+                    return NotFound("Slider not found.");
                 }
 
-                //var updateSponsorDTO = new CreateSponsorDTO
-                //{
-                //    SponsorName = sponsor.SponsorName,
-                //    SponsorDescription = sponsor.SponsorDescription,
-                //    Email = sponsor.Email,
-                //    PhoneNumber = sponsor.PhoneNumber,
-                //    Website = sponsor.Website,
-                //    //LanguageId = sponsorDTO.LanguageId
-                //};
+                var updateSliderDTO = new CreateHeroSectionDTO
+                {
+                    Title = slider.Title,
+                    Description = slider.Description,
+                    ImagePath = slider.ImagePath,
+                    LanguageId = slider.LanguageId
+                };
 
-
-                return View(slider);
+                return View(updateSliderDTO);
             }
             catch (Exception ex)
             {
@@ -116,17 +113,23 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditSlider(Guid id, CreateHeroSectionDTO updateSliderDTO)
+        public async Task<IActionResult> EditSlider(Guid id, [FromForm] CreateHeroSectionDTO updateSliderDTO)
         {
+
+            if (!ModelState.IsValid)
+            {
+                return View(updateSliderDTO);
+            }
+
             try
             {
-                var updatedSponsor = await _sliderService.EditSlider(id, updateSliderDTO);
+                await _sliderService.EditSlider(id, updateSliderDTO);
                 TempData["Success"] = "Slider updated successfully!";
-                return View(updateSliderDTO);
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                TempData["Error"] = ex.Message;
+                ModelState.AddModelError(string.Empty, ex.Message);
                 return View(updateSliderDTO);
             }
         }

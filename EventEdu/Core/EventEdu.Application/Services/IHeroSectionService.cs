@@ -12,8 +12,8 @@ namespace EventEdu.Application.Services
     {
         Task AddSlider(CreateHeroSectionDTO addSliderDTO);
         Task<List<GetHeroSectionDTO>> GetAllSlidersAsync();
-        Task<GetHeroSectionDTO> GetSLiderById(Guid id);
-        Task<CreateHeroSectionDTO> EditSlider(Guid id, CreateHeroSectionDTO updateSliderDTO);
+        Task<GetHeroSectionDTO> GetSLiderById(Guid id, string isoCode);
+        Task EditSlider(Guid id, CreateHeroSectionDTO updateSliderDTO);
         Task DeleteSlider(Guid id);
         Task RestoreSlider(Guid id);
     }

@@ -161,8 +161,14 @@ namespace EventEdu.Persistence.Services
             return sliders;
         }
 
-        public async Task<GetHeroSectionDTO> GetSLiderById(Guid id)
+        public async Task<GetHeroSectionDTO> GetSLiderById(Guid id, string isoCode)
         {
+            var language = await _languageReadRepository.GetByIsoCodeAsync(isoCode);
+
+            if (language == null)
+            {
+                throw new Exception("Invalid language selection.");
+            }
 
             var slider = await _sliderReadRepository.GetAll()
                   .Include(s => s.HeroSectionDetails)
@@ -171,7 +177,8 @@ namespace EventEdu.Persistence.Services
                   .Select(s => new GetHeroSectionDTO
                   {
                       Id = s.Id,
-                      IsoCode = s.HeroSectionDetails.FirstOrDefault().Language.IsoCode,
+                      IsoCode = s.HeroSectionDetails.FirstOrDefault().Language.Name,
+                      LanguageId = s.HeroSectionDetails.FirstOrDefault().Language.Id,
                       Title = s.HeroSectionDetails.FirstOrDefault().Title,
                       Description = s.HeroSectionDetails.FirstOrDefault().Description,
                       ImagePath = s.ImagePath,
@@ -184,14 +191,14 @@ namespace EventEdu.Persistence.Services
 
         public async Task DeleteSlider(Guid id)
         {
-            var slider = await _context.HeroSections.FirstOrDefaultAsync(x => x.Id == id);
+            var slider = await _sliderReadRepository.GetAll().FirstOrDefaultAsync(x => x.Id == id);
             if (slider == null)
             {
                 throw new Exception("Slider not found");
             }
             slider.SoftDelete();
             _sliderWriteRepository.Update(slider);
-            var sliderDetails = await _context.HeroSectionDetails.Where(x => x.HeroSectionId == id).ToListAsync();
+            var sliderDetails = await _sliderDetailReadRepository.GetAll().Where(x => x.HeroSectionId == id).ToListAsync();
             foreach (var detail in sliderDetails)
             {
                 detail.SoftDelete();
@@ -202,13 +209,13 @@ namespace EventEdu.Persistence.Services
 
         public async Task RestoreSlider(Guid id)
         {
-            var slider = await _context.HeroSections.FirstOrDefaultAsync(x => x.Id == id);
+            var slider = await _sliderReadRepository.GetAll().FirstOrDefaultAsync(x => x.Id == id);
             if (slider == null)
             {
                 throw new Exception("Slider not found");
             }
             slider.Restore();
-            var sliderDetails = await _context.HeroSectionDetails.Where(x => x.HeroSectionId == id).ToListAsync();
+            var sliderDetails = await _sliderDetailReadRepository.GetAll().Where(x => x.HeroSectionId == id).ToListAsync();
             foreach (var detail in sliderDetails)
             {
                 detail.Restore();
@@ -218,22 +225,28 @@ namespace EventEdu.Persistence.Services
             await _sliderWriteRepository.SaveChangeAsync();
         }
 
-        public async Task<CreateHeroSectionDTO> EditSlider(Guid id, CreateHeroSectionDTO updateSliderDTO)
+        public async Task EditSlider(Guid id, CreateHeroSectionDTO updateSliderDTO)
         {
-            var Slider = _context.HeroSections
+            var Slider = _sliderReadRepository.GetAll()
            .Include(s => s.HeroSectionDetails)
-           .FirstOrDefault(s => s.Id == updateSliderDTO.Id);
+           .FirstOrDefault(s => s.Id == id);
 
             if (Slider == null)
             {
                 throw new Exception("Slider not found.");
             }
             var SliderDetail = Slider.HeroSectionDetails
-                .FirstOrDefault(sd => sd.HeroSectionId == updateSliderDTO.Id);
+                .FirstOrDefault(sd => sd.HeroSectionId == id);
 
             if (SliderDetail == null)
             {
                 throw new Exception("Slider detail for the selected language not found.");
+            }
+
+            var validationResult = await _createHeroSectionValidator.ValidateAsync(updateSliderDTO);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
             }
 
             Slider.UpdatedDate = DateTime.UtcNow.AddHours(4);
@@ -260,19 +273,10 @@ namespace EventEdu.Persistence.Services
                 Slider.ImagePath = newImagePath.Trim();
             }
 
-            _context.HeroSections.Update(Slider);
-            _context.HeroSectionDetails.Update(SliderDetail);
-            await _context.SaveChangesAsync();
+            _sliderWriteRepository.Update(Slider);
+            _sliderDetailWriteRepository.Update(SliderDetail);
+            await _sliderDetailWriteRepository.SaveChangeAsync();
 
-            var getSliderDTO = new GetHeroSectionDTO
-            {
-                Id = Slider.Id,
-                Title = SliderDetail.Title,
-                Description = SliderDetail.Description,
-                ImagePath = Slider.ImagePath
-            };
-
-            return updateSliderDTO;
         }
     }
 

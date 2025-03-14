@@ -180,7 +180,8 @@ namespace EventEdu.Persistence.Services
                   .Select(s => new GetSponsorDTO
                   {
                       Id = s.Id,
-                      IsoCode = s.SponsorsDetail.FirstOrDefault().Language.IsoCode,
+                      IsoCode = s.SponsorsDetail.FirstOrDefault().Language.Name,
+                      LanguageId = s.SponsorsDetail.FirstOrDefault().Language.Id,
                       Email = s.Email,
                       PhoneNumber = s.PhoneNumber,
                       Website = s.Website,
@@ -231,8 +232,24 @@ namespace EventEdu.Persistence.Services
             await _sponsorWriteRepository.SaveChangeAsync();
         }
 
-        public async Task<GetSponsorDTO> EditSponsor(Guid id, CreateSponsorDTO updateSponsorDTO)
+        public async Task EditSponsor(Guid id, CreateSponsorDTO updateSponsorDTO)
         {
+            var sponsor = _sponsorReadRepository.GetAll()
+            .Include(s => s.SponsorsDetail)
+            .FirstOrDefault(s => s.Id == id
+          );
+
+            if (sponsor == null)
+            {
+                throw new Exception("Sponsor not found.");
+            }
+            var sponsorDetail = sponsor.SponsorsDetail
+                .FirstOrDefault(sd => sd.SponsorId == id);
+
+            if (sponsorDetail == null)
+            {
+                throw new Exception("Sponsor detail for the selected language not found.");
+            }
 
             var validationResult = await _createSponsorValidator.ValidateAsync(updateSponsorDTO);
             if (!validationResult.IsValid)
@@ -240,28 +257,13 @@ namespace EventEdu.Persistence.Services
                 throw new ValidationException(validationResult.Errors);
             }
 
-
-            var sponsor = _context.Sponsors
-            .Include(s => s.SponsorsDetail)
-            .FirstOrDefault(s => s.Id == updateSponsorDTO.Id);
-
-            if (sponsor == null)
-            {
-                throw new Exception("Sponsor not found.");
-            }
-            var sponsorDetail = sponsor.SponsorsDetail
-                .FirstOrDefault(sd => sd.SponsorId == updateSponsorDTO.Id);
-
-            if (sponsorDetail == null)
-            {
-                throw new Exception("Sponsor detail for the selected language not found.");
-            }
-
             sponsor.Email = updateSponsorDTO.Email?.Trim() ?? sponsor.Email;
             sponsor.PhoneNumber = updateSponsorDTO.PhoneNumber?.Trim() ?? sponsor.PhoneNumber;
             sponsor.Website = updateSponsorDTO.Website?.Trim() ?? sponsor.Website;
+            sponsor.ImagePath = updateSponsorDTO.ImagePath?.Trim() ?? sponsor.ImagePath;
             sponsor.UpdatedDate = DateTime.UtcNow.AddHours(4);
 
+            sponsorDetail.LanguageId = updateSponsorDTO.LanguageId;
             sponsorDetail.SponsorName = updateSponsorDTO.SponsorName?.Trim() ?? sponsorDetail.SponsorName;
             sponsorDetail.SponsorDescription = updateSponsorDTO.SponsorDescription?.Trim() ?? sponsorDetail.SponsorDescription;
             sponsorDetail.UpdatedDate = DateTime.UtcNow.AddHours(4);
@@ -284,22 +286,11 @@ namespace EventEdu.Persistence.Services
                 sponsor.ImagePath = newImagePath.Trim();
             }
 
-            _context.Sponsors.Update(sponsor);
-            _context.SponsorDetails.Update(sponsorDetail);
-            await _context.SaveChangesAsync();
+            _sponsorWriteRepository.Update(sponsor);
+            _sponsorDetailWriteRepository.Update(sponsorDetail);
+            await _sponsorDetailWriteRepository.SaveChangeAsync();
 
-            var getSponsorDTO = new GetSponsorDTO
-            {
-                Id = sponsor.Id,
-                SponsorName = sponsorDetail.SponsorName,
-                SponsorDescription = sponsorDetail.SponsorDescription,
-                Email = sponsor.Email,
-                PhoneNumber = sponsor.PhoneNumber,
-                Website = sponsor.Website,
-                ImagePath = sponsor.ImagePath
-            };
 
-            return getSponsorDTO;
         }
 
     }

@@ -1,10 +1,13 @@
-﻿using EventEdu.Application.DTOs.Sponsor;
+﻿using AutoMapper;
+using EventEdu.Application.DTOs.Category;
+using EventEdu.Application.DTOs.Sponsor;
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
 using EventEdu.Persistence.Context;
 using EventEdu.Persistence.Extensions;
 using EventEdu.Persistence.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using static System.Reflection.Metadata.BlobBuilder;
@@ -16,10 +19,12 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
     {
         private readonly ISponsorService _sponsorService;
         private readonly AppDbContext _context;
-        public SponsorController(ISponsorService sponsorService, AppDbContext context)
+        private readonly IMapper _mapper;
+        public SponsorController(ISponsorService sponsorService, AppDbContext context, IMapper mapper)
         {
             _sponsorService = sponsorService;
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
@@ -43,15 +48,16 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddSponsor(CreateSponsorDTO addSponsorDTO)
         {
 
-            //if (!ModelState.IsValid)
-            //{
-            //    return View(addSponsorDTO);
-            //}
+            if (!ModelState.IsValid)
+            {
+                return View(addSponsorDTO);
+            }
 
-        
+
             try
             {
                 await _sponsorService.AddSponsor(addSponsorDTO);
@@ -98,11 +104,11 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         {
             try
             {
-                var sponsor = await _sponsorService.GetSponsorById(id, "en");
+                var sponsor = await _sponsorService.GetSponsorById(id, "az-AZ");
 
                 if (sponsor == null)
                 {
-                    return NotFound();
+                    return NotFound("Sponsor not found.");
                 }
 
                 var updateSponsorDTO = new CreateSponsorDTO
@@ -112,30 +118,38 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
                     Email = sponsor.Email,
                     PhoneNumber = sponsor.PhoneNumber,
                     Website = sponsor.Website,
+                    Id = sponsor.Id,
+                    ImagePath = sponsor.ImagePath,
+                    LanguageId = sponsor.LanguageId
                 };
+
 
                 return View(updateSponsorDTO);
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, ex.Message);
-                return RedirectToAction("Index");
+                return View("Error", ex.Message); 
             }
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> EditSponsorAsync(Guid id, CreateSponsorDTO updateSponsorDTO)
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditSponsorAsync(Guid id, [FromForm] CreateSponsorDTO updateSponsorDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(updateSponsorDTO);
+            }
+
             try
             {
-                var updatedSponsor = await _sponsorService.EditSponsor(id, updateSponsorDTO);
+                await _sponsorService.EditSponsor(id, updateSponsorDTO);
                 TempData["Success"] = "Sponsor updated successfully!";
-                return View(updateSponsorDTO);
+                return RedirectToAction("Index");  
             }
             catch (Exception ex)
             {
-                TempData["Error"] = ex.Message;
+                ModelState.AddModelError(string.Empty, ex.Message);  
                 return View(updateSponsorDTO);
             }
         }

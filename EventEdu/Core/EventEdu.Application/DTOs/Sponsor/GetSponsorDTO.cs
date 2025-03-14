@@ -10,6 +10,7 @@ namespace EventEdu.Application.DTOs.Sponsor
     public class GetSponsorDTO
     {
         public Guid Id { get; set; }
+        public Guid LanguageId { get; set; }    
         public string IsoCode { get; set; }
         public string Email { get; set; } 
         public string PhoneNumber { get; set; } 

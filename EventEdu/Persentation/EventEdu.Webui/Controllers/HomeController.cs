@@ -1,4 +1,5 @@
 using EventEdu.Application.Services;
+using EventEdu.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 
@@ -27,7 +28,7 @@ public class HomeController : Controller
 		ViewBag.Localizer = _localizer;
 		ViewBag.Categories = categories;
 
-		return View();
+        return View();
 	}
 
 

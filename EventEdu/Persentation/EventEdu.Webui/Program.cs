@@ -11,11 +11,12 @@ using EventEdu.Application.Profiles;
 using EventEdu.Application.Validators.Sponsor;
 using FluentValidation;
 using EventEdu.Application.Validators.HeroSection;
+using FluentValidation.AspNetCore;
 //using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews().AddViewLocalization();
+builder.Services.AddControllersWithViews().AddViewLocalization().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateSponsorDTOValidator>()); ;
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddLocalization();
@@ -37,7 +38,7 @@ builder.Services.AddScoped<IAboutSectionService, AboutSectionService>();
 
 
 
-builder.Services.AddValidatorsFromAssemblyContaining<CreateSponsorDTOValidator>();
+//builder.Services.AddValidatorsFromAssemblyContaining<CreateSponsorDTOValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateHeroSectionDTOValidator>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapping));

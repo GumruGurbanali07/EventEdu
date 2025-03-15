@@ -13,6 +13,7 @@ namespace EventEdu.Persistence.Repository
     {
         public EventDetailReadRepository(AppDbContext context) : base(context)
         {
+
         }
     }
 }

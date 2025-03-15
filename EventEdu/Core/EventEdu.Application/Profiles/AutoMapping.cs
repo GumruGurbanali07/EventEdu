@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EventEdu.Application.DTOs.Category;
+using EventEdu.Application.DTOs.Event;
 using EventEdu.Application.DTOs.Language;
 using EventEdu.Application.DTOs.Speaker;
 using EventEdu.Application.ViewModel;
@@ -42,9 +43,20 @@ namespace EventEdu.Application.Profiles
 			CreateMap<SpeakerDetail, GetSpeakerDTO>().ReverseMap();
 			CreateMap<SpeakerDetail, CreateSpeakerDTO>().ReverseMap();
 			CreateMap<UpdateSpeakerDTO,SpeakerDetail>()
-			.ForMember(dest => dest.Id, opt => opt.Ignore())
+		   .ForMember(dest => dest.Id, opt => opt.Ignore())
 		   .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
 		   .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+			//Event
+			CreateMap<Event, CreateEventDTO>().ReverseMap();
+			CreateMap<Event, UpdateEventDTO>().ReverseMap();
+			CreateMap<Event, GetEventDTO>().ReverseMap();
+			CreateMap<EventDetail, GetEventDTO>().ReverseMap();
+			CreateMap<EventDetail, CreateEventDTO>().ReverseMap();
+			CreateMap<UpdateEventDTO, EventDetail>()
+		    .ForMember(dest => dest.Id, opt => opt.Ignore())
+			.ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
+			.ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
 
 
 		}

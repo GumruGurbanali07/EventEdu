@@ -88,6 +88,7 @@ namespace EventEdu.Persistence.Services
 			//	CreatedDate = DateTime.UtcNow,
 			//	UpdatedDate = DateTime.UtcNow,
 			//};
+
 			var category = _mapper.Map<Category>(createCategoryDTO);
 			category.Id = Guid.NewGuid();
 			category.CreatedDate = DateTime.UtcNow;
@@ -95,6 +96,7 @@ namespace EventEdu.Persistence.Services
 
 			//_context.Categories.Add(category);
 			//await _context.SaveChangesAsync();
+
 			await _categoryWriteRepository.AddAsync(category);
 			await _categoryWriteRepository.SaveChangeAsync();
 
@@ -142,11 +144,7 @@ namespace EventEdu.Persistence.Services
 				})
 				.ToListAsync();
 
-			if (categories == null || categories.Count == 0)
-			{
-				throw new NotFoundException("No categories found for the selected language.");
-			}
-
+			
 			return categories;
 		}
 

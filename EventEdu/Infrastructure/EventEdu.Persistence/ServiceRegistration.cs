@@ -38,12 +38,14 @@ namespace EventEdu.Persistence
 			services.AddIdentity<AppUser, AppRole>(options => options.SignIn.RequireConfirmedAccount = false)
 			.AddEntityFrameworkStores<AppDbContext>()
 			.AddDefaultTokenProviders();
+
 			//Services
 			//services.AddAutoMapper(Assembly.GetExecutingAssembly());
 			services.AddScoped<ILanguageService, LanguageService>();
 			services.AddScoped<ICategoryService, CategoryService>();
 			services.AddScoped<ISpeakerService, SpeakerService>();
 			services.AddScoped<IUserService, UserService>();
+			services.AddScoped<IEventService, EventService>();
 
 			//Repositories
 			services.AddSingleton<StringLocalizerService>();

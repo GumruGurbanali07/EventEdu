@@ -9,5 +9,7 @@ namespace EventEdu.Application.Repository
 {
     public interface ISponsorWriteRepository : IWriteRepository<Sponsor>
     {
+        Task SoftDeleteSponsor(Guid sponsorId);
+        Task RestoreSponsor(Guid sponsorId);
     }
 }

@@ -8,8 +8,8 @@ using System.Globalization;
 
 namespace EventEdu.Webui.Controllers
 {
-	[ApiController]
-	[Route("api/[controller]")]
+	//[ApiController]
+	//[Route("api/[controller]")]
 	public class CategoryController : Controller
 	{
 		private readonly ICategoryService _categoryService;

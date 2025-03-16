@@ -1,0 +1,70 @@
+﻿@using EventEdu.Application.DTOs.HeroSection
+@model CreateHeroSectionDTO
+
+<form asp-action="EditSlider" method="post" enctype="multipart/form-data">
+    <h4 style="margin-left:40px">Edit Slider</h4>
+
+    <div class="addOrEditCard card">
+        <!-- Image Preview -->
+        <div class="chosenImage">
+            @if (Model.ImagePath == null || Model.ImagePath.Length == 0)
+            {
+                <img src="~/admin/assets/img/avatars/default.jpg" />
+            }
+            else
+            {
+                <img id="imagePreview" src="@Model.ImagePath" alt="Slider Image" />
+            }
+        </div>
+
+        <div class="card-body">
+            <!-- Language Dropdown -->
+            <div class="form-floating form-floating-outline mb-3">
+                <select asp-for="LanguageId" name="LanguageId" class="form-select" aria-label="Choose a Language">
+                    <option selected disabled value="">Choose a Language</option>
+                    <option value="B3284054-E7FA-48FB-7C70-08DD595D715B">Aze</option>
+                    <option value="4C11A351-B8D5-4D69-7C72-08DD595D715B">Ru</option>
+                    <option value="C9B1E706-D934-4B46-7C71-08DD595D715B">Eng</option>
+                </select>
+                <label asp-for="LanguageId">Language</label>
+                <span class="form-text text-danger" asp-validation-for="LanguageId"></span>
+            </div>
+
+            <!-- File Input for Image -->
+            <div class="mb-3">
+                <label asp-for="ImageFile" class="form-label">Slider's Image</label>
+                <input class="form-control" type="file" asp-for="ImageFile" name="imageFile" id="ImageFile" accept="image/*" onchange="previewImage(event)">
+                <span class="form-text text-danger" asp-validation-for="ImageFile"></span>
+            </div>
+
+            <!-- Slider TItle -->
+            <div>
+                <label asp-for="Title" class="form-label">Title</label>
+                <input type="text" asp-for="Title" name="Title" class="form-control" placeholder="Enter Title">
+                <span class="form-text text-danger" asp-validation-for="Title"></span>
+            </div>
+
+            <!-- Slider Description -->
+            <div>
+                <label asp-for="Description" class="form-label">Slider Description</label>
+                <textarea asp-for="Description" name="Description" class="form-control" placeholder="Enter Slider Description"></textarea>
+                <span class="form-text text-danger" asp-validation-for="Description"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary mt-3">Save</button>
+        </div>
+    </div>
+</form>
+
+<!-- Image Preview Script -->
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var output = document.getElementById('imagePreview');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>

@@ -5,8 +5,8 @@ using EventEdu.Application.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 namespace EventEdu.Webui.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
+//[ApiController]
+//[Route("api/[controller]")]
 public class LanguageController : Controller
 {
 	private readonly ILanguageService _languageService;

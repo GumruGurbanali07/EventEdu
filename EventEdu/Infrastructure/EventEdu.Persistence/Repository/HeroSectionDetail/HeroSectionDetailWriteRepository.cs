@@ -8,7 +8,7 @@ using System.Text;
 
 namespace EventEdu.Persistence.Repository
 {
-    public class HeroSectionDetailWriteRepository : WriteRepository<HeroSectionDetail>, IHeroSectionDetailWriteRepository
+    public class HeroSectionDetailWriteRepository : WriteRepository<HeroSectionDetails>, IHeroSectionDetailWriteRepository
     {
         public HeroSectionDetailWriteRepository(AppDbContext context) : base(context)
         {

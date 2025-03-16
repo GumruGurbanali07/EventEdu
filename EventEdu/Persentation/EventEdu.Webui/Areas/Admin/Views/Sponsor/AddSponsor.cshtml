@@ -1,0 +1,92 @@
+﻿@using EventEdu.Application.DTOs.Sponsor
+@model CreateSponsorDTO
+
+<form asp-action="AddSponsor" method="post" asp-validation-summary="All" enctype="multipart/form-data">
+    <h4 style="margin-left:40px">Add Sponsor</h4>
+
+    <div class="addOrEditCard card">
+        <!-- Image Preview -->
+        <div class="chosenImage">
+            <img id="imagePreview" src="~/client/assets/img/teams/team-2.jpg" alt="Sponsor Image" />
+        </div>
+
+        <div class="card-body">
+            <!-- Language Dropdown -->
+            <div class="form-floating form-floating-outline mb-3">
+                <select asp-for="LanguageId" name="LanguageId" class="form-select" aria-label="Choose a Language">
+                    <option selected disabled value="">Choose a Language</option>
+                    <option value="B3284054-E7FA-48FB-7C70-08DD595D715B">Aze</option>
+                    <option value="4C11A351-B8D5-4D69-7C72-08DD595D715B">Ru</option>
+                    <option value="C9B1E706-D934-4B46-7C71-08DD595D715B">Eng</option>
+                </select>
+                <label asp-for="LanguageId">Language</label>
+                <span class="form-text text-danger" asp-validation-for="LanguageId"></span>
+            </div>
+
+            <!-- File Input for Image -->
+            <div class="mb-3">
+                <label asp-for="ImageFile" class="form-label">Sponsor's Image</label>
+                <input class="form-control" type="file" asp-for="ImageFile" name="ImageFile" id="ImageFile" accept="image/*" onchange="previewImage(event)">
+                <span class="form-text text-danger" asp-validation-for="ImageFile"></span>
+            </div>
+
+            <!-- Sponsor Name (inside SponsorDetails) -->
+            <div>
+                <label asp-for="SponsorName" class="form-label">Sponsor Name</label>
+                <input type="text" asp-for="SponsorName" name="SponsorName" class="form-control" placeholder="Enter Sponsor Name">
+                <span class="form-text text-danger" asp-validation-for="SponsorName"></span>
+            </div>
+
+            <!-- Sponsor Description -->
+            <div>
+                <label asp-for="SponsorDescription" class="form-label">Sponsor Description</label>
+                <textarea asp-for="SponsorDescription" name="SponsorDescription" class="form-control" placeholder="Enter Sponsor Description"></textarea>
+                <span class="form-text text-danger" asp-validation-for="SponsorDescription"></span>
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label asp-for="Email" class="form-label">Email</label>
+                <input type="email" asp-for="Email" name="Email" class="form-control" placeholder="Enter Email">
+                <span class="form-text text-danger" asp-validation-for="Email"></span>
+            </div>
+
+            <!-- Phone Number -->
+            <div>
+                <label asp-for="PhoneNumber" class="form-label">Phone number</label>
+                <input type="tel" asp-for="PhoneNumber" name="PhoneNumber" class="form-control" placeholder="Enter Phone Number">
+                <span class="form-text text-danger" asp-validation-for="PhoneNumber"></span>
+            </div>
+
+            <!-- Website -->
+            <div>
+                <label asp-for="Website" class="form-label">Website</label>
+                <input type="text" asp-for="Website" name="Website" class="form-control" placeholder="Enter Website URL">
+                <span class="form-text text-danger" asp-validation-for="Website"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary mt-3">Save</button>
+        </div>
+    </div>
+</form>
+
+<!-- Image Preview Script -->
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var output = document.getElementById('imagePreview');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+        document.getElementById("PhoneNumber").addEventListener("input", function (e) {
+        this.value = this.value.replace(/[^0-9+ ]/g, ''); // Allows only numbers, space, and +
+    });
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>

@@ -1,0 +1,72 @@
+﻿@model List<EventEdu.Application.DTOs.HeroSection.GetHeroSectionDTO>
+
+@{
+    ViewData["Title"] = "Slider List";
+}
+
+
+<!-- Basic Bootstrap Table -->
+<div class="card">
+    <h5 class="card-header">Slider Table</h5>
+    <a href="@Url.Action("AddSlider", "HeroSection")" class="btn btn-primary mb-3">Add New Slider</a>
+
+    <div class="table-responsive text-nowrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Language</th>
+                    <th>Slider image</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                @foreach (var slider in Model)
+                {
+                    if (slider.IsDeleted)
+                    {
+                         <td>@slider.IsoCode</td>
+                        <tr class="sliderRow" style="background:plum; color:#fff;">
+                            <td style="display:flex; gap:5px;align-items:center;"><div class="imgAsAnIconContent"><img class="imgAsAnIcon" src="@(string.IsNullOrEmpty(slider.ImagePath) ? "~/client/assets/img/default-jpg.jpg" : @slider.ImagePath)" /></div<td>
+                            <td>@slider.Title</td>
+                            <td>@slider.Description</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line"></i></button>
+                                    <div class="dropdown-menu">
+                                        <form asp-controller="HeroSection" asp-action="RestoreSlider" asp-route-id="@slider.Id" method="post" onsubmit="return confirm('Are you sure you want to restore this slider?');">
+                                            <button type="submit" class="dropdown-item"><i class="ri-pencil-line me-2"></i>Restore</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr class="sliderRow">
+                            <td>@slider.IsoCode</td>
+                            <td style="display:flex; gap:5px;align-items:center;"><div class="imgAsAnIconContent"><img class="imgAsAnIcon" src="@(string.IsNullOrEmpty(slider.ImagePath) ? "~/client/assets/img/default-jpg.jpg" : slider.ImagePath)" /></div></td>
+                            <td>@slider.Title</td>
+                            <td>@slider.Description</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line"></i></button>
+                                    <div class="dropdown-menu">
+                                        <a asp-controller="HeroSection" asp-action="EditSlider" asp-route-id="@slider.Id" class="dropdown-item">
+                                            <i class="ri-pencil-line me-2"></i>Edit </a>
+                                        <form asp-controller="HeroSection" asp-action="DeleteSlider" asp-route-id="@slider.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this slider?');">
+                                            <button type="submit" class="dropdown-item"><i class="ri-delete-bin-6-line me-2"></i> Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<!--/ Basic Bootstrap Table -->

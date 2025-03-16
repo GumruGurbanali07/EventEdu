@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Application.Repository
 {
-    public interface IHeroSectionDetailWriteRepository : IWriteRepository<HeroSectionDetail>
+    public interface IHeroSectionDetailWriteRepository : IWriteRepository<HeroSectionDetails>
     {
     }
 }

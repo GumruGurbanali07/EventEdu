@@ -17,5 +17,6 @@ namespace EventEdu.Application.DTOs.Speaker
 		public string FacebookLink { get; set; }
 		public string TwitterLink { get; set; }
 		public string InstagramLink { get; set; }
-	}
+        public bool IsDeleted { get; set; }
+    }
 }

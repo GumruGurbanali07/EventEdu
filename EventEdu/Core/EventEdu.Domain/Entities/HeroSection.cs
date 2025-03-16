@@ -9,9 +9,8 @@ namespace EventEdu.Domain.Entities
 {
     public class HeroSection:BaseEntity
     {
-		public string Title { get; set; }
-		public string Description { get; set; }
-		public ICollection<HeroSectionDetail> HeroSectionDetails { get; set; }
+		public string ImagePath { get; set; }
+		public ICollection<HeroSectionDetails>? HeroSectionDetails { get; set; }
 		
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using EventEdu.Application.Repository;
 using EventEdu.Domain.Entities.Common;
 using EventEdu.Persistence.Context;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
@@ -49,5 +50,5 @@ namespace EventEdu.Persistence.Repository
 			EntityEntry entry = Table.Update(model);
 			return entry.State == EntityState.Modified;
 		}
-	}
+    }
 }

@@ -5,14 +5,18 @@ using RequestLocalizationOptions = Microsoft.AspNetCore.Builder.RequestLocalizat
 using EventEdu.Webui.Localization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
-using Microsoft.OpenApi.Models;
+using EventEdu.Application.Services;
+using EventEdu.Persistence.Services;
 using EventEdu.Application.Profiles;
-using EventEdu.Application;
-using EventEdu.Webui.Extension;
+using EventEdu.Application.Validators.Sponsor;
+using FluentValidation;
+using EventEdu.Application.Validators.HeroSection;
+using FluentValidation.AspNetCore;
+//using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews().AddViewLocalization();
+builder.Services.AddControllersWithViews().AddViewLocalization().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateSponsorDTOValidator>()); ;
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddLocalization();
@@ -25,21 +29,30 @@ builder.Services.AddSession(options =>
 });
 
 
+
 builder.Services.AddPersistenceServices(builder.Configuration);
-builder.Services.AddApplicationServices();
+builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<ISponsorService, SponsorService>();
+builder.Services.AddScoped<IHeroSectionService, HeroSectionService>();
+builder.Services.AddScoped<IAboutSectionService, AboutSectionService>();
+
+
+
+//builder.Services.AddValidatorsFromAssemblyContaining<CreateSponsorDTOValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateHeroSectionDTOValidator>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapping));
-
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+//builder.Services.AddControllersWithViews();
 
 
 //Swagger services
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-	c.SwaggerDoc("v1", new OpenApiInfo { Title = "EventEdu API", Version = "v1" });
-});
+
+//builder.Services.AddSwaggerGen(c =>
+//{
+//	c.SwaggerDoc("v1", new OpenApiInfo { Title = "EventEdu API", Version = "v1" });
+//});
 //Swagger services
 
 
@@ -57,8 +70,8 @@ app.UseSession();
 
 app.UseHttpsRedirection();
 
-var logger = app.Services.GetRequiredService<ILogger<Program>>();
-app.ConfigureExceptionHandler(logger); app.UseStaticFiles();
+
+app.UseStaticFiles();
 
 
 app.UseRequestLocalization(new RequestLocalizationOptions
@@ -74,11 +87,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 //// Enable Swagger middleware
-app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-	c.SwaggerEndpoint("/swagger/v1/swagger.json", "EventEdu API v1");
-});
+//app.UseSwagger();
+//app.UseSwaggerUI(c =>
+//{
+//	c.SwaggerEndpoint("/swagger/v1/swagger.json", "EventEdu API v1");
+//});
 //// Enable Swagger middleware
 
 
@@ -86,7 +99,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
 			name: "areas",
-			pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}"
+			pattern: "{area:exists}/{controller=Dashboards}/{action=Index}/{id?}"
 		  );
 
 app.MapControllerRoute(

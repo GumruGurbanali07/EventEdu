@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="DTOs\Feature\" />
     <Compile Remove="Validator\**" />
     <EmbeddedResource Remove="Validator\**" />
     <None Remove="Validator\**" />
@@ -15,11 +16,15 @@
     <Folder Include="Token\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Validators\HeroSection\CreateHeroSectionDTOValidator.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\EventEdu.Domain\EventEdu.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
   </ItemGroup>
 </Project>

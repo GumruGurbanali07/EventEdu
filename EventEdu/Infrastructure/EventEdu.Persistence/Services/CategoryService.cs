@@ -5,6 +5,7 @@ using EventEdu.Application.Repository;
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
 using EventEdu.Persistence.Context;
+using EventEdu.Persistence.Repository;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -76,7 +77,7 @@ namespace EventEdu.Persistence.Services
 
 
 			//var language = await _context.Languages.FirstOrDefaultAsync(l => l.Id == createCategoryDTO.LanguageId);
-			var language = await _languageReadRepository.GetByIdAsync(createCategoryDTO.LanguageId.ToString());
+			var language = await _languageReadRepository.GetByIdAsync(createCategoryDTO.LanguageId);
 			if (language == null)
 			{
 				throw new NotFoundException("Selected language not found.");
@@ -184,7 +185,7 @@ namespace EventEdu.Persistence.Services
 
 		public async Task SoftDeleteCategoryAsync(Guid categoryId)
 		{
-			var categories = await _categoryReadRepository.GetByIdAsync(categoryId.ToString());
+			var categories = await _categoryReadRepository.GetByIdAsync(categoryId);
 			if (categories == null)
 			{
 				throw new NotFoundException("Category not found.");
@@ -200,13 +201,13 @@ namespace EventEdu.Persistence.Services
 			{
 				detail.SoftDelete();
 				_categoryDetailWriteRepository.Update(detail);
-				
+
 			}
 			await _categoryWriteRepository.SaveChangeAsync();
 		}
 		public async Task RestoreCategoryAsync(Guid categoryId)
 		{
-			var categories = await _categoryReadRepository.GetByIdAsync(categoryId.ToString());
+			var categories = await _categoryReadRepository.GetByIdAsync(categoryId);
 			if (categories == null)
 			{
 				throw new NotFoundException("Category not found.");
@@ -226,7 +227,7 @@ namespace EventEdu.Persistence.Services
 
 			}
 			await _categoryWriteRepository.SaveChangeAsync();
-			
+
 		}
 
 		public async Task<GetCategoryDTO?> GetCategoryByIdAndLanguageAsync(Guid categoryId, string isoCode)
@@ -236,7 +237,7 @@ namespace EventEdu.Persistence.Services
 			{
 				language = await _languageReadRepository.GetAll().FirstOrDefaultAsync();
 			}
-			var categoryDetailsQuery =  _categoryDetailReadRepository.GetAll();
+			var categoryDetailsQuery = _categoryDetailReadRepository.GetAll();
 
 			var category = await _categoryReadRepository.GetAll()
 				.Where(c => c.Id == categoryId)

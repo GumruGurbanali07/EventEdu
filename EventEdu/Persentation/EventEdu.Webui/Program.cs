@@ -12,11 +12,22 @@ using EventEdu.Application.Validators.Sponsor;
 using FluentValidation;
 using EventEdu.Application.Validators.HeroSection;
 using FluentValidation.AspNetCore;
+using EventEdu.Application.Validators.AboutSection;
+using EventEdu.Application.Validators.Language;
+using EventEdu.Domain.Entities.Identity;
+using EventEdu.Persistence.Context;
+using Microsoft.AspNetCore.Identity;
 //using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews().AddViewLocalization().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateSponsorDTOValidator>()); ;
+builder.Services.AddControllersWithViews().AddViewLocalization().AddFluentValidation(fv =>
+    fv.RegisterValidatorsFromAssemblyContaining<CreateLanguageDTOValidator>()
+    .RegisterValidatorsFromAssemblyContaining<UpdateLanguageDTOValidator>()
+    .RegisterValidatorsFromAssemblyContaining<CreateSponsorDTOValidator>()
+     .RegisterValidatorsFromAssemblyContaining<CreateHeroSectionDTOValidator>()
+      .RegisterValidatorsFromAssemblyContaining<CreateAboutSectionDTOValidator>());
+
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddLocalization();
@@ -31,19 +42,8 @@ builder.Services.AddSession(options =>
 
 
 builder.Services.AddPersistenceServices(builder.Configuration);
-builder.Services.AddScoped<IFileService, FileService>();
-builder.Services.AddScoped<ISponsorService, SponsorService>();
-builder.Services.AddScoped<IHeroSectionService, HeroSectionService>();
-builder.Services.AddScoped<IAboutSectionService, AboutSectionService>();
-
-
-
-//builder.Services.AddValidatorsFromAssemblyContaining<CreateSponsorDTOValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<CreateHeroSectionDTOValidator>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapping));
-// Add services to the container.
-//builder.Services.AddControllersWithViews();
 
 
 //Swagger services

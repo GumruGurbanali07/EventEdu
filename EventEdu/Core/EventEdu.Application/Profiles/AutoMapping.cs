@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EventEdu.Application.DTOs.Event;
 
 namespace EventEdu.Application.Profiles
 {
@@ -75,6 +76,18 @@ namespace EventEdu.Application.Profiles
             .ForMember(dest => dest.Id, opt => opt.Ignore())
            .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
            .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+            //Event
+            CreateMap<Event, CreateEventDTO>().ReverseMap();
+            CreateMap<Event, UpdateEventDTO>().ReverseMap();
+            CreateMap<Event, GetEventDTO>().ReverseMap();
+            CreateMap<EventDetail, GetEventDTO>().ReverseMap();
+            CreateMap<EventDetail, CreateEventDTO>().ReverseMap();
+            CreateMap<UpdateEventDTO, EventDetail>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
 
         }
     }

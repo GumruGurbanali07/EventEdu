@@ -156,7 +156,7 @@ namespace EventEdu.Persistence.Services
             return about;
         }
 
-        public async Task<GetAboutSectionDTO> GetAboutSectionById(Guid id)
+        public async Task<GetAboutSectionDTO> GetAboutSectionById(Guid id, string IsoCode)
         {
             var aboutSection = await _aboutReadRepository.GetAll()
                  .Include(s => s.AboutSectionDetails)
@@ -165,7 +165,8 @@ namespace EventEdu.Persistence.Services
                  .Select(s => new GetAboutSectionDTO
                  {
                      Id = s.Id,
-                     IsoCode = s.AboutSectionDetails.FirstOrDefault().Language.IsoCode,
+                     IsoCode = s.AboutSectionDetails.FirstOrDefault().Language.Name,
+                     LanguageId = s.AboutSectionDetails.FirstOrDefault().Language.Id,
                      Title = s.AboutSectionDetails.FirstOrDefault().Title,
                      Description = s.AboutSectionDetails.FirstOrDefault().Description,
                      ImagePath = s.ImagePath,
@@ -178,7 +179,7 @@ namespace EventEdu.Persistence.Services
 
         public async Task DeleteAboutSection(Guid id)
         {
-            var aboutSection = await _context.AboutSections.FirstOrDefaultAsync(x => x.Id == id);
+            var aboutSection = await _aboutReadRepository.GetAll().FirstOrDefaultAsync(x => x.Id == id);
             if (aboutSection == null)
             {
                 throw new Exception("About Section not found");
@@ -186,7 +187,7 @@ namespace EventEdu.Persistence.Services
             aboutSection.SoftDelete();
             _aboutWriteRepository.Update(aboutSection);
 
-            var aboutSectionDetails = await _context.AboutSectionDetails.Where(x => x.AboutSectionId == id).ToListAsync();
+            var aboutSectionDetails = await _aboutDetailReadRepository.GetAll().Where(x => x.AboutSectionId == id).ToListAsync();
             foreach (var detail in aboutSectionDetails)
             {
                 detail.SoftDelete();
@@ -197,7 +198,7 @@ namespace EventEdu.Persistence.Services
 
         public async Task RestoreAboutSection(Guid id)
         {
-            var aboutSection = await _context.AboutSections.FirstOrDefaultAsync(x => x.Id == id);
+            var aboutSection = await _aboutReadRepository.GetAll().FirstOrDefaultAsync(x => x.Id == id);
             if (aboutSection == null)
             {
                 throw new Exception("About Section not found");
@@ -205,7 +206,7 @@ namespace EventEdu.Persistence.Services
             aboutSection.Restore();
             _aboutWriteRepository.Update(aboutSection);
 
-            var aboutSectionDetails = await _context.AboutSectionDetails.Where(x => x.AboutSectionId == id).ToListAsync();
+            var aboutSectionDetails = await _aboutDetailReadRepository.GetAll().Where(x => x.AboutSectionId == id).ToListAsync();
             foreach (var detail in aboutSectionDetails)
             {
                 detail.Restore();
@@ -214,25 +215,31 @@ namespace EventEdu.Persistence.Services
             await _aboutWriteRepository.SaveChangeAsync();
         }
        
-        public async Task<CreateAboutSectionDTO> EditAboutSection(Guid id, CreateAboutSectionDTO updateAboutSectionDTO)
+        public async Task EditAboutSection(Guid id, CreateAboutSectionDTO updateAboutSectionDTO)
         {
-            var AboutSection = _context.AboutSections
+
+            var AboutSection = _aboutReadRepository.GetAll()
            .Include(s => s.AboutSectionDetails)
-           .FirstOrDefault(s => s.Id == updateAboutSectionDTO.Id);
+           .FirstOrDefault(s => s.Id == id);
 
             if (AboutSection == null)
             {
                 throw new Exception("About Section not found.");
             }
             var AboutSectionDetail = AboutSection.AboutSectionDetails
-                .FirstOrDefault(sd => sd.AboutSectionId == updateAboutSectionDTO.Id);
+                .FirstOrDefault(sd => sd.AboutSectionId == id);
 
             if (AboutSectionDetail == null)
             {
                 throw new Exception("About Section detail for the selected language not found.");
             }
 
-            AboutSection.UpdatedDate = DateTime.UtcNow.AddHours(4);
+            var validationResult = await _createAboutSectionValidator.ValidateAsync(updateAboutSectionDTO);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
+
+            }
 
             AboutSectionDetail.Title = updateAboutSectionDTO.Title?.Trim() ?? AboutSectionDetail.Title;
             AboutSectionDetail.Description = updateAboutSectionDTO.Description?.Trim() ?? AboutSectionDetail.Description;
@@ -256,19 +263,10 @@ namespace EventEdu.Persistence.Services
                 AboutSection.ImagePath = newImagePath.Trim();
             }
 
-            _context.AboutSections.Update(AboutSection);
-            _context.AboutSectionDetails.Update(AboutSectionDetail);
-            await _context.SaveChangesAsync();
+            _aboutWriteRepository.Update(AboutSection);
+            _aboutDetailWriteRepository.Update(AboutSectionDetail);
+            await _aboutDetailWriteRepository.SaveChangeAsync();
 
-            var getAboutSectionDTO = new GetAboutSectionDTO
-            {
-                Id = AboutSection.Id,
-                Title = AboutSectionDetail.Title,
-                Description = AboutSectionDetail.Description,
-                ImagePath = AboutSection.ImagePath
-            };
-
-            return updateAboutSectionDTO;
         }
 
     }

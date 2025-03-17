@@ -7,7 +7,14 @@
     <div class="addOrEditCard card">
         <!-- Image Preview -->
         <div class="chosenImage">
-            <img id="imagePreview" src="~/client/assets/img/teams/team-2.jpg" alt="About Section Image" />
+            @if (Model.ImagePath == null || Model.ImagePath.Length == 0)
+            {
+                <img src="~/admin/assets/img/avatars/default.jpg" />
+            }
+            else
+            {
+                <img id="imagePreview" src="@Model.ImagePath" alt="About Section Image" />
+            }
         </div>
 
         <div class="card-body">
@@ -22,6 +29,7 @@
                 <label asp-for="LanguageId">Language</label>
                 <span class="form-text text-danger" asp-validation-for="LanguageId"></span>
             </div>
+
 
             <!-- File Input for Image -->
             <div class="mb-3">

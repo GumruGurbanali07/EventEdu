@@ -26,12 +26,12 @@ namespace EventEdu.Persistence.Services
 			var existingUser = await _userManager.FindByEmailAsync(registerDTO.Email);
 			if (existingUser != null)
 			{
-				throw new Exception("Bu email ilə artıq istifadəçi mövcuddur");
+				throw new Exception("User already exists at this email.");
 			}
 
 			if (registerDTO.Password != registerDTO.ConfirmPassword)
 			{
-				throw new Exception("Parollar uyğun gəlmir.");
+				throw new Exception("The passwords does not match.");
 			}
 
 			var user = new AppUser
@@ -40,7 +40,8 @@ namespace EventEdu.Persistence.Services
 				Firstname = registerDTO.Firstname,
 				Lastname = registerDTO.Lastname,
 				Email = registerDTO.Email,
-				UserName=registerDTO.Email
+				UserName=registerDTO.Username,
+				ResetPassword = registerDTO.ConfirmPassword
 			};
 
 			var result = await _userManager.CreateAsync(user, registerDTO.Password);

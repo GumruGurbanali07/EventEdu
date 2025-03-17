@@ -8,7 +8,7 @@ namespace EventEdu.Application.Services
 	{
 		Task<Language> CreateAsync(CreateLanguageDTO languageDTO);
 		Task<List<LanguageGetDTO>> GetLanguagesAsync();
-		Task<LanguageGetDTO> GetLanguageAsync(string isoCode);
+		Task<LanguageGetDTO> GetLanguageAsync(string IsoCode);
 		Task UpdateLanguageAsync(Guid id, UpdateLanguageDTO updateLanguageDTO);
 		Task SoftDeleteLanguageAsync(Guid languageId);
 		Task RestoreLanguageAsync(Guid languageId);

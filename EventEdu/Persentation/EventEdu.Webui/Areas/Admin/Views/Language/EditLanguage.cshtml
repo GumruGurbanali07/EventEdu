@@ -1,0 +1,60 @@
+﻿@using EventEdu.Application.DTOs.Language
+@model LanguageGetDTO
+
+<form asp-controller="Language" asp-action="Update" method="post" enctype="multipart/form-data">
+    <h4 style="margin-left:40px">Edit Sponsor</h4>
+
+    <div class="addOrEditCard card">
+        <!-- Image Preview -->
+        <div class="chosenImage">
+            @if (Model.ImagePath == null || Model.ImagePath.Length == 0)
+            {
+                <img src="~/admin/assets/img/avatars/default.jpg" />
+            }
+            else
+            {
+                <img id="imagePreview" src="@Model.ImagePath" alt="Language Image" />
+            }
+        </div>
+
+        <div class="card-body">
+
+            <!-- File Input for Image -->
+            <div class="mb-3">
+                <label asp-for="ImageFile" class="form-label">Language's Image</label>
+                <input class="form-control" type="file" asp-for="ImageFile" name="ImageFile" id="ImageFile" accept="image/*" onchange="previewImage(event)">
+                <span class="form-text text-danger" asp-validation-for="ImageFile"></span>
+            </div>
+
+            <!-- Language Name -->
+            <div>
+                <label asp-for="Name" class="form-label">Language Name</label>
+                <input type="text" asp-for="Name" name="Name" class="form-control" placeholder="Enter Language Name">
+                <span class="form-text text-danger" asp-validation-for="Name"></span>
+            </div>
+
+            <!-- IsoCode -->
+            <div>
+                <label asp-for="IsoCode" class="form-label">IsoCode</label>
+                <input type="text" asp-for="IsoCode" name="IsoCode" class="form-control" placeholder="Enter IsoCode">
+                <span class="form-text text-danger" asp-validation-for="IsoCode"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary mt-3">Save</button>
+        </div>
+    </div>
+</form>
+
+<!-- Image Preview Script -->
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var output = document.getElementById('imagePreview');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+</script>

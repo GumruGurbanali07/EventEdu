@@ -21,7 +21,7 @@ namespace EventEdu.Application.Validators.HeroSection
                 .Length(20, 500).WithMessage("Hero Section Description must be between 20 and 500 characters.");
 
             RuleFor(x => x.LanguageId)
-                .NotEqual(Guid.Empty).WithMessage("Language ID is required.");
+                .NotEqual(Guid.Empty).WithMessage("Language is required.");
 
             RuleFor(x => x.ImageFile)
                 .NotEmpty().WithMessage("Image is required.");

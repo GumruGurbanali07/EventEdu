@@ -41,21 +41,20 @@
                                     <label asp-for="Password">Password</label>
                                     <span class="form-text text-danger" asp-validation-for="Password"></span>
                                 </div>
-                                <span class="input-group-text cursor-pointer"><i class="ri-eye-off-line ri-20px"></i></span>
+                                <span style="height:48px" class="input-group-text cursor-pointer"><i class="ri-eye-off-line ri-20px"></i></span>
                             </div>
                         </div>
 
                         <div class="mb-5 py-2">
                             <div class="form-check mb-0">
-                                <input style="height:20px !important;" class="form-check-input" type="checkbox" id="terms-conditions" name="terms">
-                                <label class="form-check-label" for="terms-conditions">
-                                    I agree to
-                                    <a href="javascript:void(0);">privacy policy & terms</a>
+                                <input style="height:20px !important;" class="form-check-input" type="checkbox" id="terms-conditions" asp-for="RememberMe" name="RememberMe">
+                                <label class="form-check-label" asp-for="RememberMe">
+                                    <span>Remember Me</span>
                                 </label>
                             </div>
                         </div>
                         <button class="btn btn-primary d-grid w-100 mb-5">
-                            Sign up
+                            Sign in
                         </button>
                     </form>
 
@@ -67,7 +66,7 @@
                     </p>
                     <p class="text-center mb-5">
                         <span>Forgot Password?</span>
-                        <a asp-controller="User" asp-action="ForgotPassword">
+                        <a asp-controller="User" asp-action="VerifyEmail">
                             <span>Reset Password</span>
                         </a>
                     </p>

@@ -1,67 +1,82 @@
-﻿using EventEdu.Application.DTOs.User;
+﻿using AutoMapper;
+using EventEdu.Application.DTOs.User;
 using EventEdu.Application.Services;
+using EventEdu.Domain.Entities;
 using EventEdu.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace EventEdu.Persistence.Services
 {
-	public class UserService : IUserService
+	[Area("Admin")]
+    public class UserService : IUserService
 	{
 		private readonly UserManager<AppUser> _userManager;
 		private readonly SignInManager<AppUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IMapper _mapper;
 
-		public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+		public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, RoleManager<IdentityRole> roleManager)
 		{
 			_userManager = userManager;
 			_signInManager = signInManager;
+			_mapper = mapper;
+			_roleManager = roleManager;
 		}
 
-		public async Task<IdentityResult> RegisterAsync(UserRegisterDTO registerDTO)
+        public async Task<IdentityResult> RegisterAsync(UserRegisterDTO registerDTO)
+        {
+            var existingUser = await _userManager.FindByEmailAsync(registerDTO.Email);
+            if (existingUser != null)
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "User already exists with this email." });
+            }
+
+            if (registerDTO.Password != registerDTO.ConfirmPassword)
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "Passwords do not match." });
+            }
+
+            var user = _mapper.Map<AppUser>(registerDTO);
+            user.Firstname = registerDTO.Firstname;
+            user.Lastname = registerDTO.Lastname;
+            user.EmailConfirmed = false;  
+
+            var result = await _userManager.CreateAsync(user, registerDTO.Password);
+            if (!result.Succeeded)
+            {
+                return result; 
+            }
+
+            var roleExists = await _roleManager.RoleExistsAsync("Admin");
+            if (!roleExists)
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "Role 'Admin' does not exist." });
+            }
+
+            await _userManager.AddToRoleAsync(user, "Admin");
+            return result;
+        }
+
+        public async Task<SignInResult> LoginAsync(UserLoginDTO userLoginDTO)
 		{
-			var existingUser = await _userManager.FindByEmailAsync(registerDTO.Email);
-			if (existingUser != null)
-			{
-				throw new Exception("User already exists at this email.");
-			}
-
-			if (registerDTO.Password != registerDTO.ConfirmPassword)
-			{
-				throw new Exception("The passwords does not match.");
-			}
-
-			var user = new AppUser
-			{
-				Id = Guid.NewGuid().ToString(),
-				Firstname = registerDTO.Firstname,
-				Lastname = registerDTO.Lastname,
-				Email = registerDTO.Email,
-				UserName=registerDTO.Username,
-				ResetPassword = registerDTO.ConfirmPassword
-			};
-
-			var result = await _userManager.CreateAsync(user, registerDTO.Password);
-
-			if (result.Succeeded)
-			{				
-				var userId = user.Id; 
-			}							
-				return result;
-			
-		}
-
-		public async Task<SignInResult> LoginAsync(UserLoginDTO userLoginDTO)
-		{
-			var user = await _userManager.FindByEmailAsync(userLoginDTO.Email);
+			var user = await _userManager.FindByEmailAsync(userLoginDTO.Username);
 			if (user == null)
 			{
 				return SignInResult.Failed;
 			}
-			var result = await _signInManager.PasswordSignInAsync(user, userLoginDTO.Password, userLoginDTO.RememberMe, false);
+       
+            var result = await _signInManager.PasswordSignInAsync(user, userLoginDTO.Password, userLoginDTO.RememberMe, false);
 			
 			if (!result.Succeeded)
 			{
@@ -69,6 +84,7 @@ namespace EventEdu.Persistence.Services
 			}
 			return result;
 		}
+
 
 		public async Task LogOutAsync()
 		{

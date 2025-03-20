@@ -17,16 +17,18 @@ using EventEdu.Application.Validators.Language;
 using EventEdu.Domain.Entities.Identity;
 using EventEdu.Persistence.Context;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
 //using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews().AddViewLocalization().AddFluentValidation(fv =>
-    fv.RegisterValidatorsFromAssemblyContaining<CreateLanguageDTOValidator>()
-    .RegisterValidatorsFromAssemblyContaining<UpdateLanguageDTOValidator>()
-    .RegisterValidatorsFromAssemblyContaining<CreateSponsorDTOValidator>()
-     .RegisterValidatorsFromAssemblyContaining<CreateHeroSectionDTOValidator>()
-      .RegisterValidatorsFromAssemblyContaining<CreateAboutSectionDTOValidator>());
+	fv.RegisterValidatorsFromAssemblyContaining<CreateLanguageDTOValidator>()
+	.RegisterValidatorsFromAssemblyContaining<UpdateLanguageDTOValidator>()
+	.RegisterValidatorsFromAssemblyContaining<CreateSponsorDTOValidator>()
+	 .RegisterValidatorsFromAssemblyContaining<CreateHeroSectionDTOValidator>()
+	  .RegisterValidatorsFromAssemblyContaining<CreateAboutSectionDTOValidator>());
+       //.RegisterValidatorsFromAssemblyContaining<CreateUserDTOValidator>());
 
 
 builder.Services.AddDistributedMemoryCache();
@@ -45,6 +47,25 @@ builder.Services.AddPersistenceServices(builder.Configuration);
 
 builder.Services.AddAutoMapper(typeof(AutoMapping));
 
+
+builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+{
+    //options.SignIn.RequireConfirmedAccount = false;
+    //options.User.RequireUniqueEmail = false;
+
+    options.User.RequireUniqueEmail = true;
+
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequiredLength = 6;
+
+    options.Lockout.AllowedForNewUsers = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(1);
+    options.Lockout.MaxFailedAccessAttempts = 300;
+}).AddEntityFrameworkStores<AppDbContext>()
+  .AddDefaultTokenProviders();
 
 //Swagger services
 builder.Services.AddEndpointsApiExplorer();
@@ -84,6 +105,7 @@ app.UseMiddleware<LocalizationMiddleware>();
 app.UseRouting();
 
 app.UseAuthentication();
+
 app.UseAuthorization();
 
 //// Enable Swagger middleware

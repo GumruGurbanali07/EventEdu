@@ -31,6 +31,12 @@ public class LanguageController : Controller
         return RedirectToAction("Index", "Home");
     }
 
+    [HttpGet]
+    public async Task<IActionResult> CreateLanguage()
+    {
+        return View();
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateLanguage([FromForm] CreateLanguageDTO languageDTO)
     {

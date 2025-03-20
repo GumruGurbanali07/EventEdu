@@ -8,9 +8,9 @@ using System.Data;
 
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
-    
+
     [Area("Admin")]
-    //[Authorize(Roles = "Admin")]
+
     public class UserController : Controller
     {
         private readonly IUserService _userService;
@@ -18,7 +18,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<AppUser> _signInManager;
 
-        public UserController(IUserService userService, 
+        public UserController(IUserService userService,
             UserManager<AppUser> userManager,
             RoleManager<IdentityRole> roleManager,
             SignInManager<AppUser> signInManager)
@@ -67,9 +67,9 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
             {
                 if (User.IsInRole("Admin"))
                 {
-                    return RedirectToAction("Index", "Dashboard");
+                    return RedirectToAction("Index", "Dashboards");
                 }
-                
+
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -106,23 +106,43 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
                     ModelState.AddModelError("", "Sorry, your email or password was incorrect.");
                     return View(userLoginDTO);
                 }
-
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Dashboards");
             }
         }
 
         [HttpGet]
-        public IActionResult ForgotPassword()
+        public async Task<IActionResult> VerifyEmail(ForgotPasswordDTO verifyEmailDTO)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByNameAsync(verifyEmailDTO.Email);
+                if (user == null)
+                {
+                    ModelState.AddModelError("", "Something is wrong!");
+                    return View(verifyEmailDTO);
+                }
+                else
+                {
+                    return RedirectToAction("ChangePassword", "User", new { verifyEmailDTO.Email });
+                }
+
+            }
+            return View(verifyEmailDTO);
+        }
+
+
+        [HttpGet]
+        public IActionResult ChangePassword()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> ForgotPassword( UserLoginDTO userLoginDTO)
+        public async Task<IActionResult> ChangePassword(UserLoginDTO userLoginDTO)
         {
 
-                return RedirectToAction("Login", "Acconut");
-            }
+            return RedirectToAction("Login", "Acconut");
+        }
 
 
 
@@ -132,5 +152,21 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "User");
         }
+
+
+
+
+
+
+
+
+
+        //[HttpGet]
+        //public async Task<IActionResult> CreateRoles()
+        //{
+        //    await _roleManager.CreateAsync(new IdentityRole("Admin"));
+
+        //    return Content("Successed!");
+        //}
     }
 }

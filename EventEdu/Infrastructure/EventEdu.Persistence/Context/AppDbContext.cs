@@ -2,6 +2,7 @@
 using EventEdu.Domain.Entities;
 using EventEdu.Domain.Entities.Common;
 using EventEdu.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -13,14 +14,15 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Persistence.Context
 {
-	public class AppDbContext : IdentityDbContext<AppUser, AppRole, string>
-	{
+	public class AppDbContext : IdentityDbContext<AppUser>
+    {
 		public AppDbContext(DbContextOptions options) : base(options)
 		{
 
 		}
 
-		public DbSet<Category> Categories { get; set; }
+        public DbSet<AppUser> AppUsers { get; set; }
+        public DbSet<Category> Categories { get; set; }
 		public DbSet<CategoryDetail> CategoryDetails { get; set; }
 		
 		public DbSet<Event> Events { get; set; }

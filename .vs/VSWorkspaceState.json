@@ -2,18 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\EventEdu",
-    "\\EventEdu\\Core",
-    "\\EventEdu\\Core\\EventEdu.Application",
-    "\\EventEdu\\Core\\EventEdu.Application\\DTOs",
-    "\\EventEdu\\Core\\EventEdu.Application\\DTOs\\AboutSection",
     "\\EventEdu\\Persentation",
     "\\EventEdu\\Persentation\\EventEdu.Webui",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Sponsor",
+    "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\User",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Controllers"
   ],
-  "SelectedNode": "\\EventEdu\\Core\\EventEdu.Application\\DTOs\\AboutSection\\CreateAboutSectionDTO.cs",
+  "SelectedNode": "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\User\\ChangePassword.cshtml",
   "PreviewInSolutionExplorer": false
 }

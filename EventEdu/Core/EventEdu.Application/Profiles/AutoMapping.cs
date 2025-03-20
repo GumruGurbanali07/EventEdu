@@ -13,6 +13,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EventEdu.Application.DTOs.Event;
+using EventEdu.Application.DTOs.User;
+using EventEdu.Domain.Entities.Identity;
 
 namespace EventEdu.Application.Profiles
 {
@@ -87,6 +89,17 @@ namespace EventEdu.Application.Profiles
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+            //User
+            // Mapping from UserRegisterDTO to AppUser
+            CreateMap<UserRegisterDTO, AppUser>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email)) // Set UserName to Email
+                .ForMember(dest => dest.EmailConfirmed, opt => opt.Ignore()) // Identity handles this
+                .ForMember(dest => dest.NormalizedEmail, opt => opt.Ignore()) // Identity normalizes automatically
+                .ForMember(dest => dest.NormalizedUserName, opt => opt.Ignore()) // Identity normalizes automatically
+                .ForMember(dest => dest.RefreshToken, opt => opt.Ignore()) // Ensure RefreshToken is handled separately
+                .ForMember(dest => dest.Id, opt => opt.Ignore()); // Id is generated automatically
+
 
 
         }

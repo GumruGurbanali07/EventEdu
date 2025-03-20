@@ -9,7 +9,7 @@ using EventEdu.Persistence.Context;
 using EventEdu.Persistence.Extensions;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +28,12 @@ namespace EventEdu.Persistence.Services
         private readonly IFileService _fileService;
         private readonly IHostingEnvironment _environment;
         private readonly IMapper _mapper;
-		public LanguageService(ILanguageReadRepository languageReadRepository, ILanguageWriteRepository languageWriteRepository, IMapper mapper, IValidator<CreateLanguageDTO> createLanguageValidator, IValidator<UpdateLanguageDTO> updateLanguageValidator, IFileService fileService, IHostingEnvironment environment)
+		public LanguageService(ILanguageReadRepository languageReadRepository, 
+			ILanguageWriteRepository languageWriteRepository, IMapper mapper, 
+			IValidator<CreateLanguageDTO> createLanguageValidator, 
+			IValidator<UpdateLanguageDTO> updateLanguageValidator, 
+			IFileService fileService,
+			IHostingEnvironment environment)
 		{
 			_languageReadRepository = languageReadRepository;
 			_languageWriteRepository = languageWriteRepository;
@@ -56,14 +61,14 @@ namespace EventEdu.Persistence.Services
 				throw new BadRequestException("Bu ISO kodlu dil artıq mövcuddur.");
 
 			}
-            //var newLang = new Language
-            //{
-            //	IsoCode = languageDTO.IsoCode,
-            //	ImagePath = languageDTO.ImagePath,
-            //	Name = languageDTO.Name
-            //};
+			var newLang = new Language
+			{
+				IsoCode = languageDTO.IsoCode,
+				
+				Name = languageDTO.Name
+			};
 
-            if (!languageDTO.ImageFile.CheckFileType("image"))
+			if (!languageDTO.ImageFile.CheckFileType("image"))
             {
                 throw new Exception("Invalid file type. Please upload an image.");
             }
@@ -73,12 +78,12 @@ namespace EventEdu.Persistence.Services
                 throw new Exception("File size is too large. Maximum allowed size is 10MB.");
             }
 
-            //string webRootPath = _environment.WebRootPath;
-            //string imagePath = await _fileService.SaveFilesAsync(languageDTO.ImageFile, webRootPath, "client", "assets", "img", "languageMedias");
+            string webRootPath = _environment.WebRootPath;
+            string imagePath = await _fileService.SaveFilesAsync(languageDTO.ImageFile, webRootPath, "client", "assets", "img", "languageMedias");
 
 
-            var newLang = _mapper.Map<Language>(languageDTO);
-            //languageDTO.ImagePath = imagePath;
+			newLang = _mapper.Map<Language>(languageDTO);
+            languageDTO.ImagePath = imagePath;
             await _languageWriteRepository.AddAsync(newLang);
 			await _languageWriteRepository.SaveChangeAsync();
 			return newLang;

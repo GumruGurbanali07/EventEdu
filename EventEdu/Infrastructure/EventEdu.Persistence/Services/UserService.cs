@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -18,21 +19,21 @@ using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace EventEdu.Persistence.Services
 {
-	[Area("Admin")]
+    [Area("Admin")]
     public class UserService : IUserService
-	{
-		private readonly UserManager<AppUser> _userManager;
-		private readonly SignInManager<AppUser> _signInManager;
+    {
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMapper _mapper;
 
-		public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, RoleManager<IdentityRole> roleManager)
-		{
-			_userManager = userManager;
-			_signInManager = signInManager;
-			_mapper = mapper;
-			_roleManager = roleManager;
-		}
+        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, RoleManager<IdentityRole> roleManager)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _mapper = mapper;
+            _roleManager = roleManager;
+        }
 
         public async Task<IdentityResult> RegisterAsync(UserRegisterDTO registerDTO)
         {
@@ -50,12 +51,12 @@ namespace EventEdu.Persistence.Services
             var user = _mapper.Map<AppUser>(registerDTO);
             user.Firstname = registerDTO.Firstname;
             user.Lastname = registerDTO.Lastname;
-            user.EmailConfirmed = false;  
-            
+            user.EmailConfirmed = false;
+
             var result = await _userManager.CreateAsync(user, registerDTO.Password);
             if (!result.Succeeded)
             {
-                return result; 
+                return result;
             }
 
             var roleExists = await _roleManager.RoleExistsAsync("Admin");
@@ -69,28 +70,37 @@ namespace EventEdu.Persistence.Services
         }
 
         public async Task<SignInResult> LoginAsync(UserLoginDTO userLoginDTO)
-		{
-			var user = await _userManager.FindByEmailAsync(userLoginDTO.Email);
-			if (user == null)
-			{
-				return SignInResult.Failed;
-			}
-       
+        {
+            var user = await _userManager.FindByEmailAsync(userLoginDTO.Email);
+            if (user == null)
+            {
+                return SignInResult.Failed;
+            }
+
             var result = await _signInManager.PasswordSignInAsync(userLoginDTO.Email, userLoginDTO.Password, userLoginDTO.RememberMe, lockoutOnFailure: false);
-			
-			if (!result.Succeeded)
-			{
-				return SignInResult.Failed;
-			}
-			return result;
-		}
 
+            if (!result.Succeeded)
+            {
+                return SignInResult.Failed;
+            }
+            return result;
+        }
 
-		public async Task LogOutAsync()
-		{
-			await _signInManager.SignOutAsync();
-		}
+        public async Task LogOutAsync()
+        {
+            await _signInManager.SignOutAsync();
+        }
 
+        public async Task VerifyEmail(ForgotPasswordDTO verifyEmailDTO)
+        {
 
-	}
+            var user = await _userManager.FindByNameAsync(verifyEmailDTO.Email);
+            if (user == null)
+            {
+                throw new Exception("Something is wrong!");
+            }
+        }
+
+       
+    }
 }

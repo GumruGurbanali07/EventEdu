@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
@@ -116,42 +117,73 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> VerifyEmail(ForgotPasswordDTO verifyEmailDTO)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = await _userManager.FindByNameAsync(verifyEmailDTO.Email);
-                if (user == null)
-                {
-                    ModelState.AddModelError("", "Something is wrong!");
-                    return View(verifyEmailDTO);
-                }
-                else
-                {
-                    return RedirectToAction("ChangePassword", "User", new { verifyEmailDTO.Email });
-                }
-
-            }
-            return View(verifyEmailDTO);
-        }
-
-
-        [HttpGet]
-        public IActionResult ChangePassword()
+        public IActionResult VerifyEmail()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangePassword(UserLoginDTO userLoginDTO)
+        public async Task<IActionResult> VerifyEmail(ForgotPasswordDTO verifyEmailDTO)
         {
-
-            return RedirectToAction("Login", "Acconut");
+            if (ModelState.IsValid)
+            {
+                return View(verifyEmailDTO);
+            }
+            else
+            {
+                return RedirectToAction("ChangePassword", "User", new { userEmail = verifyEmailDTO.Email });
+            }
+            //return View(verifyEmailDTO);
         }
 
+        [HttpGet]
+        public IActionResult ChangePassword(string userEmail)
+        {
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return RedirectToAction("VerifyEmail");
+            }
+            return View(new ForgotPasswordDTO { Email = userEmail});
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword([FromForm]ForgotPasswordDTO userChangePasswordDTO)
+        {
+            if (ModelState.IsValid) {
 
+                var user = await _userManager.FindByEmailAsync(userChangePasswordDTO.Email);
+                if(user != null)
+                {
+                    var result = await  _userManager.RemovePasswordAsync(user);
+                    if (result.Succeeded)
+                    {
 
+                       result = await _userManager.AddPasswordAsync(user, userChangePasswordDTO.NewPassword);
+                        return RedirectToAction("Login", "User");
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError("", error.Description);
+                        }
+                        return View(userChangePasswordDTO);
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Email not found!");
+                    return View(userChangePasswordDTO);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Something went wrong. Try again!");
+                return View(userChangePasswordDTO);
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> LogOut()
         {
             await _signInManager.SignOutAsync();

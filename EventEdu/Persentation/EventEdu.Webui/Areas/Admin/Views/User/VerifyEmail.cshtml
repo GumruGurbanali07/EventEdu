@@ -23,12 +23,13 @@
                 <div class="card-body mt-1">
                     <h4 class="mb-1">Forgot Password? 🔒</h4>
                     <p class="mb-5">Enter your email and we'll send you instructions to reset your password</p>
-                    <form asp-action="ForgotPassword" method="GET" id="formAuthentication" class="mb-5">
+                    <form asp-controller="User" asp-action="VerifyEmail" method="Post" id="formAuthentication" class="mb-5">
                         <div class="form-floating form-floating-outline mb-5">
-                            <input type="text" class="form-control" id="email" asp-for="Email" name="email" placeholder="Enter your email" autofocus>
-                            <label>Email</label>
+                            <input type="text" class="form-control" id="Email" asp-for="Email" name="Email" placeholder="Enter your email" autofocus>
+                            <label asp-for="Email">Email</label>
+                            <span class="form-text text-danger" asp-validation-for="Email"></span>
                         </div>
-                        <button class="btn btn-primary d-grid w-100 mb-5">Send Reset Link</button>
+                        <button type="submit" class="btn btn-primary d-grid w-100 mb-5">Send Reset Link</button>
                     </form>
                     <div class="text-center">
                         <a asp-controller="User" asp-action="ChangePassword" class="d-flex align-items-center justify-content-center">

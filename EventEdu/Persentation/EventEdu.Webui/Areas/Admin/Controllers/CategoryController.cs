@@ -1,6 +1,7 @@
 ﻿using EventEdu.Application.DTOs.Category;
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Localization;
@@ -8,9 +9,8 @@ using System.Globalization;
 
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
-    //[ApiController]
-    //[Route("api/[controller]")]
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;

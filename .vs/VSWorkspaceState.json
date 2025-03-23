@@ -6,11 +6,11 @@
     "\\EventEdu\\Persentation\\EventEdu.Webui",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin",
+    "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Controllers",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views",
-    "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Sponsor",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\User",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Controllers"
   ],
-  "SelectedNode": "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\User\\ChangePassword.cshtml",
+  "SelectedNode": "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Controllers\\UserController.cs",
   "PreviewInSolutionExplorer": false
 }

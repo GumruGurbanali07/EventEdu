@@ -51,7 +51,7 @@ namespace EventEdu.Persistence.Services
             user.Firstname = registerDTO.Firstname;
             user.Lastname = registerDTO.Lastname;
             user.EmailConfirmed = false;  
-
+            
             var result = await _userManager.CreateAsync(user, registerDTO.Password);
             if (!result.Succeeded)
             {
@@ -70,13 +70,13 @@ namespace EventEdu.Persistence.Services
 
         public async Task<SignInResult> LoginAsync(UserLoginDTO userLoginDTO)
 		{
-			var user = await _userManager.FindByEmailAsync(userLoginDTO.Username);
+			var user = await _userManager.FindByEmailAsync(userLoginDTO.Email);
 			if (user == null)
 			{
 				return SignInResult.Failed;
 			}
        
-            var result = await _signInManager.PasswordSignInAsync(user, userLoginDTO.Password, userLoginDTO.RememberMe, false);
+            var result = await _signInManager.PasswordSignInAsync(userLoginDTO.Email, userLoginDTO.Password, userLoginDTO.RememberMe, lockoutOnFailure: false);
 			
 			if (!result.Succeeded)
 			{

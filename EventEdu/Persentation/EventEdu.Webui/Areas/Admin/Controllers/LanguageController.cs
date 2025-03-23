@@ -4,12 +4,14 @@ using EventEdu.Application.Services;
 using EventEdu.Application.ViewModel;
 using EventEdu.Domain.Entities;
 using EventEdu.Persistence.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace EventEdu.Webui.Areas.Admin.Controllers;
 
 //[ApiController]
 //[Route("api/[controller]")]
 [Area("Admin")]
+[Authorize(Roles = "Admin")]
 public class LanguageController : Controller
 {
     private readonly ILanguageService _languageService;

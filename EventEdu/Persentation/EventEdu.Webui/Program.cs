@@ -121,7 +121,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
 			name: "areas",
-			pattern: "{area:exists}/{controller=Dashboards}/{action=Index}/{id?}"
+			pattern: "{area:exists}/{controller=User}/{action=Login}/{id?}"
 		  );
 
 app.MapControllerRoute(

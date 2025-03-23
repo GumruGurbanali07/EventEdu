@@ -23,17 +23,17 @@
                 <div class="card-body mt-1">
                     <h4 class="mb-2">Login Page</h4>
 
-                    <form id="formAuthentication" class="mb-5" action="~/" method="GET">
-                        <div class="form-floating form-floating-outline mb-5">
+                    <form asp-action="Login" method="post" id="formAuthentication" class="mb-5">
+                    @*     <div class="form-floating form-floating-outline mb-5">
                             <input type="text" class="form-control" id="username" asp-for="Username" name="Username" placeholder="Enter your username" autofocus>
                             <label asp-for="Username">Username</label>
                             <span class="form-text text-danger" asp-validation-for="Username"></span>
-                        </div>
-                    @*     <div class="form-floating form-floating-outline mb-5">
+                        </div> *@
+                        <div class="form-floating form-floating-outline mb-5">
                             <input type="text" class="form-control" id="email" asp-for="Email" name="Email" placeholder="Enter your email">
                             <label asp-for="Email">Email</label>
                              <span class="form-text text-danger" asp-validation-for="Email"></span>
-                        </div> *@
+                        </div>
                         <div class="mb-5 form-password-toggle">
                             <div class="input-group input-group-merge">
                                 <div class="form-floating form-floating-outline">
@@ -53,7 +53,7 @@
                                 </label>
                             </div>
                         </div>
-                        <button class="btn btn-primary d-grid w-100 mb-5">
+                        <button type="submit" class="btn btn-primary d-grid w-100 mb-5">
                             Sign in
                         </button>
                     </form>

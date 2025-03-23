@@ -62,7 +62,8 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 
         [HttpGet]
         public IActionResult Login()
-        {
+        
+       {
             if (User.Identity.IsAuthenticated)
             {
                 if (User.IsInRole("Admin"))
@@ -91,19 +92,23 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
                 {
                     return View(userLoginDTO);
                 }
+                if (userLoginDTO == null || string.IsNullOrEmpty(userLoginDTO.Email))
+                {
+                    return BadRequest("Username is required.");
+                }
 
                 var existUser = await _userManager.FindByEmailAsync(userLoginDTO.Email);
 
                 if (existUser == null)
                 {
-                    ModelState.AddModelError("", "Sorry, your email or password was incorrect.");
+                    ModelState.AddModelError("", "Sorry, your username or password was incorrect.");
                     return View(userLoginDTO);
                 }
                 var result = await _signInManager.PasswordSignInAsync(existUser, userLoginDTO.Password, false, true);
 
                 if (!result.Succeeded)
                 {
-                    ModelState.AddModelError("", "Sorry, your email or password was incorrect.");
+                    ModelState.AddModelError("", "Sorry, your username or password was incorrect.");
                     return View(userLoginDTO);
                 }
                 return RedirectToAction("Index", "Dashboards");

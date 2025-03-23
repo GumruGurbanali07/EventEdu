@@ -4,11 +4,13 @@ using EventEdu.Application.Repository;
 using EventEdu.Application.Services;
 using EventEdu.Persistence.Context;
 using EventEdu.Persistence.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class AboutSectionController : Controller
     {
         private readonly IAboutSectionService _aboutSectionService;

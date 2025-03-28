@@ -11,5 +11,6 @@ namespace EventEdu.Application.Repository
     {
         Task SoftDeleteSponsor(Guid sponsorId);
         Task RestoreSponsor(Guid sponsorId);
+       
     }
 }

@@ -21,8 +21,8 @@ namespace EventEdu.Application.Validators.Language
 				.NotEmpty().WithMessage("ISO kodu boş olmamalıdır.")
 				.Length(2, 5).WithMessage("ISO kodu 2 ilə 5 simvol arasında olmalıdır.");
 
-			RuleFor(x => x.ImagePath)
-				.NotEmpty().WithMessage("Şəkil yolu boş olmamalıdır.");
+			//RuleFor(x => x.ImagePath)
+			//	.NotEmpty().WithMessage("Şəkil yolu boş olmamalıdır.");
 		}
 	}
 }

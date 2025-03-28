@@ -14,13 +14,14 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Persistence.Context
 {
-	public class AppDbContext : IdentityDbContext<AppUser>
+    public class AppDbContext : IdentityDbContext<AppUser>
     {
 		public AppDbContext(DbContextOptions options) : base(options)
 		{
 
 		}
 
+        public DbSet<PersonalData> PersonalDatas { get; set; }
         public DbSet<AppUser> AppUsers { get; set; }
         public DbSet<Category> Categories { get; set; }
 		public DbSet<CategoryDetail> CategoryDetails { get; set; }

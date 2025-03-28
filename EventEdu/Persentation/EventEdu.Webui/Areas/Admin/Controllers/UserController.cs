@@ -1,6 +1,8 @@
 ﻿using EventEdu.Application.DTOs.User;
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -63,8 +65,8 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 
         [HttpGet]
         public IActionResult Login()
-        
-       {
+
+        {
             if (User.Identity.IsAuthenticated)
             {
                 if (User.IsInRole("Admin"))
@@ -186,6 +188,10 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> LogOut()
         {
+            //HttpContext.Session.Clear();
+            //HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            //Response.Cookies.Delete("RememberMe");
+
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "User");
         }

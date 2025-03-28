@@ -11,6 +11,6 @@
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\User",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Controllers"
   ],
-  "SelectedNode": "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Controllers\\UserController.cs",
+  "SelectedNode": "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\_ViewStart.cshtml",
   "PreviewInSolutionExplorer": false
 }

@@ -18,17 +18,20 @@ using EventEdu.Domain.Entities.Identity;
 using EventEdu.Persistence.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.Options;
+using EventEdu.Application.Validators.AccountForUserPersonalData;
 //using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews().AddViewLocalization().AddFluentValidation(fv =>
-	fv.RegisterValidatorsFromAssemblyContaining<CreateLanguageDTOValidator>()
-	.RegisterValidatorsFromAssemblyContaining<UpdateLanguageDTOValidator>()
-	.RegisterValidatorsFromAssemblyContaining<CreateSponsorDTOValidator>()
-	 .RegisterValidatorsFromAssemblyContaining<CreateHeroSectionDTOValidator>()
-	  .RegisterValidatorsFromAssemblyContaining<CreateAboutSectionDTOValidator>());
-       //.RegisterValidatorsFromAssemblyContaining<CreateUserDTOValidator>());
+    fv.RegisterValidatorsFromAssemblyContaining<CreateLanguageDTOValidator>()
+    .RegisterValidatorsFromAssemblyContaining<UpdateLanguageDTOValidator>()
+    .RegisterValidatorsFromAssemblyContaining<CreateSponsorDTOValidator>()
+     .RegisterValidatorsFromAssemblyContaining<CreateHeroSectionDTOValidator>()
+      .RegisterValidatorsFromAssemblyContaining<CreateAboutSectionDTOValidator>()
+     .RegisterValidatorsFromAssemblyContaining<CreatePersonalDataValidator>());
+//.RegisterValidatorsFromAssemblyContaining<CreateUserDTOValidator>());
 
 
 builder.Services.AddDistributedMemoryCache();
@@ -36,10 +39,17 @@ builder.Services.AddLocalization();
 builder.Services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizationFactory>();
 builder.Services.AddSession(options =>
 {
-	options.IdleTimeout = TimeSpan.FromMinutes(30);
-	options.Cookie.HttpOnly = true;
-	options.Cookie.IsEssential = true; // For GDPR compliance
+    options.IdleTimeout = TimeSpan.Zero;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true; // For GDPR compliance
 });
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(
+    options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.Cookie.Expiration = TimeSpan.FromDays(7);
+        options.Cookie.IsEssential = true;
+    });
 
 
 
@@ -83,9 +93,9 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-	app.UseExceptionHandler("/Home/Error");
-	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-	app.UseHsts();
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
 app.UseSession();
 
@@ -97,7 +107,7 @@ app.UseStaticFiles();
 
 app.UseRequestLocalization(new RequestLocalizationOptions
 {
-	DefaultRequestCulture = new RequestCulture(new CultureInfo("az-AZ"))
+    DefaultRequestCulture = new RequestCulture(new CultureInfo("az-AZ"))
 });
 
 app.UseMiddleware<LocalizationMiddleware>();
@@ -120,14 +130,14 @@ app.UseAuthorization();
 app.MapStaticAssets();
 
 app.MapControllerRoute(
-			name: "areas",
-			pattern: "{area:exists}/{controller=User}/{action=Login}/{id?}"
-		  );
+            name: "areas",
+            pattern: "{area:exists}/{controller=User}/{action=Login}/{id?}"
+          );
 
 app.MapControllerRoute(
-		name: "default",
-		pattern: "{controller=Home}/{action=Index}/{id?}")
-		.WithStaticAssets();
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}")
+        .WithStaticAssets();
 
 
 app.Run();

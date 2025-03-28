@@ -83,7 +83,7 @@ namespace EventEdu.Persistence.Services
 
 
 			newLang = _mapper.Map<Language>(languageDTO);
-            languageDTO.ImagePath = imagePath;
+            newLang.ImagePath = imagePath;
             await _languageWriteRepository.AddAsync(newLang);
 			await _languageWriteRepository.SaveChangeAsync();
 			return newLang;

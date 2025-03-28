@@ -68,7 +68,8 @@ namespace EventEdu.Persistence
             services.AddScoped<ILanguageService, LanguageService>();
 			services.AddScoped<ICategoryService, CategoryService>();
 			services.AddScoped<ISpeakerService, SpeakerService>();
-			services.AddScoped<IUserService, UserService>();
+			services.AddScoped<IAccountServiceForPersonalData, AccountService>();
+            services.AddScoped<IUserService, UserService>();
     
 
             //Repositories
@@ -126,8 +127,6 @@ namespace EventEdu.Persistence
 			services.AddScoped<IAboutSectionDetailReadRepository, AboutSectionDetailReadRepository>();
 			services.AddScoped<IAboutSectionDetailWriteRepository, AboutSectionDetailWriteRepository>();
 
-
-
-		}
+        }
 	}
 }

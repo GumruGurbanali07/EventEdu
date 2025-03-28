@@ -15,5 +15,12 @@ namespace EventEdu.Persistence.Repository
         public SponsorReadRepository(AppDbContext context) : base(context)
         {
         }
+
+        public List<Sponsor> Search(string query)
+        {
+            return _context.Sponsors
+                .Where(e => e.SponsorsDetail.FirstOrDefault().SponsorName.Contains(query) || e.SponsorsDetail.FirstOrDefault().SponsorDescription.Contains(query))
+                .ToList();
+        }
     }
 }

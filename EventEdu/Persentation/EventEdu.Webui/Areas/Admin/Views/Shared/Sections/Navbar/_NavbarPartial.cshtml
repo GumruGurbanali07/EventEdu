@@ -23,14 +23,15 @@
 
 <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
 
-<!-- Search -->
-    <div class="navbar-nav align-items-center">
+@* <!-- Search -->
+    <form asp-controller="Search" asp-action="Index" method="get" class="navbar-nav align-items-center">
       <div class="nav-item d-flex align-items-center">
         <i class="ri-search-line ri-22px me-2 lh-0"></i>
-        <input type="text" class="form-control border-0 shadow-none bg-body" placeholder="Search..." aria-label="Search...">
+            <input type="text" name="query" class="form-control border-0 shadow-none bg-body" placeholder="Search..." aria-label="Search...">
+            <span type="submit">Search</span>
       </div>
-    </div>
- <!-- /Search -->
+    </form>
+ <!-- /Search --> *@
 
   <ul class="navbar-nav flex-row align-items-center ms-auto">
 

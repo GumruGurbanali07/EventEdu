@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using EventEdu.Application.DTOs.Event;
 using EventEdu.Application.DTOs.User;
 using EventEdu.Domain.Entities.Identity;
+using EventEdu.Application.DTOs.PersonalData;
 
 namespace EventEdu.Application.Profiles
 {
@@ -90,7 +91,7 @@ namespace EventEdu.Application.Profiles
             .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
 
-            //User
+            //UserAdmin
             // Mapping from UserRegisterDTO to AppUser
             CreateMap<UserRegisterDTO, AppUser>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email)) // Set UserName to Email
@@ -100,8 +101,16 @@ namespace EventEdu.Application.Profiles
                 .ForMember(dest => dest.RefreshToken, opt => opt.Ignore()) // Ensure RefreshToken is handled separately
                 .ForMember(dest => dest.Id, opt => opt.Ignore()); // Id is generated automatically
 
-
-
+            //UserPersonalData
+            CreateMap<CreatePersonalDataDTO, PersonalData>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid())) // Auto-generate Id
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.Firstname, opt => opt.MapFrom(src => src.Firstname))
+                .ForMember(dest => dest.Lastname, opt => opt.MapFrom(src => src.Lastname))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
+                .ForMember(dest => dest.Birthday, opt => opt.MapFrom(src =>
+                    string.IsNullOrWhiteSpace(src.Birthday) ? (DateTime?)null : DateTime.Parse(src.Birthday))) // Convert string to DateTime
+                .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender));
         }
     }
 

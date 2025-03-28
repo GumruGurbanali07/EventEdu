@@ -24,7 +24,7 @@
     <ul class="menu-inner py-1">
         <!-- Dashboards -->
         <li class='menu-item@(currentPage == "/Tables/Basic" ? " active" : "")'>
-            <a asp-controller="Tables" asp-action="Basic" class="menu-link">
+            <a asp-controller="Dashboards" asp-action="Index" class="menu-link">
                 <i class="menu-icon tf-icons ri-home-smile-line"></i>
                 <div>Dashboard</div>
             </a>
@@ -187,7 +187,7 @@
                 </li>
             </ul>
         </li>
-        <li class='menu-item@(currentPage.StartsWith("/User") ? " active open" : "")'>
+@*         <li class='menu-item@(currentPage.StartsWith("/User") ? " active open" : "")'>
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons ri-layout-2-line"></i>
                 <div>Authentification</div>
@@ -210,7 +210,7 @@
                     </a>
                 </li>
             </ul>
-        </li>
+        </li> *@
 
         <li class='menu-item@(currentPage.StartsWith("/Pages/Misc") ? " active open" : "")'>
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -225,61 +225,5 @@
                 </li>
             </ul>
         </li>
-
-        <!-- Forms & Tables -->
-        <li class="menu-header mt-7"><span class="menu-header-text">Forms &amp; Tables</span></li>
-        <!-- Forms -->
-        <li class='menu-item@(currentPage.StartsWith("/Forms") ? " active open" : "")'>
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ri-radio-button-line"></i>
-                <div>Form Elements</div>
-            </a>
-            <ul class="menu-sub">
-                <li class='menu-item@(currentPage == "/Forms/BasicInputs" ? " active" : "")'>
-                    <a asp-controller="Forms" asp-action="BasicInputs" class="menu-link">
-                        <div>Basic Inputs</div>
-                    </a>
-                </li>
-                <li class='menu-item@(currentPage == "/Forms/InputGroups" ? " active" : "")'>
-                    <a asp-controller="Forms" asp-action="InputGroups" class="menu-link">
-                        <div>Input groups</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class='menu-item@(currentPage.StartsWith("/FormLayouts") ? " active open" : "")'>
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ri-box-3-line"></i>
-                <div>Books</div>
-            </a>
-            <ul class="menu-sub">
-                <li class='menu-item@(currentPage == "/FormLayouts/Vertical" ? " active" : "")'>
-                    <a asp-controller="FormLayouts" asp-action="Vertical" class="menu-link">
-                        <div>Vertical Form</div>
-                    </a>
-                </li>
-                <li class='menu-item@(currentPage == "/FormLayouts/Horizontal" ? " active" : "")'>
-                    <a asp-controller="FormLayouts" asp-action="Horizontal" class="menu-link">
-                        <div>Horizontal Form</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <!-- Tables -->
-        <li class='menu-item@(currentPage == "/Tables/Basic" ? " active" : "")'>
-            <a asp-controller="Tables" asp-action="Basic" class="menu-link">
-                <i class="menu-icon tf-icons ri-table-alt-line"></i>
-                <div>Tables</div>
-            </a>
-        </li>
-        <!-- Data Tables -->
-        <li class='menu-item@(currentPage.StartsWith("/Tables/DataTables") ? " active open" : "")'>
-            <a href="https://demos.themeselection.com/materio-aspnet-core-mvc-admin-template/html/vertical-menu-template/tables-datatables-basic.html" target="_blank" class="menu-link">
-                <i class="menu-icon tf-icons ri-grid-line"></i>
-                <div>Datatables</div><div class="badge bg-label-primary fs-tiny rounded-pill ms-auto">Pro</div>
-            </a>
-        </li>
-    </ul>
-
 </aside>
 <!-- / Menu -->

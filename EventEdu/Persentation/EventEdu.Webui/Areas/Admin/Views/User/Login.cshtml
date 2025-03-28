@@ -5,10 +5,14 @@
     <link rel="stylesheet" href="~/vendor/css/pages/page-auth.css">
 }
 
+@{
+    Layout = "_BlankLayout";
+}
+
 @* ************** Content ************** *@
 
 <div class="position-relative">
-    <div class="authentication-wrapper authentication-basic container-p-y">
+    <div style="width: 58%; margin: auto;" class="authentication-wrapper authentication-basic container-p-y">
         <div class="authentication-inner py-6 mx-4">
 
             <!-- Register Card -->
@@ -23,21 +27,21 @@
                 <div class="card-body mt-1">
                     <h4 class="mb-2">Login Page</h4>
 
-                    <form asp-action="Login" method="post" id="formAuthentication" class="mb-5">
+                    <form asp-controller="User" asp-action="Login" method="post" id="formAuthentication" class="mb-5">
                     @*     <div class="form-floating form-floating-outline mb-5">
                             <input type="text" class="form-control" id="username" asp-for="Username" name="Username" placeholder="Enter your username" autofocus>
                             <label asp-for="Username">Username</label>
                             <span class="form-text text-danger" asp-validation-for="Username"></span>
                         </div> *@
                         <div class="form-floating form-floating-outline mb-5">
-                            <input type="text" class="form-control" id="email" asp-for="Email" name="Email" placeholder="Enter your email">
+                            <input type="text" class="form-control" id="email" asp-for="Email" name="Email" value="@ViewBag.RememberMeEmail" placeholder="Enter your email">
                             <label asp-for="Email">Email</label>
                              <span class="form-text text-danger" asp-validation-for="Email"></span>
                         </div>
                         <div class="mb-5 form-password-toggle">
                             <div class="input-group input-group-merge">
                                 <div class="form-floating form-floating-outline">
-                                    <input type="password" id="password" class="form-control" asp-for="Password" name="Password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
+                                    <input type="password" id="password" class="form-control" asp-for="Password" name="Password" value="@ViewBag.RememberMePassword" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
                                     <label asp-for="Password">Password</label>
                                     <span class="form-text text-danger" asp-validation-for="Password"></span>
                                 </div>

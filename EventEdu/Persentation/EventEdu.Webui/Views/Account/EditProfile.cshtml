@@ -1,0 +1,89 @@
+﻿@using EventEdu.Application.DTOs.PersonalData
+@model CreatePersonalDataDTO
+
+<div class="profile-container container">
+    <div class="profile-form">
+        <h2>Personal Data</h2>
+        <form asp-action="EditProfile" method="post" @* asp-route-id="@Model.Id"  *@enctype="multipart/form-data">
+            <div class="form-group">
+                <label asp-for="Email">Email</label>
+                <input asp-for="Email" name="Email" type="email">
+                <span class="form-text text-danger" asp-validation-for="Email"></span>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Firstname">First Name</label>
+                    <input asp-for="Firstname" name="Firstname" type="text">
+                    <span class="form-text text-danger" asp-validation-for="Firstname"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Lastname">Last Name</label>
+                    <input asp-for="Lastname" name="Lastname" type="text">
+                    <span class="form-text text-danger" asp-validation-for="Lastname"></span>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="PhoneNumber">Phone Number</label>
+                    <input asp-for="PhoneNumber" name="PhoneNumber" type="text">
+                    <span class="form-text text-danger" asp-validation-for="PhoneNumber"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Birthday">Birthday</label>
+                    <input asp-for="Birthday" name="Birthday" type="date" class="form-control">
+                    <span class="form-text text-danger" asp-validation-for="Birthday"></span>
+                </div>
+
+            </div>
+            <div class="form-group">
+                <label asp-for="Gender">Gender</label>
+                <div class="gender-toggle">
+                    <button type="button" class="gender-btn active" data-value="Male">Male</button>
+                    <button type="button" class="gender-btn" data-value="Female">Female</button>
+                </div>
+                <input type="hidden" id="Gender" name="Gender" value="Male" />
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+            <div class="button-group">
+                <button type="submit" class="save">Save Changes</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="sidebar">
+        <ul>
+            <a asp-controller="Account" asp-action="Profile">
+            <li class="active">Profile</li></a>
+            <a asp-controller="Account" asp-action="ParticipationHistory">
+            <li>Participation History</li></a>
+        </ul>
+    </div>
+</div>
+@* <script>
+    document.querySelectorAll(".gender-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            document.querySelectorAll(".gender-btn").forEach(btn => btn.classList.remove("active"));
+            this.classList.add("active");
+            document.getElementById("Gender").value = this.getAttribute("data-value");
+        });
+    });
+</script> *@
+
+<script>
+    document.querySelectorAll('.gender-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            // Remove 'active' class and 'selected' attribute from all buttons
+            document.querySelectorAll('.gender-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.removeAttribute('selected');
+            });
+
+            // Add 'active' class and 'selected' attribute to clicked button
+            this.classList.add('active');
+            this.setAttribute('selected', 'true');
+
+            // Update hidden input value
+            document.getElementById('Gender').value = this.getAttribute('data-value');
+        });
+    });
+</script>

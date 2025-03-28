@@ -106,10 +106,10 @@
             </div>
 
 
-            <div class="searchbar">
-                <input placeholder="Search products" type="text">
-                <span id="magnifying-glass"><i class="fa-solid fa-magnifying-glass"></i></span>
-            </div>
+            <form asp-controller="Search" asp-action="Index" method="get" class="searchbar">
+                <input name="query" placeholder="Search products" type="text">
+                <button style="border:none; padding:0" type="submit" id="magnifying-glass"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </form>
             <a asp-controller="Account" asp-action="Profile" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">ACCOUNT<i class="fa fa-arrow-right ms-3"></i></a>
         </div>
     </nav>

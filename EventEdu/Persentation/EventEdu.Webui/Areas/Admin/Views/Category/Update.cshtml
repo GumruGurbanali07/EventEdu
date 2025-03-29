@@ -1,0 +1,41 @@
+﻿@using EventEdu.Application.DTOs.Category
+@model UpdateCategoryDTO;
+
+<form method="post" enctype="multipart/form-data">
+    <input type="hidden"  name="name" value="@Model.CategoryId" />
+    <h4 style="margin-left:40px">Update Category</h4>
+
+    <div class="addOrEditCard card">
+        <!-- Image Preview -->
+        <div class="chosenImage">
+            <img id="imagePreview" src="~/client/assets/img/@Model.ImagePath" alt="Category Image" />
+        </div>
+
+        <div class="card-body">
+            <!-- Language Dropdown -->
+            <div class="form-floating form-floating-outline mb-3">
+                <select asp-for="LanguageId" value="@Model.LanguageId" class="form-select" onselect="LanguageId" asp-items="@ViewBag.Language">
+                
+                </select>
+                <label for="LanguageId">Language</label>
+                <span class="form-text text-danger"  asp-validation-for="LanguageId"></span>
+            </div>
+
+          
+            <!-- Category Name (inside CategoryDetails) -->
+            <div>
+                <label for="CategoryDetails_0__CategoryName" class="form-label">Category Name</label>
+                <input type="text" asp-for="CategoryName" value="@Model.CategoryName" class="form-control" placeholder="Enter Category Name">
+                <span class="form-text text-danger" asp-validation-for="CategoryName"></span>
+            </div>
+            <div>
+                <label asp-for="FormFile" class="form-label">Upload Files</label>
+                <input type="text" asp-for="FormFile" class="form-control" placeholder="Upload file">
+                <span class="form-text text-danger" asp-validation-for="FormFile"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary mt-3">Save</button>
+        </div>
+    </div>
+</form>

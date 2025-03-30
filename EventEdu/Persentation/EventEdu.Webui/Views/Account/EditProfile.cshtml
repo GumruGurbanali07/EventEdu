@@ -4,7 +4,7 @@
 <div class="profile-container container">
     <div class="profile-form">
         <h2>Personal Data</h2>
-        <form asp-action="EditProfile" method="post" @* asp-route-id="@Model.Id"  *@enctype="multipart/form-data">
+        <form asp-action="EditProfile" method="post" @* asp-route-id="@Model.Id" *@ enctype="multipart/form-data">
             <div class="form-group">
                 <label asp-for="Email">Email</label>
                 <input asp-for="Email" name="Email" type="email">

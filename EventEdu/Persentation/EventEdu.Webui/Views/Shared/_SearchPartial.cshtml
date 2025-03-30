@@ -1,0 +1,14 @@
+﻿@using EventEdu.Application.DTOs.Sponsor
+@model List<GetSponsorDTO>
+
+@foreach (var sponsor in Model)
+{
+    <ul style="background-color: white; list-style:none; margin-bottom:0; padding-left:0">
+        <li style="height: 48px;padding-top: 8px;">
+            <a style="width:100%">
+                <img style="width:100px;height: 40px !important;" src="@sponsor.ImagePath" />
+                <p style="display:inline-block; margin-bottom:0">@sponsor.SponsorName</p>
+            </a>
+        </li>
+    </ul>
+}

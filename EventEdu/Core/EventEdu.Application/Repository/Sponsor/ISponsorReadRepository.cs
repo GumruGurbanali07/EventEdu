@@ -1,4 +1,5 @@
-﻿using EventEdu.Application.Repository;
+﻿using EventEdu.Application.DTOs.Sponsor;
+using EventEdu.Application.Repository;
 using EventEdu.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace EventEdu.Application.Repositor
     {
         //Task<List<Sponsor>> GetSponsorsByLanguageIdAsync(Guid languageId);
 
-        List<Sponsor> Search(string query);
+        //Task<List<GetSponsorDTO>> Search(string search);
 
     }
 }

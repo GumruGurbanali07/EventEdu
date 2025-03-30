@@ -127,6 +127,7 @@ namespace EventEdu.Persistence
 			services.AddScoped<IAboutSectionDetailReadRepository, AboutSectionDetailReadRepository>();
 			services.AddScoped<IAboutSectionDetailWriteRepository, AboutSectionDetailWriteRepository>();
 
+
         }
 	}
 }

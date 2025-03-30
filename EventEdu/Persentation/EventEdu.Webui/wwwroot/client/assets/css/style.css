@@ -1097,3 +1097,13 @@ textarea {
         color: black;
         text-decoration: none;
     }
+
+#searchBody {
+    overflow-y: scroll;
+    max-height: 250px;
+    position: absolute;
+    width: 27%;
+    right: 229px;
+    top: 60px;
+    margin-right: 35px;
+}

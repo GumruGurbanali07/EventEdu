@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EventEdu.Application.DTOs.Sponsor;
 using EventEdu.Application.Services;
 using EventEdu.Persistence.Context;
 using EventEdu.Webui.ViewsModels.Sponsors;
@@ -10,10 +11,12 @@ namespace EventEdu.Webui.Controllers;
 public class SponsorController : Controller
 {
     private readonly ISponsorService _sponsorService;
+    private readonly AppDbContext _context;
 
-    public SponsorController(ISponsorService sponsorService)
+    public SponsorController(ISponsorService sponsorService, AppDbContext context)
     {
         _sponsorService = sponsorService;
+        _context = context;
     }
 
     public async Task<IActionResult> Index()
@@ -39,5 +42,12 @@ public class SponsorController : Controller
             return NotFound();
         }
         return View(sponsor);
+    }
+
+    public async Task<IActionResult> Search(string search)
+    {
+        var sponsors = await _sponsorService.SearchSponsors(search);
+
+        return PartialView("_SearchPartial", sponsors ?? new List<GetSponsorDTO>()); 
     }
 }

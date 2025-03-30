@@ -2,6 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\EventEdu",
+    "\\EventEdu\\Core",
+    "\\EventEdu\\Core\\EventEdu.Application",
+    "\\EventEdu\\Core\\EventEdu.Application\\DTOs",
+    "\\EventEdu\\Core\\EventEdu.Application\\DTOs\\User",
     "\\EventEdu\\Persentation",
     "\\EventEdu\\Persentation\\EventEdu.Webui",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas",
@@ -12,6 +16,6 @@
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Shared\\Sections\\Menu",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Controllers"
   ],
-  "SelectedNode": "\\EventEdu\\Persentation\\EventEdu.Webui\\Controllers\\AccountController.cs",
+  "SelectedNode": "\\EventEdu\\Core\\EventEdu.Application\\DTOs\\User\\ForgotPasswordDTO.cs",
   "PreviewInSolutionExplorer": false
 }

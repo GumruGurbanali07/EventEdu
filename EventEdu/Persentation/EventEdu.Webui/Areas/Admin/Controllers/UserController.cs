@@ -50,6 +50,8 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
             {
                 var result = await _userService.RegisterAsync(registerDTO);
 
+
+
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Login");
@@ -67,6 +69,15 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         public IActionResult Login()
 
         {
+            if(Request.Cookies.TryGetValue("RememberMeCredentials", out string rememberMeValue))
+            {
+                var values = rememberMeValue.Split('|');
+                if(values.Length == 2)
+                {
+                    ViewBag.RememberMeEmail = values[0];
+                    ViewBag.RememberMePassword = values[1];
+                }
+            }
             if (User.Identity.IsAuthenticated)
             {
                 if (User.IsInRole("Admin"))
@@ -114,6 +125,21 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
                     ModelState.AddModelError("", "Sorry, your username or password was incorrect.");
                     return View(userLoginDTO);
                 }
+
+                HttpContext.Session.SetString("RememberMeEmail", userLoginDTO.Email);
+                HttpContext.Session.SetString("RememberMePassword", userLoginDTO.Password);
+                if (userLoginDTO.RememberMe)
+                {
+                    Response.Cookies.Append("RememberMeCredentials",
+                        $"{userLoginDTO.Email}|" +
+                        $"{userLoginDTO.Password}|", new CookieOptions
+                        {
+                            HttpOnly = true,
+                            Expires = DateTime.UtcNow.AddYears(1),
+                            Secure = true,
+                            SameSite = SameSiteMode.None,
+                        });
+                }
                 return RedirectToAction("Index", "Dashboards");
             }
         }
@@ -145,22 +171,23 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
             {
                 return RedirectToAction("VerifyEmail");
             }
-            return View(new ForgotPasswordDTO { Email = userEmail});
+            return View(new ForgotPasswordDTO { Email = userEmail });
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangePassword([FromForm]ForgotPasswordDTO userChangePasswordDTO)
+        public async Task<IActionResult> ChangePassword([FromForm] ForgotPasswordDTO userChangePasswordDTO)
         {
-            if (ModelState.IsValid) {
+            if (ModelState.IsValid)
+            {
 
                 var user = await _userManager.FindByEmailAsync(userChangePasswordDTO.Email);
-                if(user != null)
+                if (user != null)
                 {
-                    var result = await  _userManager.RemovePasswordAsync(user);
+                    var result = await _userManager.RemovePasswordAsync(user);
                     if (result.Succeeded)
                     {
 
-                       result = await _userManager.AddPasswordAsync(user, userChangePasswordDTO.NewPassword);
+                        result = await _userManager.AddPasswordAsync(user, userChangePasswordDTO.NewPassword);
                         return RedirectToAction("Login", "User");
                     }
                     else
@@ -188,9 +215,9 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> LogOut()
         {
-            //HttpContext.Session.Clear();
-            //HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            //Response.Cookies.Delete("RememberMe");
+            HttpContext.Session.Clear();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            Response.Cookies.Delete("RememberMeCredentials");
 
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "User");

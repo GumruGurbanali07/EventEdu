@@ -38,8 +38,8 @@
             <div class="form-group">
                 <label asp-for="Gender">Gender</label>
                 <div class="gender-toggle">
-                    <button type="button" class="gender-btn active" data-value="Male">Male</button>
-                    <button type="button" class="gender-btn" data-value="Female">Female</button>
+                    <button type="button" class="gender-btn @(Model.Gender == "Male" ? "active" : "")" data-value="Male">Male</button>
+                    <button type="button" class="gender-btn @(Model.Gender == "Female" ? "active" : "")" data-value="Female">Female</button>
                 </div>
                 <input type="hidden" id="Gender" name="Gender" value="Male" />
                 <span asp-validation-for="Gender" class="text-danger"></span>

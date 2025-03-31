@@ -68,6 +68,7 @@ namespace EventEdu.Persistence.Services
             return personalData;
         }
 
+
         public async Task EditPersonalData(Guid id, CreatePersonalDataDTO updatePersonalDataDTO)
         {
             var PersonalData = _context.PersonalDatas

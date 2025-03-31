@@ -27,12 +27,12 @@ public class AccountController : Controller
             // Extract the ID from the cookie or session if necessary
             var personalDataFromCookie = personalDataCookie?.Split("|");
 
-            var PersonalIdForEdit = await _accountService.GetPersonalDatasById(id);
+            //var PersonalIdForEdit = await _accountService.GetPersonalDatasById(id);
 
-            if (PersonalIdForEdit == null)
-            {
-                return NotFound("Sponsor not found.");
-            }
+            //if (PersonalIdForEdit == null)
+            //{
+            //    return NotFound("Sponsor not found.");
+            //}
 
 
             return RedirectToAction("EditProfile", new { id = id });

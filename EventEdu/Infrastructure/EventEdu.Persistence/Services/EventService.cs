@@ -16,7 +16,14 @@ namespace EventEdu.Persistence.Services
 	public class EventService : IEventService
 	{
 		private readonly IEventReadRepository _eventReadRepository;
+		private readonly IEventSpeakerReadRepository _eventSpeakerReadRepository;
+		private readonly IEventSpeakerWriteRepository  _eventSpeakerWriteRepository;
+		private readonly IEventSponsorReadRepository _eventSponsorReadRepository;
+		private readonly IEventSponsorWriteRepository _eventSponsorWriteRepository;
 		private readonly IEventWriteRepository _eventWriteRepository;
+		private readonly ICategoryReadRepository _categoryReadRepository;
+		private readonly ICategoryWriteRepository _categoryWriteRepository;
+		private readonly ICategoryDetailReadRepository _categoryDetailReadRepository;
 		private readonly IEventDetailReadRepository _eventDetailReadRepository;
 		private readonly IEventDetailWriteRepository _eventDetailWriteRepository;
 		private readonly ILanguageReadRepository _languageReadRepository;
@@ -26,7 +33,9 @@ namespace EventEdu.Persistence.Services
 		private readonly IMapper _mapper;
 		private readonly AppDbContext _context;
 
-		public EventService(IEventReadRepository eventReadRepository, IEventWriteRepository eventWriteRepository, IEventDetailReadRepository eventDetailReadRepository, IEventDetailWriteRepository eventDetailWriteRepository, ILanguageReadRepository languageReadRepository, ILanguageWriteRepository languageWriteRepository, IValidator<CreateEventDTO> createValidator, IValidator<UpdateEventDTO> updateValidator, IMapper mapper, AppDbContext context)
+		private readonly IFileService _fileService;
+
+		public EventService(IEventReadRepository eventReadRepository, IEventWriteRepository eventWriteRepository, IEventDetailReadRepository eventDetailReadRepository, IEventDetailWriteRepository eventDetailWriteRepository, ILanguageReadRepository languageReadRepository, ILanguageWriteRepository languageWriteRepository, IValidator<CreateEventDTO> createValidator, IValidator<UpdateEventDTO> updateValidator, IMapper mapper, AppDbContext context, IFileService fileService, ICategoryReadRepository categoryReadRepository, ICategoryDetailReadRepository categoryDetailReadRepository, ICategoryWriteRepository categoryWriteRepository, IEventSpeakerWriteRepository eventSpeakerWriteRepository = null, IEventSpeakerReadRepository eventSpeakerReadRepository = null, IEventSponsorReadRepository eventSponsorReadRepository = null, IEventSponsorWriteRepository eventSponsorWriteRepository = null)
 		{
 			_eventReadRepository = eventReadRepository;
 			_eventWriteRepository = eventWriteRepository;
@@ -38,6 +47,14 @@ namespace EventEdu.Persistence.Services
 			_updateValidator = updateValidator;
 			_mapper = mapper;
 			_context = context;
+			_fileService = fileService;
+			_categoryReadRepository = categoryReadRepository;
+			_categoryDetailReadRepository = categoryDetailReadRepository;
+			_categoryWriteRepository = categoryWriteRepository;
+			_eventSpeakerWriteRepository = eventSpeakerWriteRepository;
+			_eventSpeakerReadRepository = eventSpeakerReadRepository;
+			_eventSponsorReadRepository = eventSponsorReadRepository;
+			_eventSponsorWriteRepository = eventSponsorWriteRepository;
 		}
 
 		public async Task AddEventWithLanguageAsync(CreateEventDTO createEventDTO)
@@ -52,27 +69,54 @@ namespace EventEdu.Persistence.Services
 			{
 				throw new NotFoundException("Language not found");
 			}
-			var eventEntity = _mapper.Map<Event>(createEventDTO);
-			eventEntity.Id = Guid.NewGuid();
-			eventEntity.CreatedDate = DateTime.UtcNow;
-			eventEntity.UpdatedDate = DateTime.UtcNow;
-
+			var newFile = await _fileService.UploadAsync(createEventDTO.FormFile);
+			var eventEntity = new Event()
+			{
+				StartDate = createEventDTO.StartDate,
+				EndDate = createEventDTO.EndDate,
+				CategoryId = createEventDTO.CategoryId,
+				ImageUrl = newFile
+			};
+			
 			await _eventWriteRepository.AddAsync(eventEntity);
 			await _eventWriteRepository.SaveChangeAsync();
 
+ 			
+
 			var eventDetail = new EventDetail
 			{
-				Id = Guid.NewGuid(),
+			
 				EventId = eventEntity.Id,
 				Title = createEventDTO.Title,
 				Description = createEventDTO.Description,
 				LanguageId = createEventDTO.LanguageId,
 			};
 			await _eventDetailWriteRepository.AddAsync(eventDetail);
-			await _eventDetailWriteRepository.SaveChangeAsync();			
-			}
+			await _eventDetailWriteRepository.SaveChangeAsync();
 
-		
+
+			var speaketEvent = createEventDTO.SpeakerId.Select(a => new EventSpeaker
+			{
+				EventId = eventEntity.Id,
+				SpeakerId = a
+			}).ToList();
+
+			await _eventSpeakerWriteRepository.AddRangeAsync(speaketEvent);
+			await _eventSpeakerWriteRepository.SaveChangeAsync();
+
+			var sponsorEvent = createEventDTO.SponsorId.Select(a => new EventSponsor() {
+			
+				EventId = eventEntity.Id,
+			    SponsorId = a
+			
+			}).ToList();
+
+			await _eventSponsorWriteRepository.AddRangeAsync(sponsorEvent);
+			await _eventSponsorWriteRepository.SaveChangeAsync();
+			
+		}
+
+
 
 		public async Task<List<GetEventDTO>> GetEventsByLanguageAsync(string isoCode)
 		{
@@ -118,8 +162,8 @@ namespace EventEdu.Persistence.Services
 				language = await _languageReadRepository.GetAll().FirstOrDefaultAsync();
 			}
 
-			// Query for event details in the specified language
 			var eventDetailsQuery = _eventDetailReadRepository.GetAll();
+			// Query for event details in the specified language
 
 			// Fetch the event details based on eventId and the language
 			var eventData = await _eventReadRepository.GetAll()
@@ -142,7 +186,7 @@ namespace EventEdu.Persistence.Services
 						.Select(cd => cd.CategoryName)
 						.FirstOrDefault(),
 					StartDate = e.StartDate,
-					EndDate = e.EndDate,					
+					EndDate = e.EndDate,
 					LanguageId = language.Id,
 					CategoryId = e.CategoryId
 				})
@@ -183,13 +227,43 @@ namespace EventEdu.Persistence.Services
 				throw new BadRequestException("This event title already exists for the selected language and category.");
 			}
 
-			// Map the properties from the DTO to the existing event entity
 			_mapper.Map(updateEventDTO, eventEntity);
+			// Map the properties from the DTO to the existing event entity
+			if (updateEventDTO.FormFile !=null )
+			{
+				_fileService.Delete(eventEntity.ImageUrl);
+				var newFile = await _fileService.UploadAsync(updateEventDTO.FormFile);
+				eventEntity.ImageUrl = newFile;
+			}
 			eventEntity.UpdatedDate = DateTime.UtcNow;
 
 			// Update the event entity in the repository
 			_eventWriteRepository.Update(eventEntity);
 			await _eventWriteRepository.SaveChangeAsync();
+
+			if (updateEventDTO.SpeakerId.Count != null)
+			{
+				var speaketEvent = updateEventDTO.SpeakerId.Select(a => new EventSpeaker
+				{
+					EventId = eventEntity.Id,
+					SpeakerId = a
+				}).ToList();
+
+				 _eventSpeakerWriteRepository.UpdateRange(speaketEvent);
+				await _eventSpeakerWriteRepository.SaveChangeAsync();
+			}
+
+			if (updateEventDTO.SponsorId.Count() != null) {
+
+				var eventSponsor = updateEventDTO.SponsorId.Select(a => new EventSponsor()
+				{
+					EventId = eventEntity.Id,
+					SponsorId = a
+				}).ToList();
+
+				_eventSponsorWriteRepository.UpdateRange(eventSponsor);
+				await _eventSponsorWriteRepository.SaveChangeAsync();
+			}
 		}
 		public async Task SoftDeleteEventAsync(Guid eventId)
 		{
@@ -240,8 +314,66 @@ namespace EventEdu.Persistence.Services
 			await _eventWriteRepository.SaveChangeAsync();  // Save changes to the database
 		}
 
+		public async Task<List<EventDetail>> GetEventDetailsAll()
+		=> await _eventDetailReadRepository.GetAll().Include(a => a.Language).ToListAsync();
 
+		public async Task<List<Event>> GetEventAll()
+		{
+			var events = await _eventReadRepository.GetAll()
+												   .Include(a => a.Category)
+												   .Include(a => a.EventDetails)
+												   .Include(a => a.SubsEvents)
+												   .Include(a => a.EventSpeakers)
+												   .Include(a => a.EventSponsors)
 
+												    .ToListAsync();
+
+			return events;
+		}
+
+		public async Task<Event> GetEventById(string id)
+		{
+			if(!Guid.TryParse(id ,  out var guid))  throw new BadRequestException("Invalid id format");
+
+		var events = 	await _eventReadRepository.GetByIdAsync(guid.ToString()) ?? throw new NotFoundException("Values is not found ");
+
+			return events;
+
+		}
+
+		public async Task<List<EventDetail>> GetEventDetailAll()
+		=> await _eventDetailReadRepository.GetAll().ToListAsync();
+
+		public async Task<EventDetail> GetEventDetailsById(string id)
+		{
+			if (!Guid.TryParse(id, out var guid)) throw new BadRequestException("Invalid id format");
+
+			var events = await _eventDetailReadRepository.GetAll().FirstOrDefaultAsync(a=>a.EventId==Guid.Parse(id)) ?? throw new NotFoundException("Values is not found ");
+
+			return events;
+		}
+
+		public async Task<List<Event> > GetEventCategoryAsync(string categoryName, string isoCode)
+		{
+			var language = await _languageReadRepository.GetByIsoCodeAsync(isoCode);
+			if (language != null)
+			{
+				var category = await _categoryDetailReadRepository.GetAll().FirstOrDefaultAsync(a => a.CategoryName == categoryName && a.LanguageId == language.Id);
+				var events = await _eventReadRepository.GetAll().Include(a => a.EventDetails).Where(a => a.CategoryId == category.Id).Select(a => new Event()
+				{
+					Id = a.Id,
+					CategoryId = a.CategoryId,
+					EndDate = a.EndDate,
+					ImageUrl = a.ImageUrl,
+					StartDate = a.StartDate,
+					EventDetails = a.EventDetails.Where(ed => ed.LanguageId == language.Id && ed.EventId == a.Id).ToList(),
+					EventSpeakers = a.EventSpeakers.Where(ed => ed.EventId == a.Id).ToList(),
+				}).ToListAsync();
+
+				return events;
+			}
+			return null;
+		}
 	}
 
 }

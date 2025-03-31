@@ -54,11 +54,11 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteAboutSection(Guid id)
+        public async Task<IActionResult> DeleteAboutSection(Guid Id)
         {
             try
             {
-                await _aboutSectionService.DeleteAboutSection(id);
+                await _aboutSectionService.DeleteAboutSection(Id);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)

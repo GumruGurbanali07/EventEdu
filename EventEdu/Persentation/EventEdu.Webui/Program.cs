@@ -1,79 +1,88 @@
-﻿
-using System.Globalization;
+﻿using System.Globalization;
 using EventEdu.Persistence;
 using RequestLocalizationOptions = Microsoft.AspNetCore.Builder.RequestLocalizationOptions;
+using Microsoft.AspNetCore.StaticFiles;
+using System.Runtime.CompilerServices;
 using EventEdu.Webui.Localization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
-using EventEdu.Application.Services;
-using EventEdu.Persistence.Services;
-using EventEdu.Application.Profiles;
-using EventEdu.Application.Validators.Sponsor;
+using Microsoft.Extensions.Options;
+using EventEdu.Infrastructure;
+using Microsoft.OpenApi.Models;
+using EventEdu.Application;
 using FluentValidation;
-using EventEdu.Application.Validators.HeroSection;
-using FluentValidation.AspNetCore;
-//using Microsoft.OpenApi.Models;
+using System.Reflection;
+using EventEdu.Application.Profiles;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
+using System.IO.Compression;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews().AddViewLocalization().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateSponsorDTOValidator>()); ;
+
+// builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+builder.Services.AddControllersWithViews().AddViewLocalization();
 
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddLocalization();
-builder.Services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizationFactory>();
 builder.Services.AddSession(options =>
 {
-	options.IdleTimeout = TimeSpan.FromMinutes(30);
+	options.IdleTimeout = TimeSpan.FromMinutes(30); // Sessiyanın bitmə müddəti
 	options.Cookie.HttpOnly = true;
-	options.Cookie.IsEssential = true; // For GDPR compliance
+	options.Cookie.IsEssential = true;
 });
-
+builder.Services.AddLocalization();
+builder.Services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizationFactory>();
+builder.Services.AddAutoMapper(typeof(AutoMapping));
 
 
 builder.Services.AddPersistenceServices(builder.Configuration);
-builder.Services.AddScoped<IFileService, FileService>();
-builder.Services.AddScoped<ISponsorService, SponsorService>();
-builder.Services.AddScoped<IHeroSectionService, HeroSectionService>();
-builder.Services.AddScoped<IAboutSectionService, AboutSectionService>();
+builder.Services.AddInfrastructureServices();
+builder.Services.AddApplicationServices();
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 
 
-//builder.Services.AddValidatorsFromAssemblyContaining<CreateSponsorDTOValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<CreateHeroSectionDTOValidator>();
 
-builder.Services.AddAutoMapper(typeof(AutoMapping));
 // Add services to the container.
-//builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews();
 
 
-//Swagger services
-builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddResponseCompression(option =>
+{
+	option.EnableForHttps = true;
+	option.Providers.Add<BrotliCompressionProvider>();
+	option.Providers.Add<GzipCompressionProvider>();
 
-//builder.Services.AddSwaggerGen(c =>
-//{
-//	c.SwaggerDoc("v1", new OpenApiInfo { Title = "EventEdu API", Version = "v1" });
-//});
-//Swagger services
-
-
-
+});
+builder.Services.AddHttpContextAccessor();
+builder.Services.Configure<BrotliCompressionProviderOptions>(option =>
+{
+	option.Level = CompressionLevel.SmallestSize;
+});
+builder.Services.Configure<GzipCompressionProviderOptions>(option =>
+{
+	option.Level = CompressionLevel.SmallestSize;
+});
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// mvc
 if (!app.Environment.IsDevelopment())
 {
 	app.UseExceptionHandler("/Home/Error");
 	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 	app.UseHsts();
 }
+//mvc 
 app.UseSession();
+
 
 app.UseHttpsRedirection();
 
-
 app.UseStaticFiles();
 
-
+// var locOptions = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
+// app.UseRequestLocalization(locOptions!.Value);
 app.UseRequestLocalization(new RequestLocalizationOptions
 {
 	DefaultRequestCulture = new RequestCulture(new CultureInfo("az-AZ"))
@@ -81,31 +90,25 @@ app.UseRequestLocalization(new RequestLocalizationOptions
 
 app.UseMiddleware<LocalizationMiddleware>();
 
+
 app.UseRouting();
 
-app.UseAuthentication();
 app.UseAuthorization();
-
-//// Enable Swagger middleware
-//app.UseSwagger();
-//app.UseSwaggerUI(c =>
-//{
-//	c.SwaggerEndpoint("/swagger/v1/swagger.json", "EventEdu API v1");
-//});
-//// Enable Swagger middleware
-
-
+app.UseStaticFiles();
 app.MapStaticAssets();
 
-app.MapControllerRoute(
-			name: "areas",
-			pattern: "{area:exists}/{controller=Dashboards}/{action=Index}/{id?}"
-		  );
 
+app.MapAreaControllerRoute(
+	name: "areas",
+	areaName: "admin",
+	pattern: "admin/{controller=Dashboards}/{action=Index}/{id?}"
+);
 app.MapControllerRoute(
-		name: "default",
-		pattern: "{controller=Home}/{action=Index}/{id?}")
-		.WithStaticAssets();
+	name: "eventCategory",
+	pattern: "event/{categoryName}",
+	defaults: new { controller = "Event", Action = "eventCategory" });
+app.MapDefaultControllerRoute();
+	
 
 
 app.Run();

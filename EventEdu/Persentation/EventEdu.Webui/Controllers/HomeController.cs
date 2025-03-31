@@ -1,11 +1,12 @@
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
+using EventEdu.Webui.Areas.Admin.Controllers;
+using EventEdu.Webui.ViewsModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 
 namespace EventEdu.Webui.Controllers;
-//[ApiController]
-//[Route("api/[controller]")]
+
 public class HomeController : Controller
 {
 	private readonly ILogger<HomeController> _logger;
@@ -18,17 +19,24 @@ public class HomeController : Controller
 		_localizer = localizer;
 		_categoryService = categoryService;
 	}
-	//[HttpGet]
+	
 	public async Task<IActionResult> Index()
 	{
 		var lang = HttpContext.Session.GetString("lang") ?? "en-US";
 
 		var categories = await _categoryService.GetCategoriesByLanguageAsync(lang);
 		
-		ViewBag.Localizer = _localizer;
-		ViewBag.Categories = categories;
+		ViewBag.Localizer = _localizer ;
 
-        return View();
+
+		var vm = new HomeIndexVM()
+		{
+			Categories = categories.Item2
+
+		};
+
+
+        return View(vm);
 	}
 
 

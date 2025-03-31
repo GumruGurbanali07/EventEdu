@@ -1,0 +1,60 @@
+﻿@using EventEdu.Application.DTOs.Event
+@model CreateEventDTO
+
+<form asp-area="Admin" asp-controller="Event" asp-action="Create" method="post" enctype="multipart/form-data" >
+    <h4 style="margin-left:40px">Add Event</h4>
+
+    <span class="text-danger" asp-validation-summary="all"></span>
+
+    <div class="card-body">
+        <!-- Language Dropdown -->
+        <div class="form-floating form-floating-outline mb-3">
+            <select asp-for="LanguageId" asp-items="ViewBag.Language" class="form-select" aria-label="Choose a Language">
+            </select>
+            <label for="LanguageId">Language</label>
+            <span class="form-text text-danger" asp-validation-for="LanguageId"></span>
+        </div>
+
+        
+
+        <!-- Category Name (inside CategoryDetails) -->
+        <div>
+            <label asp-for="Title" class="form-label"></label>
+            <input type="text" asp-for="Title" class="form-control" placeholder="Enter Category Name">
+            <span class="form-text text-danger" asp-validation-for="Title"></span>
+        </div>
+
+        <div>
+            <label asp-for="StartDate" class="form-label"></label>
+            <input  asp-for="StartDate" class="form-control" placeholder="Enter Category Name">
+            <span class="form-text text-danger" asp-validation-for="StartDate"></span>
+        </div>
+        <div>
+            <label asp-for="EndDate" class="form-label"></label>
+            <input  asp-for="EndDate" class="form-control" placeholder="Enter Category Name">
+            <span class="form-text text-danger" asp-validation-for="EndDate"></span>
+        </div>
+        <div class="form-floating form-floating-outline mb-3">
+            <select asp-for="CategoryId" asp-items="ViewBag.Category" class="form-select" aria-label="Choose a Language">
+            </select>
+            <label for="CategoryId">Categgory</label>
+            <span class="form-text text-danger" asp-validation-for="CategoryId"></span>
+        </div>
+        <div>
+            <label asp-for="FormFile" class="form-label"></label>
+            <input  asp-for="FormFile" class="form-control" placeholder="Enter upload images">
+            <span class="form-text text-danger" asp-validation-for="FormFile"></span>
+        </div>
+        <div>
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control" placeholder="Enter description " style="resize:none"></textarea>
+            <span class="form-text text-danger" asp-validation-for="Description"></span>
+        </div>
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary mt-3">Save</button>
+    </div>
+    </div>
+</form>
+
+
+

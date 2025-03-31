@@ -9,6 +9,8 @@ namespace EventEdu.Application.Services
 {
     public interface IFileService
     {
+        Task<string> UploadAsync(IFormFile formFile);
+        void Delete(string path);
         Task<string> SaveFilesAsync(IFormFile file, string webRootPath, params string[] subfolders);
     }
 

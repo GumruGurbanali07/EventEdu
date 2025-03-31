@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using EventEdu.Application.DTOs;
+using E=EventEdu.Application.DTOs;
 using EventEdu.Application.DTOs.Category;
 using EventEdu.Application.Exceptions;
 using EventEdu.Application.Repository;
@@ -20,6 +22,7 @@ namespace EventEdu.Persistence.Services
 {
 	public class CategoryService : ICategoryService
 	{
+		private readonly IFileService _fileService;
 		private readonly ICategoryReadRepository _categoryReadRepository;
 		private readonly ICategoryWriteRepository _categoryWriteRepository;
 		private readonly ICategoryDetailReadRepository _categoryDetailReadRepository;
@@ -30,7 +33,7 @@ namespace EventEdu.Persistence.Services
 		private readonly IValidator<UpdateCategoryDTO> _updateCategoryValidator;
 		private readonly IMapper _mapper;
 		private readonly AppDbContext _context;
-		public CategoryService(ICategoryReadRepository categoryReadRepository, ICategoryWriteRepository categoryWriteRepository, AppDbContext context, ICategoryDetailReadRepository categoryDetailReadRepository, ICategoryDetailWriteRepository categoryDetailWriteRepository, ILanguageReadRepository languageReadRepository, ILanguageWriteRepository languageWriteRepository, IMapper mapper, IValidator<CreateCategoryDTO> createCategoryValidator, IValidator<UpdateCategoryDTO> updateCategoryValidator)
+		public CategoryService(ICategoryReadRepository categoryReadRepository, ICategoryWriteRepository categoryWriteRepository, AppDbContext context, ICategoryDetailReadRepository categoryDetailReadRepository, ICategoryDetailWriteRepository categoryDetailWriteRepository, ILanguageReadRepository languageReadRepository, ILanguageWriteRepository languageWriteRepository, IMapper mapper, IValidator<CreateCategoryDTO> createCategoryValidator, IValidator<UpdateCategoryDTO> updateCategoryValidator, IFileService fileService)
 		{
 			_categoryReadRepository = categoryReadRepository;
 			_categoryWriteRepository = categoryWriteRepository;
@@ -42,27 +45,13 @@ namespace EventEdu.Persistence.Services
 			_mapper = mapper;
 			_createCategoryValidator = createCategoryValidator;
 			_updateCategoryValidator = updateCategoryValidator;
+			_fileService = fileService;
 		}
 
-		//public async Task<List<CategoryDetail>> GetCategoriesByLanguageAsync(string isoCode)
-		//{
-		//	var categories = await _categoryReadRepository.GetAll()
-		//		.Include(x => x.CategoryDetail)
-		//		.ThenInclude(x => x.Language)
-		//		.Where(z => z.CategoryDetail.Any(y => y.Language.IsoCode == isoCode))
-		//		.SelectMany(c => c.CategoryDetail.Where(cd => cd.Language.IsoCode == isoCode))
-		//		.ToListAsync();
-		//	return categories;
-		//}
 
 		public async Task AddCategoryWithLanguageAsync(CreateCategoryDTO createCategoryDTO)
 		{
-			//bool isCategoryExist = await _categoryReadRepository.GetAll().AnyAsync(x=>x.CategoryDetail.Any(x => x.CategoryName == createCategoryDTO.CategoryName && x.LanguageId == createCategoryDTO.LanguageId));
-			//if (isCategoryExist)
-			//{
-			//	throw new Exception("This category already exists for the selected language.");
-
-			//}
+		
 			var validationResult = await _createCategoryValidator.ValidateAsync(createCategoryDTO);
 			if (!validationResult.IsValid)
 			{
@@ -76,30 +65,28 @@ namespace EventEdu.Persistence.Services
 			}
 
 
-			//var language = await _context.Languages.FirstOrDefaultAsync(l => l.Id == createCategoryDTO.LanguageId);
-			var language = await _languageReadRepository.GetByIdAsync(createCategoryDTO.LanguageId);
+			var language = await _languageReadRepository.GetByIdAsync(createCategoryDTO.LanguageId.ToString());
 			if (language == null)
 			{
 				throw new NotFoundException("Selected language not found.");
 			}
 
-			//var category = new Category
-			//{
-			//	Id = Guid.NewGuid(),
-			//	CreatedDate = DateTime.UtcNow,
-			//	UpdatedDate = DateTime.UtcNow,
-			//};
-
+			
 			var category = _mapper.Map<Category>(createCategoryDTO);
+			
 			category.Id = Guid.NewGuid();
 			category.CreatedDate = DateTime.UtcNow;
 			category.UpdatedDate = DateTime.UtcNow;
+			
 
-			//_context.Categories.Add(category);
-			//await _context.SaveChangesAsync();
+			
+
+		
 
 			await _categoryWriteRepository.AddAsync(category);
 			await _categoryWriteRepository.SaveChangeAsync();
+
+			var newFile = await _fileService.UploadAsync(createCategoryDTO.FormFile);
 
 			var categoryDetail = new CategoryDetail
 			{
@@ -107,6 +94,7 @@ namespace EventEdu.Persistence.Services
 				CategoryName = createCategoryDTO.CategoryName,
 				CategoryId = category.Id,
 				LanguageId = createCategoryDTO.LanguageId,
+				ImagePath=newFile,
 				CreatedDate = DateTime.UtcNow,
 				UpdatedDate = DateTime.UtcNow,
 			};
@@ -117,7 +105,7 @@ namespace EventEdu.Persistence.Services
 			await _categoryDetailWriteRepository.SaveChangeAsync();
 		}
 
-		public async Task<List<GetCategoryDTO>> GetCategoriesByLanguageAsync(string isoCode)
+		public async Task<(List<Category>, List<CategoryDetail>)> GetCategoriesByLanguageAsync(string isoCode)
 		{
 			// Get the language by ISO code
 			var language = await _languageReadRepository.GetByIsoCodeAsync(isoCode);
@@ -127,26 +115,21 @@ namespace EventEdu.Persistence.Services
 			}
 
 			// Call GetAll() outside the LINQ query and store the result
-			var categoryDetailsQuery = _categoryDetailReadRepository.GetAll();
+			var categoryDetail =await _categoryDetailReadRepository.GetAll().Where(a=>a.LanguageId==language.Id).ToListAsync();
 
 			// Use the stored query in the LINQ query
 			var categories = await _categoryReadRepository.GetAll()
-				.Where(c => categoryDetailsQuery
-					.Any(cd => cd.CategoryId == c.Id && cd.LanguageId == language.Id))
-				.Select(c => new GetCategoryDTO
-				{
-					Id = c.Id,
-					CategoryName = categoryDetailsQuery
-						.Where(cd => cd.CategoryId == c.Id && cd.LanguageId == language.Id)
-						.Select(cd => cd.CategoryName)
-						.FirstOrDefault(),
-					IsoCode = language.IsoCode,
-					ImagePath = language.ImagePath
-				})
+
+				
 				.ToListAsync();
 
-			
-			return categories;
+
+
+
+
+			return (categories, categoryDetail);
+
+
 		}
 
 
@@ -176,8 +159,16 @@ namespace EventEdu.Persistence.Services
 			//categoryDetail.LanguageId = updateCategoryDTO.LanguageId;
 			//categoryDetail.UpdatedDate = DateTime.UtcNow;
 
+			if (updateCategoryDTO.FormFile != null)
+			{
+				_fileService.Delete(categoryDetail.ImagePath);
+				var newFile = await _fileService.UploadAsync(updateCategoryDTO.FormFile);
+				categoryDetail.ImagePath = newFile;
+
+			}
 			_mapper.Map(updateCategoryDTO, categoryDetail);
 			categoryDetail.UpdatedDate = DateTime.UtcNow;
+		
 
 			_categoryDetailWriteRepository.Update(categoryDetail);
 			await _categoryDetailWriteRepository.SaveChangeAsync();
@@ -185,7 +176,7 @@ namespace EventEdu.Persistence.Services
 
 		public async Task SoftDeleteCategoryAsync(Guid categoryId)
 		{
-			var categories = await _categoryReadRepository.GetByIdAsync(categoryId);
+			var categories = await _categoryReadRepository.GetByIdAsync(categoryId.ToString());
 			if (categories == null)
 			{
 				throw new NotFoundException("Category not found.");
@@ -205,9 +196,10 @@ namespace EventEdu.Persistence.Services
 			}
 			await _categoryWriteRepository.SaveChangeAsync();
 		}
+
 		public async Task RestoreCategoryAsync(Guid categoryId)
 		{
-			var categories = await _categoryReadRepository.GetByIdAsync(categoryId);
+			var categories = await _categoryReadRepository.GetByIdAsync(categoryId.ToString());
 			if (categories == null)
 			{
 				throw new NotFoundException("Category not found.");
@@ -249,7 +241,7 @@ namespace EventEdu.Persistence.Services
 						.Select(cd => cd.CategoryName)
 						.FirstOrDefault(),
 					IsoCode = language.IsoCode,
-					ImagePath = language.ImagePath
+				
 				})
 				.FirstOrDefaultAsync();
 
@@ -261,6 +253,15 @@ namespace EventEdu.Persistence.Services
 			return category;
 		}
 
+		public async Task<List<CategoryDetail>> GetCategoriesAllAsync()
+		{
+			var category = await _categoryDetailReadRepository.GetAll().ToListAsync();
+
+			return category;
+		}
+
+		public async Task<CategoryDetail> GetCategoryById(Guid id)
+		 => await _categoryDetailReadRepository.GetByIdAsync(id.ToString());
 	}
 
 }

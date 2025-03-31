@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EventEdu.Application.DTOs;
 using EventEdu.Application.DTOs.Category;
 using EventEdu.Application.DTOs.Speaker;
 using EventEdu.Application.Exceptions;
@@ -7,10 +8,13 @@ using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
 using EventEdu.Persistence.Context;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using ValidationException = FluentValidation.ValidationException;
@@ -20,6 +24,8 @@ namespace EventEdu.Persistence.Services
 	public class SpeakerService : ISpeakerService
 	{
 		private readonly AppDbContext _context;
+		private readonly IEventSpeakerReadRepository _eventSpeakerReadRepository;
+		private readonly IEventSpeakerWriteRepository _eventSpeakerWriteRepository;
 		private readonly ISpeakerWriteRepository _speakerWriteRepository;
 		private readonly ISpeakerReadRepository _speakerReadRepository;
 		private readonly ISpeakerDetailWriteRepository _speakerDetailWriteRepository;
@@ -28,7 +34,20 @@ namespace EventEdu.Persistence.Services
 		private readonly IMapper _mapper;
 		private readonly IValidator<CreateSpeakerDTO> _createSpeakerValidator;
 		private readonly IValidator<UpdateSpeakerDTO> _updateSpeakerValidator;
-		public SpeakerService(AppDbContext context, ISpeakerWriteRepository speakerWriteRepository, ISpeakerReadRepository speakerReadRepository, ISpeakerDetailWriteRepository speakerDetailWriteRepository, ISpeakerDetailReadRepository speakerDetailReadRepository, ILanguageReadRepository languageReadRepository, IMapper mapper, IValidator<CreateSpeakerDTO> createSpeakerValidator, IValidator<UpdateSpeakerDTO> updateSpeakerValidator)
+		
+		readonly private IHttpContextAccessor _contextAccessor;
+		public SpeakerService(AppDbContext context,
+			ISpeakerWriteRepository speakerWriteRepository,
+			ISpeakerReadRepository speakerReadRepository,
+			ISpeakerDetailWriteRepository speakerDetailWriteRepository, 
+			ISpeakerDetailReadRepository speakerDetailReadRepository,
+			ILanguageReadRepository languageReadRepository, IMapper mapper,
+			IValidator<CreateSpeakerDTO> createSpeakerValidator, 
+			IValidator<UpdateSpeakerDTO> updateSpeakerValidator
+			, IHttpContextAccessor contextAccessor,
+			IEventSpeakerReadRepository eventSpeakerReadRepository,
+			IEventSpeakerWriteRepository eventSpeakerWriteRepository
+			)
 		{
 			_context = context;
 			_speakerWriteRepository = speakerWriteRepository;
@@ -39,6 +58,10 @@ namespace EventEdu.Persistence.Services
 			_mapper = mapper;
 			_createSpeakerValidator = createSpeakerValidator;
 			_updateSpeakerValidator = updateSpeakerValidator;
+			_contextAccessor = contextAccessor;
+			_eventSpeakerReadRepository = eventSpeakerReadRepository;
+			_eventSpeakerWriteRepository = eventSpeakerWriteRepository;
+			
 		}
 
 		public async Task AddSpeakerWithLanguageAsync(CreateSpeakerDTO createSpeakerDTO)
@@ -56,7 +79,7 @@ namespace EventEdu.Persistence.Services
 				throw new ValidationException(validationResult.Errors);
 			}
 
-			var language = await _languageReadRepository.GetByIdAsync(createSpeakerDTO.LanguageId);
+			var language = await _languageReadRepository.GetByIdAsync(createSpeakerDTO.LanguageId.ToString());
 			if (language == null)
 			{
 				throw new NotFoundException("Selected language not found");
@@ -263,7 +286,7 @@ namespace EventEdu.Persistence.Services
 			speakerDetail.UpdatedDate = DateTime.UtcNow;
 
 			//var speaker = await _context.Speakers.FirstOrDefaultAsync(x => x.Id == speakerDetail.SpeakerId);
-			var speaker = await _speakerReadRepository.GetByIdAsync(speakerId);
+			var speaker = await _speakerReadRepository.GetByIdAsync(speakerId.ToString());
 			if (speaker != null)
 			{
 				//speaker.ImageUrl = updateSpeakerDTO.ImageUrl;
@@ -282,7 +305,7 @@ namespace EventEdu.Persistence.Services
 
 		public async Task SoftDeleteSpeakerAsync(Guid speakerId)
 		{
-			var speaker = await _speakerReadRepository.GetByIdAsync(speakerId);
+			var speaker = await _speakerReadRepository.GetByIdAsync(speakerId.ToString());
 			if (speaker == null)
 			{
 				throw new NotFoundException("Speaker not found");
@@ -304,7 +327,7 @@ namespace EventEdu.Persistence.Services
 
 		public async Task RestoreSpeakerAsync(Guid speakerId)
 		{
-			var speaker = await _speakerReadRepository.GetByIdAsync(speakerId);
+			var speaker = await _speakerReadRepository.GetByIdAsync(speakerId.ToString());
 			if (speaker == null)
 			{
 				throw new NotFoundException("Speaker not found");
@@ -321,6 +344,55 @@ namespace EventEdu.Persistence.Services
 				_speakerDetailWriteRepository.Update(detail);
 			}
 			await _speakerWriteRepository.SaveChangeAsync();
+		}
+
+		public async Task<(List<Speaker>, List<SpeakerDetail>)> GetSpeakersAllAsync()
+		{
+			var language = _contextAccessor.HttpContext.Request.Headers["accept-language"].FirstOrDefault();
+			var isoCode = language.Split(",").FirstOrDefault();
+			var languages = await _languageReadRepository.GetByIsoCodeAsync(isoCode);
+			var speakerDetails = await _speakerDetailReadRepository.GetAll().Where(a => a.LanguageId == languages.Id).ToListAsync();
+			var speak = await _speakerReadRepository.GetAll()
+				.Include(a => a.EventSpeakers)
+				.Include(a => a.SpeakerDetails)
+
+				.ToListAsync();
+
+
+
+			return (speak, speakerDetails);
+		}
+
+		public async Task<SpeakDetailsVM> GetSpeakersByIdAsync(string id)
+		{
+			var speaker = await _speakerReadRepository.GetByIdAsync(id);
+
+			// speaker tapılmadıqda boş dictionary qaytarırıq
+
+			var speakerDetail = await _speakerDetailReadRepository
+				.GetAll()
+				.FirstOrDefaultAsync(a => a.SpeakerId == speaker.Id);
+
+			var spVm = new SpeakDetailsVM()
+			{
+				Speaker = speaker,
+				SpeakerDetail = speakerDetail
+			};
+			return spVm;
+
+		}
+
+		public async Task<List<SpeakerDetail>> GetSpeakersEventByIdAsync(string eventId)
+		{
+			var language =  _contextAccessor.HttpContext.Request.Headers["accept-language"].FirstOrDefault();
+			var isoCode = language.Split(",").FirstOrDefault();	
+			var languages= await _languageReadRepository.GetByIsoCodeAsync(isoCode);
+			var eventSpeaker = await _eventSpeakerReadRepository.GetAll().FirstOrDefaultAsync(a => a.EventId == Guid.Parse(eventId));
+
+			var speaker = await _speakerDetailReadRepository.GetAll().Where(a => a.SpeakerId == eventSpeaker.SpeakerId && a.LanguageId == languages.Id).ToListAsync();
+
+			return speaker;
+
 		}
 	}
 }

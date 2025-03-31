@@ -1,0 +1,38 @@
+﻿@using EventEdu.Application.DTOs.Language
+@model UpdateLanguageDTO;
+
+<form asp-area="Admin" asp-controller="Language" asp-action="Edit" asp-route-id="id" method="post">
+    <h4 style="margin-left:40px">Edit Language</h4>
+    <input type="hidden" name="name" value="@Model.Id" />
+    <span class="text-danger" asp-validation-summary="all"></span>
+
+    <div class="card-body">
+
+
+
+
+        <!-- Category Name (inside CategoryDetails) -->
+        <div>
+            <label asp-for="Name" class="form-label"> </label>
+            <input type="text" asp-for="Name" value="@Model.Name" class="form-control" placeholder="Enter  Name">
+            <span class="form-text text-danger" asp-validation-for="Name"></span>
+        </div>
+
+        <div>
+            <label asp-for="IsoCode" class="form-label"> </label>
+            <input type="text" asp-for="IsoCode" value="@Model.IsoCode" class="form-control" placeholder="Enter  IsoCode">
+            <span class="form-text text-danger" asp-validation-for="IsoCode"></span>
+        </div>
+        <div>
+            <label asp-for="ImagePath" class="form-label"> </label>
+            <input type="text" asp-for="ImagePath" value="@Model.IsoCode" class="form-control" placeholder="Enter  ImagePath">
+            <span class="form-text text-danger" asp-validation-for="ImagePath"></span>
+        </div>
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary mt-3">Save</button>
+    </div>
+    </div>
+</form>
+
+
+

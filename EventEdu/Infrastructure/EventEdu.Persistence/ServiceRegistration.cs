@@ -9,6 +9,7 @@ using EventEdu.Domain.Entities.Identity;
 using EventEdu.Persistence.Context;
 using EventEdu.Persistence.Repository;
 using EventEdu.Persistence.Services;
+using EventEdu.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
@@ -44,8 +45,12 @@ namespace EventEdu.Persistence
 			services.AddScoped<ILanguageService, LanguageService>();
 			services.AddScoped<ICategoryService, CategoryService>();
 			services.AddScoped<ISpeakerService, SpeakerService>();
+			services.AddScoped<ISponsorService, SponsorService>();
 			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<IEventService, EventService>();
+			services.AddScoped<ISubscriptionService, SubscriptionService>();
+			services.AddScoped<IFeedbackService, FeedbackService>();
+			services.AddTransient<IFileService, FileService>();
 
 			//Repositories
 			services.AddSingleton<StringLocalizerService>();
@@ -60,7 +65,8 @@ namespace EventEdu.Persistence
 
 			services.AddScoped<ISubscriptionReadRepository, SubscriptionReadRepository>();
 			services.AddScoped<ISubscriptionWriteRepository, SubscriptionWriteRepository>();
-
+			services.AddScoped<ISubsEventReadRepository, SubsEventReadRepository>();
+			services.AddScoped<ISubsEventWriteRepository, SubsEventWriteRepository>();
 
 			services.AddScoped<IEventReadRepository, EventReadRepository>();
 			services.AddScoped<IEventWriteRepository, EventWriteRepository>();
@@ -76,8 +82,6 @@ namespace EventEdu.Persistence
 			services.AddScoped<IFeedBackDetailReadRepository, FeedBackDetailReadRepository>();
 			services.AddScoped<IFeedBackDetailWriteRepository, FeedBackDetailWriteRepository>();
 
-
-
 			
 
 			services.AddScoped<ISpeakerReadRepository, SpeakerReadRepository>();
@@ -89,7 +93,6 @@ namespace EventEdu.Persistence
 			services.AddScoped<ISponsorWriteRepository, SponsorWriteRepository>();
 			services.AddScoped<ISponsorDetailReadRepository, SponsorDetailReadRepository>();
 			services.AddScoped<ISponsorDetailWriteRepository, SponsorDetailWriteRepository>();
-
 			
 
 			services.AddScoped<IHeroSectionReadRepository, HeroSectionReadRepository>();

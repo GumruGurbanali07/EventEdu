@@ -9,5 +9,7 @@ namespace EventEdu.Application.Repository
 {
    public interface IFeedBackDetailReadRepository : IReadRepository<FeedBackDetail>
     {
-    }
+		Task<List<FeedBackDetail>> GetFeedbacksByEventAndLanguageAsync(Guid eventId, string isoCode);
+
+	}
 }

@@ -87,7 +87,15 @@ namespace EventEdu.Persistence.Services
 			return _mapper.Map<LanguageGetDTO>(language);
 		}
 
-		public async Task<List<LanguageGetDTO>> GetLanguagesAsync()
+		public async Task<Language> GetLanguageById(Guid id)
+		{
+			
+
+			var language = await _languageReadRepository.GetByIdAsync(id.ToString()) ?? throw new NotFoundException("Values is not found !");
+
+			return language;
+		}
+		public async Task<List<Language>> GetLanguagesAsync()
 		{
 			var languages = await _languageReadRepository.GetAll().ToListAsync();
 			//return languages.Select(x => new LanguageGetDTO
@@ -97,7 +105,7 @@ namespace EventEdu.Persistence.Services
 			//	IsoCode = x.IsoCode,
 			//	ImagePath = x.ImagePath
 			//}).ToList();
-			return _mapper.Map<List<LanguageGetDTO>>(languages);
+			return languages;
 		}
 
 		public async Task UpdateLanguageAsync(Guid id, UpdateLanguageDTO updateLanguageDTO)
@@ -108,7 +116,7 @@ namespace EventEdu.Persistence.Services
 				throw new ValidationException(validationResult.Errors);
 			}
 
-			var language = await _languageReadRepository.GetByIdAsync(id);
+			var language = await _languageReadRepository.GetByIdAsync(id.ToString());
 			if (language == null)
 			{
 				throw new NotFoundException("Dil tapılmadı.");
@@ -125,7 +133,7 @@ namespace EventEdu.Persistence.Services
 
 		public async Task SoftDeleteLanguageAsync(Guid languageId)
 		{
-			var language = await _languageReadRepository.GetByIdAsync(languageId);
+			var language = await _languageReadRepository.GetByIdAsync(languageId.ToString());
 			if (language == null)
 			{
 				throw new NotFoundException("Dil tapılmadı.");
@@ -136,7 +144,7 @@ namespace EventEdu.Persistence.Services
 
 		public async Task RestoreLanguageAsync(Guid languageId)
 		{
-			var language = await _languageReadRepository.GetByIdAsync(languageId);
+			var language = await _languageReadRepository.GetByIdAsync(languageId.ToString());
 			if (language == null)
 			{
 				throw new NotFoundException("Dil tapılmadı.");
@@ -146,8 +154,6 @@ namespace EventEdu.Persistence.Services
 
 		}
 
-
-
-
+		
 	}
 }

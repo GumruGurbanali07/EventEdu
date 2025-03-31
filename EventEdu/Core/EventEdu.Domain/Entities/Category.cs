@@ -9,6 +9,7 @@ namespace EventEdu.Domain.Entities
 {
 	public class Category:BaseEntity
 	{
+		public List<Event> Events { get; set;  }
 		public ICollection<CategoryDetail> CategoryDetail { get; set; } 
 
 	}

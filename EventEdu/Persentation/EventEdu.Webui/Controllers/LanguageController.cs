@@ -5,8 +5,7 @@ using EventEdu.Application.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 namespace EventEdu.Webui.Controllers;
 
-//[ApiController]
-//[Route("api/[controller]")]
+
 public class LanguageController : Controller
 {
 	private readonly ILanguageService _languageService;
@@ -17,7 +16,7 @@ public class LanguageController : Controller
 	}
 
 
-	[HttpGet]
+	
 	public IActionResult Change(string? lang)
 	{
 		if (!string.IsNullOrEmpty(lang))
@@ -29,7 +28,6 @@ public class LanguageController : Controller
 	}
 
 
-	[HttpPost("create")]
 	public async Task<IActionResult> CreateLanguage([FromBody] CreateLanguageDTO languageDTO)
 	{
 		try
@@ -46,7 +44,7 @@ public class LanguageController : Controller
 			return StatusCode(500, "Daxili server xətası: " + ex.Message); 
 		}
 	}
-	[HttpGet("{isoCode}")]
+	
 	public async Task<IActionResult> Get(string isoCode)
 	{
 		try
@@ -60,7 +58,7 @@ public class LanguageController : Controller
 		}
 	}
 
-	[HttpGet("getall")]
+
 	public async Task<IActionResult> GetAll()
 	{
 		try
@@ -74,7 +72,7 @@ public class LanguageController : Controller
 		}
 	}
 
-	[HttpPut("{id}")]
+	
 	public async Task<IActionResult> Update(Guid id, [FromBody] UpdateLanguageDTO languageDTO)
 	{
 		try
@@ -88,7 +86,7 @@ public class LanguageController : Controller
 		}
 	}
 
-	[HttpDelete("{id}")]
+
 	public async Task<IActionResult> SoftDelete(Guid id)
 	{
 		try
@@ -102,7 +100,7 @@ public class LanguageController : Controller
 		}
 	}
 
-	[HttpPost("restore/{id}")]
+	
 	public async Task<IActionResult> Restore(Guid id)
 	{
 		try

@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EventEdu.Webui.Controllers
 {
-	[ApiController]
-	[Route("api/[controller]")]
+	
 	public class SpeakerController : Controller
     {
 		private readonly ISpeakerService _speakerService;
@@ -17,7 +16,6 @@ namespace EventEdu.Webui.Controllers
 			_speakerService = speakerService;
 		}
 
-		[HttpPost("AddSpeakerWithLanguage")]
 		public async Task<IActionResult> AddSpeakerWithLanguage([FromBody] CreateSpeakerDTO createSpeakerDTO)
 		{
 			try
@@ -30,8 +28,7 @@ namespace EventEdu.Webui.Controllers
 				return BadRequest(ex.Message);
 			}
 		}
-		[HttpGet("language/{isoCode}")]
-        public async Task<IActionResult> GetSpeakersByLanguageAsync(string isoCode)
+		public async Task<IActionResult> GetSpeakersByLanguageAsync(string isoCode)
 		{
 			try
 			{
@@ -50,7 +47,6 @@ namespace EventEdu.Webui.Controllers
 			}
 		}
 
-		[HttpPut("{speakerId}")]
 		public async Task<IActionResult> UpdateSpeaker(Guid speakerId, [FromBody] UpdateSpeakerDTO updateSpeakerDTO)
 		{
 			if (updateSpeakerDTO == null)
@@ -62,7 +58,6 @@ namespace EventEdu.Webui.Controllers
 			return Ok("Speaker successfully updated.");
 		}
 
-		[HttpDelete("soft-delete/{speakerId}")]
 		public async Task<IActionResult> SoftDeleteSpeaker(Guid speakerId)
 		{
 			try
@@ -76,8 +71,7 @@ namespace EventEdu.Webui.Controllers
 			}
 		}
 
-		
-		[HttpPut("restore/{speakerId}")]
+
 		public async Task<IActionResult> RestoreSpeaker(Guid speakerId)
 		{
 			try

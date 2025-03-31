@@ -28,6 +28,12 @@ namespace EventEdu.Persistence.Repository
 			return entry.State == EntityState.Added;
 		}
 
+		public async Task<bool> AddRangeAsync(List<T> model)
+		{
+		  await Table.AddRangeAsync(model);
+			return true;
+		}
+
 		public async Task<bool> Remove(string id)
 		{
 			T values = await Table.FirstOrDefaultAsync(x => x.Id == Guid.Parse(id));
@@ -50,5 +56,12 @@ namespace EventEdu.Persistence.Repository
 			EntityEntry entry = Table.Update(model);
 			return entry.State == EntityState.Modified;
 		}
-    }
+
+		public bool UpdateRange(List<T> model)
+		{
+			Table.UpdateRange(model);
+
+			return true;	
+		}
+	}
 }

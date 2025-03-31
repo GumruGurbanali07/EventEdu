@@ -1,116 +1,123 @@
 ﻿using EventEdu.Application.DTOs.Category;
 using EventEdu.Application.Services;
-using EventEdu.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.Extensions.Localization;
-using System.Globalization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
-    //[ApiController]
-    //[Route("api/[controller]")]
-    [Area("Admin")]
-    public class CategoryController : Controller
-    {
-        private readonly ICategoryService _categoryService;
+	[Area("Admin")]
+	public class CategoryController : Controller
+	{
+		private readonly ICategoryService _categoryService;
+		private readonly ILanguageService _languageService;
 
-        public CategoryController(ICategoryService categoryService)
-        {
-            _categoryService = categoryService;
-        }
+		public CategoryController(ICategoryService categoryService, ILanguageService languageService)
+		{
+			_categoryService = categoryService;
+			_languageService = languageService;
+		}
 
-        //[HttpGet("GetCategories")]
-        [HttpGet]
-        public async Task<IActionResult> GetCategoriesByLanguage(string isoCode)
-        {
-            var categories = await _categoryService.GetCategoriesByLanguageAsync(isoCode);
-            return Ok(categories);
-        }
+		[HttpGet]
+		public async Task<IActionResult> Index()
+		{
+			var categories = await _categoryService.GetCategoriesAllAsync();
+			return View(categories);
+		}
 
-        //[HttpGet]
-        //public async Task<IActionResult> Index(string lang)
-        //{
-        //	var categories = await _categoryService.GetCategoriesByLanguageAsync(lang);
-        //	return View(categories);
-        //}
-        //[HttpGet("GetCategoryById")]
-        [HttpGet]
-        public async Task<IActionResult> GetCategoryByIdAndLanguage(Guid categoryId, string isoCode)
-        {
-            var category = await _categoryService.GetCategoryByIdAndLanguageAsync(categoryId, isoCode);
+		[HttpGet]
+		public async Task<IActionResult> Create()
+		{
+			var getLanguage = await _languageService.GetLanguagesAsync();
+			ViewBag.Language = getLanguage.Select(a => new SelectListItem
+			{
+				Text = a.Name,
+				Value = a.Id.ToString()
+			});
+			return View();
+		}
 
-            if (category == null)
-                return NotFound("Category not found");
+		[HttpPost]
+		public async Task<IActionResult> Create(CreateCategoryDTO createCategoryDTO)
+		{
+			if (!ModelState.IsValid)
+			{
+				var getLanguage = await _languageService.GetLanguagesAsync();
+				ViewBag.Language = getLanguage.Select(a => new SelectListItem
+				{
+					Text = a.Name,
+					Value = a.Id.ToString()
+				});
+				return View(createCategoryDTO);
+			}
 
-            return Ok(category);
-        }
+			try
+			{
+				await _categoryService.AddCategoryWithLanguageAsync(createCategoryDTO);
+				return RedirectToAction(nameof(Index));
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError(string.Empty, ex.Message);
+				return View(createCategoryDTO);
+			}
+		}
 
-        //[HttpPost("AddCategory")]
-        [HttpPost]
-        public async Task<IActionResult> AddCategoryWithLanguage([FromBody] CreateCategoryDTO createCategoryDTO)
-        {
-            if (createCategoryDTO == null)
-            {
-                return BadRequest("Category data is required.");
-            }
+		[HttpPost]
+		public async Task<IActionResult> Update(Guid categoryId, UpdateCategoryDTO updateCategoryDTO)
+		{
+			if (!ModelState.IsValid)
+			{
+				var getLanguage = await _languageService.GetLanguagesAsync();
+				ViewBag.Language = getLanguage.Select(a => new SelectListItem
+				{
+					Text = a.Name,
+					Value = a.Id.ToString()
+				});
+				return View(updateCategoryDTO);
+			}
 
-            try
-            {
-                await _categoryService.AddCategoryWithLanguageAsync(createCategoryDTO);
-                return Ok("Category added successfully.");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Error: {ex.Message}");
-            }
-        }
+			try
+			{
+				await _categoryService.UpdateCategoryAsync(categoryId, updateCategoryDTO);
 
-        //[HttpPut("{categoryId}")]
-        [HttpPost]
-        public async Task<IActionResult> UpdateCategory(Guid categoryId, [FromBody] UpdateCategoryDTO updateCategoryDTO)
-        {
-            try
-            {
-                await _categoryService.UpdateCategoryAsync(categoryId, updateCategoryDTO);
-                return Ok(new { message = "Category updated successfully." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
+				// ✅ TempData ilə uğurlu mesajı saxlayırıq ki, GET sorğusunda göstərək.
+				TempData["SuccessMessage"] = "Category successfully updated!";
 
-            }
-        }
-        //[HttpDelete("soft-delete/{categoryId}")]
-        [HttpPost]
-        public async Task<IActionResult> SoftDeleteCategory(Guid categoryId)
-        {
-            try
-            {
-                await _categoryService.SoftDeleteCategoryAsync(categoryId);
-                return Ok(new { message = "Category soft deleted successfully." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
+				return RedirectToAction(nameof(Update), new { id = categoryId }); // PRG Pattern istifadə edirik
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError(string.Empty, ex.Message);
+				return View(updateCategoryDTO);
+			}
+		}
 
-        //[HttpPut("restore/{categoryId}")]
-        [HttpPost]
-        public async Task<IActionResult> RestoreCategory(Guid categoryId)
-        {
-            try
-            {
-                await _categoryService.RestoreCategoryAsync(categoryId);
-                return Ok(new { message = "Category restored successfully." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
+		[HttpGet]
+		public async Task<IActionResult> Update(string Id)
+		{
+			var category = await _categoryService.GetCategoryById(Guid.Parse(Id));
+			if (category == null) return NotFound();
 
+			var getLanguage = await _languageService.GetLanguagesAsync();
+			ViewBag.Language = getLanguage.Select(a => new SelectListItem
+			{
+				Text = a.Name,
+				Value = a.Id.ToString()
+			});
 
-    }
+			var uc = new UpdateCategoryDTO
+			{
+				CategoryId = category.CategoryId.ToString(),
+				CategoryName = category.CategoryName,
+				LanguageId = category.LanguageId,
+				ImagePath = category.ImagePath
+			};
+
+			// ✅ TempData-dan mesajı alıb göstəririk.
+			ViewBag.SuccessMessage = TempData["SuccessMessage"];
+
+			return View(uc);
+		}
+
+	}
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventEdu.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250313072501_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20250328084753_mig1")]
+    partial class mig1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -155,6 +155,10 @@ namespace EventEdu.Persistence.Migrations
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -899,7 +903,7 @@ namespace EventEdu.Persistence.Migrations
             modelBuilder.Entity("EventEdu.Domain.Entities.Event", b =>
                 {
                     b.HasOne("EventEdu.Domain.Entities.Category", "Category")
-                        .WithMany()
+                        .WithMany("Events")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1141,6 +1145,8 @@ namespace EventEdu.Persistence.Migrations
             modelBuilder.Entity("EventEdu.Domain.Entities.Category", b =>
                 {
                     b.Navigation("CategoryDetail");
+
+                    b.Navigation("Events");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Event", b =>

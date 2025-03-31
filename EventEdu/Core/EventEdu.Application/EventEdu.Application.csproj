@@ -6,14 +6,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="DTOs\Feature\" />
+    <Compile Remove="Token\**" />
     <Compile Remove="Validator\**" />
+    <EmbeddedResource Remove="Token\**" />
     <EmbeddedResource Remove="Validator\**" />
+    <None Remove="Token\**" />
     <None Remove="Validator\**" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Repository\Category\" />
     <Folder Include="Repository\CategoryDetail\" />
-    <Folder Include="Token\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Validators\HeroSection\CreateHeroSectionDTOValidator.cs" />

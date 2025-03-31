@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EventEdu.Application.DTOs.Feedback;
 
 namespace EventEdu.Application.Profiles
 {
@@ -66,6 +67,7 @@ namespace EventEdu.Application.Profiles
            .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
            .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
 
+
 			//Speaker
 			CreateMap<Speaker, CreateSpeakerDTO>().ReverseMap();
 			CreateMap<Speaker, UpdateSpeakerDTO>().ReverseMap();
@@ -77,6 +79,7 @@ namespace EventEdu.Application.Profiles
 		   .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
 		   .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
 
+
 			//Event
 			CreateMap<Event, CreateEventDTO>().ReverseMap();
 			CreateMap<Event, UpdateEventDTO>().ReverseMap();
@@ -87,6 +90,22 @@ namespace EventEdu.Application.Profiles
 		    .ForMember(dest => dest.Id, opt => opt.Ignore())
 			.ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
 			.ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+            //Feedback
+            CreateMap<FeedBack,AddFeedBackDTO >().ReverseMap();
+            CreateMap<FeedBack, UpdateFeedbackDTO>().ReverseMap();
+            CreateMap<FeedBack, GetFeedbackDTO>().ReverseMap();
+            CreateMap<FeedBackDetail, AddFeedBackDTO>().ReverseMap();
+            CreateMap<FeedBackDetail, GetFeedbackDTO>().ReverseMap();
+			CreateMap<UpdateFeedbackDTO, FeedBackDetail>()
+	       .ForMember(dest => dest.Id, opt => opt.Ignore())
+	       .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
+	       .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+
+
+
+
 
 
 		}

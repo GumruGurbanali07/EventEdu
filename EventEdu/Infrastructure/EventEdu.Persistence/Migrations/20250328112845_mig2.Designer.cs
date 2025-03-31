@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventEdu.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250315071730_Mig_2")]
-    partial class Mig_2
+    [Migration("20250328112845_mig2")]
+    partial class mig2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,6 +33,10 @@ namespace EventEdu.Persistence.Migrations
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -58,10 +62,6 @@ namespace EventEdu.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.PrimitiveCollection<string>("Features")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -122,6 +122,10 @@ namespace EventEdu.Persistence.Migrations
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -348,16 +352,12 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("ImagePath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -367,7 +367,7 @@ namespace EventEdu.Persistence.Migrations
                     b.ToTable("HeroSections");
                 });
 
-            modelBuilder.Entity("EventEdu.Domain.Entities.HeroSectionDetail", b =>
+            modelBuilder.Entity("EventEdu.Domain.Entities.HeroSectionDetails", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -636,8 +636,20 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -665,6 +677,10 @@ namespace EventEdu.Persistence.Migrations
 
                     b.Property<Guid>("LanguageId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SponsorDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("SponsorId")
                         .HasColumnType("uniqueidentifier");
@@ -891,7 +907,7 @@ namespace EventEdu.Persistence.Migrations
             modelBuilder.Entity("EventEdu.Domain.Entities.Event", b =>
                 {
                     b.HasOne("EventEdu.Domain.Entities.Category", "Category")
-                        .WithMany()
+                        .WithMany("Events")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -998,7 +1014,7 @@ namespace EventEdu.Persistence.Migrations
                     b.Navigation("Language");
                 });
 
-            modelBuilder.Entity("EventEdu.Domain.Entities.HeroSectionDetail", b =>
+            modelBuilder.Entity("EventEdu.Domain.Entities.HeroSectionDetails", b =>
                 {
                     b.HasOne("EventEdu.Domain.Entities.HeroSection", "HeroSection")
                         .WithMany("HeroSectionDetails")
@@ -1045,7 +1061,7 @@ namespace EventEdu.Persistence.Migrations
                         .IsRequired();
 
                     b.HasOne("EventEdu.Domain.Entities.Sponsor", "Sponsor")
-                        .WithMany()
+                        .WithMany("SponsorsDetail")
                         .HasForeignKey("SponsorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1133,6 +1149,8 @@ namespace EventEdu.Persistence.Migrations
             modelBuilder.Entity("EventEdu.Domain.Entities.Category", b =>
                 {
                     b.Navigation("CategoryDetail");
+
+                    b.Navigation("Events");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Event", b =>
@@ -1173,6 +1191,8 @@ namespace EventEdu.Persistence.Migrations
             modelBuilder.Entity("EventEdu.Domain.Entities.Sponsor", b =>
                 {
                     b.Navigation("EventSponsors");
+
+                    b.Navigation("SponsorsDetail");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Subscription", b =>

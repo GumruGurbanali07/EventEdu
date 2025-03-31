@@ -10,8 +10,6 @@ namespace EventEdu.Application.DTOs.User
 {
     public class UserRegisterDTO
     {
-        public string? ImagePath { get; set; }
-        public IFormFile? ImageFile { get; set; }
         public bool RememberMe { get; set; }
         public string Firstname { get; set; }
 		public string Lastname { get; set; }

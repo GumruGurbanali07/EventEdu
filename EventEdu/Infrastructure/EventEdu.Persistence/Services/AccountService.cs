@@ -43,7 +43,7 @@ namespace EventEdu.Persistence.Services
             }
 
             var personalData = _mapper.Map<PersonalData>(addPersonalData);
-            personalData.Id = Guid.NewGuid();
+            //personalData.Id = Guid.NewGuid();
             await _context.AddAsync(personalData);
             _context.SaveChanges();
 

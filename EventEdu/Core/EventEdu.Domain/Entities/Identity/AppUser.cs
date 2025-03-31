@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,5 @@ namespace EventEdu.Domain.Entities.Identity
 		public string? RefreshToken { get; set; }
 		public DateTime RefreshTokenDate { get; set; }
 		public ICollection<FeedBack>? FeedBacks { get; set; }
-	}
+    }
 }

@@ -14,5 +14,5 @@ namespace EventEdu.Application.Services
 		Task<SignInResult> LoginAsync(UserLoginDTO userLoginDTO);
 		Task LogOutAsync();
 
-	}
+    }
 }

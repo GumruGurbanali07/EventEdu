@@ -19,6 +19,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
+using EventEdu.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventEdu.Persistence.Services
 {
@@ -31,10 +33,11 @@ namespace EventEdu.Persistence.Services
         private readonly IMapper _mapper;
         private readonly IHostingEnvironment _environment;
         private readonly IFileService _fileService;
+        private readonly AppDbContext _context;
 
         public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
             IMapper mapper, RoleManager<IdentityRole> roleManager, 
-            IHostingEnvironment environment, IFileService fileService)
+            IHostingEnvironment environment, IFileService fileService, AppDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -42,6 +45,7 @@ namespace EventEdu.Persistence.Services
             _roleManager = roleManager;
             _environment = environment;
             _fileService = fileService;
+            _context = context;
         }
 
         public async Task<IdentityResult> RegisterAsync(UserRegisterDTO registerDTO)
@@ -110,23 +114,5 @@ namespace EventEdu.Persistence.Services
             }
         }
 
-        //public async Task<IActionResult> UploadPhotoAsync(UserRegisterDTO uploadPhoto)
-        //{
-        //    if (!uploadPhoto.ImageFile.CheckFileType("image"))
-        //    {
-        //        throw new Exception("Invalid file type. Please upload an image.");
-        //    }
-
-        //    if (!uploadPhoto.ImageFile.CheckFileSize(200))
-        //    {
-        //        throw new Exception("File size is too large. Maximum allowed size is 200MB.");
-        //    }
-
-        //    string webRootPath = _environment.WebRootPath;
-        //    string imagePath = await _fileService.SaveFilesAsync(uploadPhoto.ImageFile, webRootPath, "client", "assets", "img", "AdminProfilePhotos");
-
-        //    uploadPhoto.ImagePath = imagePath;
-
-        //}
     }
 }

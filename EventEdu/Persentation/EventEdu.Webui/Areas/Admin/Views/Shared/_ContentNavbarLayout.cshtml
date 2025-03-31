@@ -3,10 +3,8 @@
   TempData.Keep();
   Layout = "_CommonMasterLayout";
 
-  ViewData["contentNavbar"] = true;
 
   @* Display elements *@
-  ViewData["isNavbar"] = (ViewData["isNavbar"] ??= true);
   ViewData["isMenu"] = (ViewData["isMenu"] ??= true);
   ViewData["isFlex"] = (ViewData["isFlex"] ??= false);
   ViewData["isFooter"] = (ViewData["isFooter"] ??= true);
@@ -14,7 +12,6 @@
 
 
   @*HTML Classes *@
-  ViewData["navbarDetached"] = (ViewData["navbarDetached"] ?? "navbar-detached");
 
   @*Content classes *@
   ViewData["container"] = (ViewData["container"] ?? "container-xxl");
@@ -43,16 +40,10 @@
 
     <!-- Layout page -->
     <div class="layout-page">
-      <!-- Navbar -->
-      @if (@ViewData["isNavbar"] != null && Convert.ToBoolean(@ViewData["isNavbar"]))
-      {
-        @await Html.PartialAsync("Sections/Navbar/_Navbar")
-      }
-      <!-- / Navbar -->
 
 
       <!-- Content wrapper -->
-      <div class="content-wrapper">
+      <div class="content-wrapper mt-5">
 
         <!-- Content -->
         <div class='@ViewData["container"] @(Convert.ToBoolean(@ViewData["isFlex"]) ? "d-flex align-items-stretch flex-grow-1 p-0" : "flex-grow-1 container-p-y")'>

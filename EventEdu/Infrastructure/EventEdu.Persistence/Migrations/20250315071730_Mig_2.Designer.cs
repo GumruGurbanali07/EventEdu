@@ -4,6 +4,7 @@ using EventEdu.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventEdu.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250315071730_Mig_2")]
+    partial class Mig_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,10 +34,6 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ImagePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -43,7 +42,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AboutSections", (string)null);
+                    b.ToTable("AboutSections");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.AboutSectionDetail", b =>
@@ -59,6 +58,10 @@ namespace EventEdu.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.PrimitiveCollection<string>("Features")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -81,7 +84,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("AboutSectionDetails", (string)null);
+                    b.ToTable("AboutSectionDetails");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Category", b =>
@@ -101,7 +104,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.CategoryDetail", b =>
@@ -135,7 +138,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("CategoryDetails", (string)null);
+                    b.ToTable("CategoryDetails");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Event", b =>
@@ -170,7 +173,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Events", (string)null);
+                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.EventDetail", b =>
@@ -208,7 +211,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("EventDetails", (string)null);
+                    b.ToTable("EventDetails");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.EventSpeaker", b =>
@@ -235,7 +238,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("SpeakerId");
 
-                    b.ToTable("EventSpeakers", (string)null);
+                    b.ToTable("EventSpeakers");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.EventSponsor", b =>
@@ -262,7 +265,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("SponsorId");
 
-                    b.ToTable("EventSponsors", (string)null);
+                    b.ToTable("EventSponsors");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.FeedBack", b =>
@@ -300,7 +303,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("SubscriptionId");
 
-                    b.ToTable("FeedBacks", (string)null);
+                    b.ToTable("FeedBacks");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.FeedBackDetail", b =>
@@ -333,7 +336,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("FeedBackDetails", (string)null);
+                    b.ToTable("FeedBackDetails");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.HeroSection", b =>
@@ -345,22 +348,26 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ImagePath")
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("HeroSections", (string)null);
+                    b.ToTable("HeroSections");
                 });
 
-            modelBuilder.Entity("EventEdu.Domain.Entities.HeroSectionDetails", b =>
+            modelBuilder.Entity("EventEdu.Domain.Entities.HeroSectionDetail", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -395,7 +402,37 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("HeroSectionDetails", (string)null);
+                    b.ToTable("HeroSectionDetails");
+                });
+
+            modelBuilder.Entity("EventEdu.Domain.Entities.Identity.AppRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<int>("RoleModel")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Identity.AppUser", b =>
@@ -454,9 +491,6 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<DateTime>("RefreshTokenDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("RememberMe")
-                        .HasColumnType("bit");
-
                     b.Property<string>("ResetPassword")
                         .HasColumnType("nvarchar(max)");
 
@@ -481,71 +515,6 @@ namespace EventEdu.Persistence.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("EventEdu.Domain.Entities.Identity.PersonalData", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Birthday")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Firstname")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Gender")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Lastname")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PersonalDatas", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Language", b =>
@@ -577,7 +546,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Languages", (string)null);
+                    b.ToTable("Languages");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Speaker", b =>
@@ -617,7 +586,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Speakers", (string)null);
+                    b.ToTable("Speakers");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.SpeakerDetail", b =>
@@ -655,7 +624,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("SpeakerId");
 
-                    b.ToTable("SpeakerDetails", (string)null);
+                    b.ToTable("SpeakerDetails");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Sponsor", b =>
@@ -667,20 +636,8 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImagePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -691,7 +648,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sponsors", (string)null);
+                    b.ToTable("Sponsors");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.SponsorDetail", b =>
@@ -709,10 +666,6 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<Guid>("LanguageId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("SponsorDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("SponsorId")
                         .HasColumnType("uniqueidentifier");
 
@@ -729,7 +682,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("SponsorId");
 
-                    b.ToTable("SponsorDetails", (string)null);
+                    b.ToTable("SponsorDetails");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.SubsEvent", b =>
@@ -756,7 +709,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("SubscriptionId");
 
-                    b.ToTable("SubsEvents", (string)null);
+                    b.ToTable("SubsEvents");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Subscription", b =>
@@ -788,34 +741,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subscriptions", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("Subscriptions");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1072,7 +998,7 @@ namespace EventEdu.Persistence.Migrations
                     b.Navigation("Language");
                 });
 
-            modelBuilder.Entity("EventEdu.Domain.Entities.HeroSectionDetails", b =>
+            modelBuilder.Entity("EventEdu.Domain.Entities.HeroSectionDetail", b =>
                 {
                     b.HasOne("EventEdu.Domain.Entities.HeroSection", "HeroSection")
                         .WithMany("HeroSectionDetails")
@@ -1119,7 +1045,7 @@ namespace EventEdu.Persistence.Migrations
                         .IsRequired();
 
                     b.HasOne("EventEdu.Domain.Entities.Sponsor", "Sponsor")
-                        .WithMany("SponsorsDetail")
+                        .WithMany()
                         .HasForeignKey("SponsorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1150,7 +1076,7 @@ namespace EventEdu.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("EventEdu.Domain.Entities.Identity.AppRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1177,7 +1103,7 @@ namespace EventEdu.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("EventEdu.Domain.Entities.Identity.AppRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1247,8 +1173,6 @@ namespace EventEdu.Persistence.Migrations
             modelBuilder.Entity("EventEdu.Domain.Entities.Sponsor", b =>
                 {
                     b.Navigation("EventSponsors");
-
-                    b.Navigation("SponsorsDetail");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Subscription", b =>

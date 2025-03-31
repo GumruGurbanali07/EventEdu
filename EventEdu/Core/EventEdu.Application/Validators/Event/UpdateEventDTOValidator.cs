@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Application.Validators.Event
 {
-	public class CreateEventDTOValidator : AbstractValidator<CreateEventDTO>
+	public class UpdateEventDTOValidator : AbstractValidator<UpdateEventDTO>
 	{
-		public CreateEventDTOValidator()
+		public UpdateEventDTOValidator()
 		{
 			RuleFor(x => x.Title).NotEmpty().WithMessage("Title is required.");
 			RuleFor(x => x.Description).NotEmpty().WithMessage("Description is required.");

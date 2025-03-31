@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EventEdu.Application.DTOs.Category;
+using EventEdu.Application.DTOs.Event;
 using EventEdu.Application.DTOs.Language;
 using EventEdu.Application.DTOs.Speaker;
 using EventEdu.Application.DTOs.AboutSection;

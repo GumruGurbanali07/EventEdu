@@ -1,4 +1,5 @@
 ﻿using EventEdu.Application.Validators.Category;
+using EventEdu.Application.Validators.Event;
 using EventEdu.Application.Validators.Language;
 using EventEdu.Application.Validators.Speaker;
 using FluentValidation;
@@ -23,6 +24,9 @@ namespace EventEdu.Application
 
 			services.AddValidatorsFromAssemblyContaining<CreateSpeakerDTOValidator>();
 			services.AddValidatorsFromAssemblyContaining<UpdateSpeakerDTOValidator>();
+
+			services.AddValidatorsFromAssemblyContaining<CreateEventDTOValidator>();
+			services.AddValidatorsFromAssemblyContaining<UpdateEventDTOValidator>();
 
 
 

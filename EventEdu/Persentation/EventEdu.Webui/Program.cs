@@ -39,7 +39,7 @@ builder.Services.AddLocalization();
 builder.Services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizationFactory>();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.Zero;
+    options.IdleTimeout = TimeSpan.FromDays(7);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true; // For GDPR compliance
 });

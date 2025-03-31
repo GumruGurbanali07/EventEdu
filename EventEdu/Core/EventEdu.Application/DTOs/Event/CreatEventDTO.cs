@@ -15,8 +15,8 @@ namespace EventEdu.Application.DTOs.Event
         public string CategoryName { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public string FormattedStartDate => StartDate.ToString("yyyy-MM-dd HH:mm");
-        public string FormattedEndDate => EndDate.ToString("yyyy-MM-dd HH:mm");
+        //public string FormattedStartDate => StartDate.ToString("yyyy-MM-dd HH:mm");
+        //public string FormattedEndDate => EndDate.ToString("yyyy-MM-dd HH:mm");
         public Guid LanguageId { get; set; }
     }
 }

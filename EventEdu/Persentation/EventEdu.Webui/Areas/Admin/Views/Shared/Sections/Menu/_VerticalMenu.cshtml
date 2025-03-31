@@ -164,6 +164,29 @@
         </li>
 
         <!-- Pages -->
+        <li class='menu-item@(currentPage.StartsWith("/User") ? " active open" : "")'>
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ri-layout-left-line"></i>
+                <div>Account Settings</div>
+            </a>
+            <ul class="menu-sub">
+                <li class='menu-item@(currentPage == "/User/Login" ? " active" : "")'>
+                    <a asp-controller="User" asp-action="LogOut" class="menu-link">
+                        <div>LogOut</div>
+                    </a>
+                </li>
+                @* <li class='menu-item@(currentPage == "/User/AccountSettingsNotifications" ? " active" : "")'>
+                    <a asp-controller="Pages" asp-action="AccountSettingsNotifications" class="menu-link">
+                        <div>Notifications</div>
+                    </a>
+                </li>
+                <li class='menu-item@(currentPage == "/User/AccountSettingsConnections" ? " active" : "")'>
+                    <a asp-controller="Pages" asp-action="AccountSettingsConnections" class="menu-link">
+                        <div>Connections</div>
+                    </a>
+                </li> *@
+            </ul>
+        </li>
 @*         <li class='menu-item@(currentPage.StartsWith("/Pages/Misc") ? " active open" : "")'>
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons ri-box-3-line"></i>

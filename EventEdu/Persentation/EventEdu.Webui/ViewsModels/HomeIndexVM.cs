@@ -1,4 +1,6 @@
-﻿using EventEdu.Domain.Entities;
+﻿using EventEdu.Application.DTOs.AboutSection;
+using EventEdu.Application.DTOs.Sponsor;
+using EventEdu.Domain.Entities;
 using System.Collections.Generic;
 
 namespace EventEdu.Webui.ViewsModels
@@ -7,5 +9,7 @@ namespace EventEdu.Webui.ViewsModels
 	{
 		public List<HeroSection> HeroSections { get; set; }
 		public List<Category> Categories { get; set; }
-	}
+        public List<GetSponsorDTO> Sponsors { get; set; }
+        public List<GetAboutSectionDTO> AboutSection { get; set; }
+    }
 }

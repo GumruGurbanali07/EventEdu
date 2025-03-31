@@ -38,7 +38,7 @@
                             <label asp-for="Email">Email</label>
                              <span class="form-text text-danger" asp-validation-for="Email"></span>
                         </div>
-                        <div class="mb-5 form-password-toggle">
+                        <div class="form-password-toggle">
                             <div class="input-group input-group-merge">
                                 <div class="form-floating form-floating-outline">
                                     <input type="password" id="password" class="form-control" asp-for="Password" name="Password" value="@ViewBag.RememberMePassword" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
@@ -49,14 +49,17 @@
                             </div>
                         </div>
 
-                        <div class="mb-5 py-2">
-                            <div class="form-check mb-0">
-                                <input style="height:20px !important;" class="form-check-input" type="checkbox" id="terms-conditions" asp-for="RememberMe" name="RememberMe">
-                                <label class="form-check-label" asp-for="RememberMe">
-                                    <span>Remember Me</span>
-                                </label>
+                        @if (@ViewBag.RememberMeEmail is null)
+                        {
+                            <div class="mb-5 py-2">
+                                <div class="form-check mb-0">
+                                    <input style="height:20px !important;" class="form-check-input" type="checkbox" id="terms-conditions" asp-for="RememberMe" name="RememberMe">
+                                    <label class="form-check-label" asp-for="RememberMe">
+                                        <span>Remember Me</span>
+                                    </label>
+                                </div>
                             </div>
-                        </div>
+                     }
                         <button type="submit" class="btn btn-primary d-grid w-100 mb-5">
                             Sign in
                         </button>

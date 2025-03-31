@@ -72,7 +72,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
             if(Request.Cookies.TryGetValue("RememberMeCredentials", out string rememberMeValue))
             {
                 var values = rememberMeValue.Split('|');
-                if(values.Length == 2)
+                if(values.Length == 3)
                 {
                     ViewBag.RememberMeEmail = values[0];
                     ViewBag.RememberMePassword = values[1];
@@ -217,7 +217,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         {
             HttpContext.Session.Clear();
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            Response.Cookies.Delete("RememberMeCredentials");
+            //Response.Cookies.Delete("RememberMeCredentials");
 
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "User");

@@ -13,7 +13,6 @@
       <ul class="nav nav-pills flex-column flex-md-row mb-6 gap-2 gap-lg-0">
         <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class="ri-group-line me-1_5"></i>Account</a></li>
         <li class="nav-item"><a class="nav-link" href="AccountSettingsNotifications"><i class="ri-notification-4-line me-1_5"></i>Notifications</a></li>
-        <li class="nav-item"><a class="nav-link" href="AccountSettingsConnections"><i class="ri-link-m me-1_5"></i>Connections</a></li>
       </ul>
     </div>
     <div class="card mb-6">
@@ -23,7 +22,7 @@
           <img src="~/admin/assets/img/avatars/1.png" alt="user-avatar" class="d-block w-px-100 h-px-100 rounded" id="uploadedAvatar" />
           <div class="button-wrapper">
             <label for="upload" class="btn btn-sm btn-primary me-3 mb-4" tabindex="0">
-              <span class="d-none d-sm-block">Upload new photo</span>
+              <a asp-controller="Account" asp-action="UploadPhoto" class="d-none d-sm-block">Upload new photo</a>
               <i class="ri-upload-2-line d-block d-sm-none"></i>
               <input type="file" id="upload" class="account-file-input" hidden accept="image/png, image/jpeg" />
             </label>

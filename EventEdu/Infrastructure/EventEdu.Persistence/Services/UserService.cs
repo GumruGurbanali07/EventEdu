@@ -4,12 +4,14 @@ using EventEdu.Application.DTOs.User;
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
 using EventEdu.Domain.Entities.Identity;
+using EventEdu.Persistence.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -27,13 +29,19 @@ namespace EventEdu.Persistence.Services
         private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMapper _mapper;
+        private readonly IHostingEnvironment _environment;
+        private readonly IFileService _fileService;
 
-        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, RoleManager<IdentityRole> roleManager)
+        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
+            IMapper mapper, RoleManager<IdentityRole> roleManager, 
+            IHostingEnvironment environment, IFileService fileService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
             _roleManager = roleManager;
+            _environment = environment;
+            _fileService = fileService;
         }
 
         public async Task<IdentityResult> RegisterAsync(UserRegisterDTO registerDTO)
@@ -102,6 +110,23 @@ namespace EventEdu.Persistence.Services
             }
         }
 
-       
+        //public async Task<IActionResult> UploadPhotoAsync(UserRegisterDTO uploadPhoto)
+        //{
+        //    if (!uploadPhoto.ImageFile.CheckFileType("image"))
+        //    {
+        //        throw new Exception("Invalid file type. Please upload an image.");
+        //    }
+
+        //    if (!uploadPhoto.ImageFile.CheckFileSize(200))
+        //    {
+        //        throw new Exception("File size is too large. Maximum allowed size is 200MB.");
+        //    }
+
+        //    string webRootPath = _environment.WebRootPath;
+        //    string imagePath = await _fileService.SaveFilesAsync(uploadPhoto.ImageFile, webRootPath, "client", "assets", "img", "AdminProfilePhotos");
+
+        //    uploadPhoto.ImagePath = imagePath;
+
+        //}
     }
 }

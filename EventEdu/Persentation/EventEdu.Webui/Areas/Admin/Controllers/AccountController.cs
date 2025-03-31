@@ -22,7 +22,8 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
             return View();
         }
 
-        public IActionResult Connections()
+        [HttpPost]
+        public IActionResult UploadPhoto()
         {
             return View();
         }

@@ -7,6 +7,9 @@ namespace EventEdu.Application.Services
 	public interface ILanguageService
 	{
 		Task<Language> CreateAsync(CreateLanguageDTO languageDTO);
+		Task<List<Language>> GetLanguagesAsync();
+		Task<Language> GetLanguageById(Guid id);
+		Task<LanguageGetDTO> GetLanguageAsync(string isoCode);
 		Task<List<LanguageGetDTO>> GetLanguagesAsync();
 		Task<LanguageGetDTO> GetLanguageAsync(string IsoCode);
 		Task UpdateLanguageAsync(Guid id, UpdateLanguageDTO updateLanguageDTO);

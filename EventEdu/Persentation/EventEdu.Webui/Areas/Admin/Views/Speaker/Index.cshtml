@@ -8,7 +8,7 @@
 <!-- Basic Bootstrap Table -->
 <div class="card">
     <h5 class="card-header">Speaker Table</h5>
-    <a asp-controller="Speaker" asp-action="AddSpeakerWithLanguage" class="btn btn-primary mb-3">Add New Speaker</a>
+    <a asp-controller="Speaker" asp-action="Create" class="btn btn-primary mb-3">Add New Speaker</a>
 
     <div class="table-responsive text-nowrap">
         <table class="table">
@@ -56,10 +56,10 @@
                                 <div class="dropdown">
                                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line"></i></button>
                                     <div class="dropdown-menu">
-                                        <form asp-controller="Speaker" asp-action="EditSpeaker" asp-route-id="@Speaker.Id" method="post">
+                                        <form asp-controller="Speaker" asp-action="Edit" asp-route-id="@Speaker.Id" method="get">
                                             <button type="submit" class="dropdown-item"><i class="ri-pencil-line me-2"></i>Edit</button>
                                         </form>
-                                        <form asp-controller="Speaker" asp-action="DeleteSpeaker" asp-route-id="@Speaker.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this speaker?');">
+                                        <form asp-controller="Speaker" asp-action="Delete" asp-route-id="@Speaker.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this speaker?');">
                                             <button type="submit" class="dropdown-item"><i class="ri-delete-bin-6-line me-2"></i> Delete</button>
                                         </form>
                                     </div>

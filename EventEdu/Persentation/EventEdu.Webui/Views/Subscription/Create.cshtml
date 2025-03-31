@@ -1,0 +1,54 @@
+﻿@{
+    var message = TempData["Error"];
+}
+
+
+
+
+@using EventEdu.Application.DTOs.Subscription
+@model  SubscribeDTO 
+
+<form asp-area="Admin" asp-controller="Subscription" asp-action="Create" method="post">
+
+
+
+
+
+    <!-- Category Name (inside CategoryDetails) -->
+    <div>
+        <label asp-for="FirstName" class="form-label">Category Name</label>
+        <input type="text" asp-for="FirstName" class="form-control" placeholder="Enter FirstName ">
+        <span class="form-text text-danger" asp-validation-for="FirstName"></span>
+    </div>
+    <div>
+        <label asp-for="LastName" class="form-label">Upload Files</label>
+        <input type="text" asp-for="LastName" class="form-control" placeholder="Upload file">
+        <span class="form-text text-danger" asp-validation-for="LastName"></span>
+    </div>
+    <div>
+        <label asp-for="Email" class="form-label">Upload Files</label>
+        <input type="email" asp-for="Email" class="form-control" placeholder="Upload file">
+        <span class="form-text text-danger" asp-validation-for="Email"></span>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary mt-3">Save</button>
+    </div>
+
+</form>
+
+
+@if (!string.IsNullOrEmpty(message as string))
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Toastify({
+                text: @Json.Serialize(message), 
+                duration: 3000,
+                gravity: "top", // "top" və ya "bottom"
+                position: "right", // "left", "center" və ya "right"
+                backgroundColor: "linear-gradient(to right, #FF0000 )",
+            }).showToast();
+        });
+    </script>
+}

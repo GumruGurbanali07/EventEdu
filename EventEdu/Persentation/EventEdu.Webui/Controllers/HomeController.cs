@@ -1,12 +1,13 @@
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
 using EventEdu.Webui.ViewsModels;
+using EventEdu.Webui.Areas.Admin.Controllers;
+using EventEdu.Webui.ViewsModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 
 namespace EventEdu.Webui.Controllers;
-//[ApiController]
-//[Route("api/[controller]")]
+
 public class HomeController : Controller
 {
 	private readonly ILogger<HomeController> _logger;
@@ -35,6 +36,17 @@ public class HomeController : Controller
 
         ViewBag.Localizer = _localizer;
         ViewBag.Categories = categories;
+		var categories = await _categoryService.GetCategoriesByLanguageAsync(lang);
+		
+		ViewBag.Localizer = _localizer ;
+
+
+		var vm = new HomeIndexVM()
+		{
+			Categories = categories.Item2
+
+		};
+
 
         // HomeIndexVM modelini doldururuq
         var viewModel = new HomeIndexVM
@@ -45,6 +57,8 @@ public class HomeController : Controller
 
         return View(viewModel);
     }
+        return View(vm);
+	}
 
 
 

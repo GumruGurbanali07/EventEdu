@@ -1,6 +1,8 @@
 ﻿using EventEdu.Domain.Entities.Common;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +12,9 @@ namespace EventEdu.Domain.Entities
     public class AboutSection:BaseEntity
     {
         public string ImagePath { get; set; }
+
+        [NotMapped]
+        public IFormFile formFile { get; set; }
         public ICollection<AboutSectionDetail> AboutSectionDetails { get; set; }
 	}
 }

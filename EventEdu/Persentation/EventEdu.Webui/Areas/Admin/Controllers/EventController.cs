@@ -1,99 +1,136 @@
 ﻿using EventEdu.Application.DTOs.Event;
 using EventEdu.Application.Exceptions;
 using EventEdu.Application.Services;
-using EventEdu.Persistence.Context;
-using Microsoft.AspNetCore.Authorization;
+using EventEdu.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Threading.Tasks;
 
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
+	[Area(nameof(Admin))]
     [Area("Admin")]
     [Authorize(Roles = "Admin")]
 
-    public class EventController : Controller
-    {
+	public class EventController : Controller
+	{
         private readonly IEventService _eventService;
         private readonly AppDbContext _context;
 
-        public EventController(IEventService eventService, AppDbContext context)
-        {
-            _eventService = eventService;
-            _context = context;
-        }
+		readonly private IEventService _eventService;
+		readonly private ILanguageService _languageService;
+		readonly private ICategoryService _categoryService;
+		readonly private ISponsorService _sponsorService;
+		readonly private ISpeakerService _speakerService;
 
-        [HttpGet]
-        public async Task<IActionResult> AddEvent()
-        {
+		public EventController(IEventService eventService, ILanguageService languageService, ICategoryService categoryService, ISpeakerService speakerService, ISponsorService sponsorService)
+		{
+			_eventService = eventService;
+			_languageService = languageService;
+			_categoryService = categoryService;
+			_speakerService = speakerService;
+			_sponsorService = sponsorService;
+            _context = context;
+		}
+
+
+		public async Task<IActionResult> Index()
+		{
             var languages = _context.Languages.ToList();
 
-            if (languages == null || !languages.Any())
-            {
-                ModelState.AddModelError("", "No languages found. Please add languages first.");
-            }
+			var events = await _eventService.GetEventDetailAll();
 
-            ViewBag.Languages = languages;
-            return View();
-        }
+			return View(events);
+		}
 
-        [HttpPost]
-        public async Task<IActionResult> AddEvent([FromForm] CreateEventDTO createEventDTO)
-        {
-            try
-            {
-                await _eventService.AddEventWithLanguageAsync(createEventDTO);
-                return Ok(new { message = "Event successfully added." });
-            }
+		public async Task<IActionResult> Details(string id)
+		{
+			var events = await _eventService.GetEventById(id);
 
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "An error occurred.", error = ex.Message });
-            }
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetEventsByLanguage(string isoCode)
-        {
-            try
-            {
-                var events = await _eventService.GetEventsByLanguageAsync(isoCode);
-                if (events == null || events.Count == 0)
-                {
-                    return NotFound(new { message = "Bu dil üçün heç bir tədbir tapılmadı." });
-                }
-                return Ok(events);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Serverdə xəta baş verdi.", error = ex.Message });
-            }
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetEventByIdAndLanguage(Guid eventId, string isoCode)
-        {
-            try
-            {
-                // Call the service to get the event by ID and language code
-                var eventDetails = await _eventService.GetEventByIdAndLanguageAsync(eventId, isoCode);
+			return View(events);
+		}
 
-                if (eventDetails == null)
-                {
-                    return NotFound("Event not found.");
-                }
+		public async Task<IActionResult> Create()
+		{
+			var getLanguage = await _languageService.GetLanguagesAsync();
+			ViewBag.Language = getLanguage.Select(a => new SelectListItem()
+			{
+				Text = a.Name,
+				Value = a.Id.ToString()
+			});
+			var sponsor = await _sponsorService.GetSponsorAll();
 
-                return Ok(eventDetails);
-            }
-            catch (Exception ex)
-            {
-                // Handle any errors, and return a server error if necessary
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
+			ViewBag.Sponsor = sponsor.Item2;
+			var category = await _categoryService.GetCategoriesAllAsync();
+			ViewBag.Category = category.Select(a => new SelectListItem()
+			{
+				Text = a.CategoryName,
+				Value = a.Id.ToString()
+			});
 
-        [HttpGet]
-        public async Task<IActionResult> UpdateEvent()
-        {
-            return View();
-        }
+			return View();
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> Create(CreateEventDTO createEventDTO)
+		{
+			if (!ModelState.IsValid)
+			{
+
+				var getLanguage = await _languageService.GetLanguagesAsync();
+				ViewBag.Language = getLanguage.Select(a => new SelectListItem()
+				{
+					Text = a.Name,
+					Value = a.Id.ToString()
+				});
+				var category = await _categoryService.GetCategoriesAllAsync();
+				ViewBag.Category = category.Select(a => new SelectListItem()
+				{
+					Text = a.CategoryName,
+					Value = a.Id.ToString()
+				});
+
+				var sponsor = await _sponsorService.GetSponsorAll();
+				var  speak = await _speakerService.GetSpeakersAllAsync();
+				ViewBag.Sponsor = sponsor.Item2;
+				ViewBag.Speak = speak.Item2;
+				return View(createEventDTO);
+			}
+			await _eventService.AddEventWithLanguageAsync(createEventDTO);
+
+			return RedirectToAction(nameof(Index));
+		}
+
+		public async Task<IActionResult> Edit(string Id)
+		{
+			var getLanguage = await _languageService.GetLanguagesAsync();
+			ViewBag.Language = getLanguage.Select(a => new SelectListItem()
+			{
+				Text = a.Name,
+				Value = a.Id.ToString()
+			});
+			var category = await _categoryService.GetCategoriesAllAsync();
+			ViewBag.Category = category.Select(a => new SelectListItem()
+			{
+				Text = a.CategoryName,
+				Value = a.Id.ToString()
+			});
+
+			var events = await _eventService.GetEventById(Id);
+			var eventDetails =await _eventService.GetEventDetailsById(events.Id.ToString());
+			var eu = new UpdateEventDTO()
+			{
+				CategoryId = events.CategoryId,
+				Id = events.Id,
+				ImageUrl = events.ImageUrl,
+				EndDate = events.EndDate,
+				StartDate = events.StartDate,
+				LanguageId = eventDetails.LanguageId,
+				Title=eventDetails.Title,
+				Description=eventDetails.Description,
+				
+			};
 
         [HttpPost]
         public async Task<IActionResult> UpdateEvent(Guid eventId, [FromForm] UpdateEventDTO updateEventDTO)
@@ -107,46 +144,44 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
                 return NoContent();
             }
 
-            catch (Exception ex)
-            {
-                // Catch any unexpected errors and return 500 (Internal Server Error)
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-        [HttpPost]
-        public async Task<IActionResult> SoftDeleteEventAsync(Guid eventId)
-        {
-            try
-            {
-                await _eventService.SoftDeleteEventAsync(eventId);
-                return RedirectToAction("GetEventsByLanguage");
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "An error occurred while soft deleting the event.", details = ex.Message });
-            }
-        }
+			return View(events);
+		}
+		[HttpPost]
+		public async Task<IActionResult> Edit(Guid Id, UpdateEventDTO updateEventDTO)
+		{
+			if (!ModelState.IsValid)
+			{
+				var getLanguage = await _languageService.GetLanguagesAsync();
+				ViewBag.Language = getLanguage.Select(a => new SelectListItem()
+				{
+					Text = a.Name,
+					Value = a.Id.ToString()
+				});
+				var category = await _categoryService.GetCategoriesAllAsync();
+				ViewBag.Category = category.Select(a => new SelectListItem()
+				{
+					Text = a.CategoryName,
+					Value = a.Id.ToString()
+				}); ;
+				return View(updateEventDTO);
+			}
+			await _eventService.UpdateEventAsync(Id, updateEventDTO);
 
-        [HttpPost]
-        public async Task<IActionResult> RestoreEventAsync(Guid eventId)
-        {
-            try
-            {
-                await _eventService.RestoreEventAsync(eventId);
-               return RedirectToAction("GetEventsByLanguage");
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "An error occurred while restoring the event.", details = ex.Message });
-            }
-        }
-    }
+			return Redirect(nameof(Index));
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> Restore(Guid Id)
+		{
+			await _eventService.RestoreEventAsync(Id);
+			return Redirect(nameof(Index));
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> Delete(Guid Id)
+		{
+			await _eventService.SoftDeleteEventAsync(Id);
+			return Redirect(nameof(Index));
+		}
+	}
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace EventEdu.Application.DTOs.Speaker
         public IFormFile ImageFile { get; set; }
         public string Bio { get; set; }
 		public Guid LanguageId { get; set; }
+
+		public List<SelectListItem> Language { get; set; }
 		//public Guid SpeakerId { get; set; }
 		public string ImageUrl { get; set; }
 		public string Email { get; set; }

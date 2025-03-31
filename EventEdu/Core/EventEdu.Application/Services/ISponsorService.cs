@@ -11,7 +11,11 @@ namespace EventEdu.Application.Services
     {
         Task AddSponsor(CreateSponsorDTO addSponsorDTO);
         Task<List<GetSponsorDTO>> GetAllSponsorsByLanguageAsync(string isoCode);
-        Task<GetSponsorDTO> GetSponsorById(Guid id, string isoCode);
+
+        Task<List<SponsorDetail>> GetSponsorsById(string eventId);
+        Task<(List<Sponsor>, List<SponsorDetail>)> GetSponsorAll();
+
+		Task<GetSponsorDTO> GetSponsorById(Guid id, string isoCode);
         Task EditSponsor(Guid id, CreateSponsorDTO updateSponsorDTO);
         Task DeleteSponsor(Guid id);
         Task RestoreSponsor(Guid id);

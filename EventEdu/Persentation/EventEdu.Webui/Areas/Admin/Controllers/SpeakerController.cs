@@ -1,8 +1,11 @@
 ﻿using EventEdu.Application.DTOs.Speaker;
 using EventEdu.Application.Services;
+using EventEdu.Domain.Entities;
 using EventEdu.Persistence.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Threading.Tasks;
 
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
@@ -11,90 +14,111 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
     public class SpeakerController : Controller
     {
         private readonly ISpeakerService _speakerService;
+        private readonly ILanguageService _languageService;
 
 
-        public SpeakerController(ISpeakerService speakerService)
+		public SpeakerController(ISpeakerService speakerService, ILanguageService languageService)
+		{
+			_speakerService = speakerService;
+			_languageService = languageService;
+		}
+
+
+		public async Task<IActionResult> Index()
         {
-            _speakerService = speakerService;
-        }
+            var speaker = await _speakerService.GetSpeakersAllAsync();
 
+            return View(speaker);
+        }
         //[HttpPost("AddSpeakerWithLanguage")]
         [HttpGet]
-        public async Task<IActionResult> AddSpeakerWithLanguage([FromBody] CreateSpeakerDTO createSpeakerDTO)
+        public async Task<IActionResult> Create()
         {
-            try
+			var getLanguage = await _languageService.GetLanguagesAsync();
+			ViewBag.Language = getLanguage.Select(a => new SelectListItem()
+			{
+				Text = a.Name,
+				Value = a.Id.ToString()
+			});
+            return View();
+		}
+
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateSpeakerDTO model)
+        {
+            if (!ModelState.IsValid)
             {
-                await _speakerService.AddSpeakerWithLanguageAsync(createSpeakerDTO);
-                return Ok("Speaker successfully added.");
+				var getLanguage = await _languageService.GetLanguagesAsync();
+				ViewBag.Language = getLanguage.Select(a => new SelectListItem()
+				{
+					Text = a.Name,
+					Value = a.Id.ToString()
+				});
+
+				return View(model);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            await _speakerService.AddSpeakerWithLanguageAsync(model);
+
+            return Redirect(nameof(Index));
         }
-        //[HttpGet("language/{isoCode}")]
+
         [HttpGet]
-        public async Task<IActionResult> GetSpeakersByLanguageAsync(string isoCode)
+        public async Task<IActionResult> Edit(string id)
         {
-            try
+            var speaker = await _speakerService.GetSpeakersByIdAsync(id);
+			var getLanguage = await _languageService.GetLanguagesAsync();
+			ViewBag.Language = getLanguage.Select(a => new SelectListItem()
+			{
+				Text = a.Name,
+				Value = a.Id.ToString()
+			});
+			var us = new UpdateSpeakerDTO()
             {
-                var speakers = await _speakerService.GetSpeakersByLanguageAsync(isoCode);
+                FullName = speaker.SpeakerDetail.FullName,
+                Bio = speaker.SpeakerDetail.Bio,
+                Email = speaker.Speaker.Email,
+                FacebookLink = speaker.Speaker.FacebookLink,
+                InstagramLink = speaker.Speaker.InstagramLink,
+                TwitterLink = speaker.Speaker.TwitterLink,
+                ImageUrl = speaker.Speaker.ImageUrl,
+                LanguageId = speaker.SpeakerDetail.LanguageId,
 
-                if (speakers == null || speakers.Count == 0)
+            };
+
+            return View(us);
+        }
+		[HttpPost]
+		public async Task<IActionResult> Edit(string id, UpdateSpeakerDTO model )
+        {
+            if (!ModelState.IsValid)
+            {
+                var getLanguage = await _languageService.GetLanguagesAsync();
+                ViewBag.Language = getLanguage.Select(a => new SelectListItem()
                 {
-                    return NotFound("No speakers found for the specified language.");
-                }
+                    Text = a.Name,
+                    Value = a.Id.ToString()
+                });
+                return View(model);
 
-                return Ok(speakers);
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            await _speakerService.UpdateSpeakerAsync(Guid.Parse(id), model);
+
+            return Redirect(nameof(Index));
         }
 
-        //[HttpPut("{speakerId}")]
         [HttpPost]
-        public async Task<IActionResult> UpdateSpeaker(Guid speakerId, [FromBody] UpdateSpeakerDTO updateSpeakerDTO)
+		public async Task<IActionResult> Delete (string id)
         {
-            if (updateSpeakerDTO == null)
-            {
-                return BadRequest("Invalid speaker update data.");
-            }
-
-            await _speakerService.UpdateSpeakerAsync(speakerId, updateSpeakerDTO);
-            return Ok("Speaker successfully updated.");
-        }
-
-        //[HttpDelete("soft-delete/{speakerId}")]
-        [HttpPost]
-        public async Task<IActionResult> SoftDeleteSpeaker(Guid speakerId)
-        {
-            try
-            {
-                await _speakerService.SoftDeleteSpeakerAsync(speakerId);
-                return Ok(new { message = "Speaker soft deleted successfully." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
-
-
-        //[HttpPut("restore/{speakerId}")]
-        [HttpPost]
+			await _speakerService.SoftDeleteSpeakerAsync(Guid.Parse(id));
+			return Redirect(nameof(Index));
+		}
+		//[HttpPut("restore/{speakerId}")]
+		[HttpPost]
         public async Task<IActionResult> RestoreSpeaker(Guid speakerId)
         {
-            try
-            {
                 await _speakerService.RestoreSpeakerAsync(speakerId);
-                return Ok(new { message = "Speaker restored successfully." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            return Redirect(nameof(Index));
+           
         }
 
     }

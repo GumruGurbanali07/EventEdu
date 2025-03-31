@@ -6,102 +6,64 @@ using EventEdu.Domain.Entities;
 using EventEdu.Persistence.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-namespace EventEdu.Webui.Areas.Admin.Controllers;
+using System.Threading.Tasks;
 
+namespace EventEdu.Webui.Areas.Admin.Controllers
+{
+    [Area(nameof(Admin))]
 //[ApiController]
 //[Route("api/[controller]")]
 [Area("Admin")]
 [Authorize(Roles = "Admin")]
-public class LanguageController : Controller
-{
-    private readonly ILanguageService _languageService;
-
-    public LanguageController(ILanguageService languageService)
+    public class LanguageController : Controller
     {
-        _languageService = languageService;
-    }
+        readonly private ILanguageService _languageService;
 
+		public LanguageController(ILanguageService languageService)
+		{
+			_languageService = languageService;
+		}
 
-    [HttpGet]
-    public IActionResult Change(string? lang)
-    {
+		public async Task<IActionResult> Index()
+        {
         if (!string.IsNullOrEmpty(lang))
         {
             HttpContext.Session.SetString("lang", lang);
         }
 
-        return RedirectToAction("Index", "Home");
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> CreateLanguage()
-    {
-        return View();
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> CreateLanguage([FromForm] CreateLanguageDTO languageDTO)
-    {
-        try
-        {
-            var newLanguage = await _languageService.CreateAsync(languageDTO);
-            return Ok(newLanguage);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, "Daxili server xətası: " + ex.Message);
-        }
-    }
-    [HttpGet]
-    public async Task<IActionResult> Get(string isoCode)
-    {
-        try
-        {
             var language = await _languageService.GetLanguagesAsync();
-            return Ok(language);
+            return View(language);
         }
-        catch (Exception ex)
-        {
-            return StatusCode(500, "Daxili server xətası: " + ex.Message);
-        }
-    }
 
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        try
-        {
-            var languages = await _languageService.GetLanguagesAsync();
-            return View(languages);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, "Daxili server xətası: " + ex.Message);
-        }
-    }
-    [HttpGet]
-    public async Task<IActionResult> Update(Guid id)
-    {
-        try
-        {
-            var aboutSection = await _languageService.GetLanguageAsync( "az-AZ");
+        public IActionResult Create()
+            => View();
 
-            if (aboutSection == null)
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateLanguageDTO createLanguageDTO)
+        {
+            if (!ModelState.IsValid) return View(createLanguageDTO);
+
+            await _languageService.CreateAsync(createLanguageDTO);
+
+            return Redirect(nameof(Index));
+
+
+        }
+
+        [HttpGet]
+		public async Task<IActionResult>  Edit (Guid id)
+        {
+            var language = await _languageService.GetLanguageById(id);
+
+            if (language == null) return NotFound();
+
+            var ud = new UpdateLanguageDTO
             {
-                return NotFound("Language not found.");
-            }
-
-            var updateLanguageDTO = new UpdateLanguageDTO
-            {
-             Name = aboutSection.Name,
-             IsoCode = aboutSection.IsoCode,
-             ImagePath = aboutSection.ImagePath
+                Name = language.Name,
+                IsoCode = language.IsoCode,
+                ImagePath = language.ImagePath
             };
-
+            return View(ud);
 
             return View(updateLanguageDTO);
         }
@@ -110,49 +72,25 @@ public class LanguageController : Controller
             ModelState.AddModelError(string.Empty, ex.Message);
             return RedirectToAction("Index");
         }
-    }
+		}
 
-    [HttpPost]
-    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateLanguageDTO languageDTO)
-    {
-        try
+        [HttpPost]
+		public async Task<IActionResult> Edit(Guid id, UpdateLanguageDTO updateLanguageDTO)
         {
-            await _languageService.UpdateLanguageAsync(id, languageDTO);
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, "Daxili server xətası: " + ex.Message);
-        }
-    }
+			
+			if (!ModelState.IsValid) return View(updateLanguageDTO);
 
-    [HttpPost]
-    public async Task<IActionResult> SoftDelete(Guid id)
-    {
-        try
+            await _languageService.UpdateLanguageAsync(id, updateLanguageDTO);
+			return Redirect(nameof(Index));
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> Delete(Guid id)
         {
             await _languageService.SoftDeleteLanguageAsync(id);
-            return RedirectToAction("GetAll");
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, "Daxili server xətası: " + ex.Message);
-        }
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Restore(Guid id)
-    {
-        try
-        {
-            await _languageService.RestoreLanguageAsync(id);
-            return RedirectToAction("GetAll");
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, "Daxili server xətası: " + ex.Message);
-        }
-    }
+			return Redirect(nameof(Index));
+		}
+	}
 
 
 

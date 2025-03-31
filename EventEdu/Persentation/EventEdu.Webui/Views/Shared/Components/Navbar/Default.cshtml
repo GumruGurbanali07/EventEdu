@@ -1,0 +1,62 @@
+﻿@using EventEdu.Webui.ViewsModels
+@model CategoryLanguageVM
+<nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
+    <a asp-controller="Home" asp-action="Index" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
+        <h2 class="m-0 text-primary"><i class="fa fa-book me-3"></i>EventEdu</h2>
+    </a>
+    <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse " id="navbarCollapse">
+        <div class="navbar-nav ms-auto p-4 p-lg-0">
+            <a asp-controller="Home" asp-action="Index" class="nav-item nav-link active">Home</a>
+            <a asp-controller="About" asp-action="Index" class="nav-item nav-link">About</a>
+            <a asp-controller="Sponsor" asp-action="Index" class="nav-item nav-link">Sponsors</a>
+            <div class="nav-item dropdown">
+                <a asp-controller="Event" asp-action="Index" class="nav-link dropdown-toggle d-flex" data-bs-toggle="dropdown">Events</a>
+                <div class="d-flex flex-column">
+                    <ul class="dropdown-menu" aria-labelledby="Dropdown">
+
+                        @foreach(var c in Model.CategoryDetails)
+                        {
+                            <li>
+                                <a class="dropdown-item" asp-controller="Event" asp-action="@c.CategoryName">@c.CategoryName</a>
+                            </li>
+                        }
+                        
+                     
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="nav-item dropdown d-flex">
+            <div class="currentLangFlag"><img class="flag" src="~/client/assets/img/flags/english.svg" alt=""></div>
+            <a data-mdb-dropdown-init class="dropdown-toggle" href="#" id="Dropdown" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+                <i class="flag-united-kingdom flag m-0"></i>
+            </a>
+            <ul class="dropdown-menu mt-4" aria-labelledby="Dropdown">
+
+                @foreach(var ln in Model.Languages){
+                <li>
+                    <a class="dropdown-item" asp-controller="Language" asp-action="Change" asp-route-lang="@ln.IsoCode">
+                       @ln.ImagePath
+                    </a>
+                </li>
+                }
+               
+               
+
+            </ul>
+        </div>
+
+
+        <div class="searchbar">
+            <input placeholder="Search products" type="text">
+            <span id="magnifying-glass"><i class="fa-solid fa-magnifying-glass"></i></span>
+        </div>
+        <a asp-controller="Account" asp-action="Profile" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">ACCOUNT<i class="fa fa-arrow-right ms-3"></i></a>
+    </div>
+</nav>
+<!-- Navbar End -->

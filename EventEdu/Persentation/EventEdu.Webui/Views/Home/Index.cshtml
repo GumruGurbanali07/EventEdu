@@ -4,6 +4,7 @@
 @model HomeIndexVM
 
 @{
+    var message = ViewData["Success"];
     var localizer = ViewBag.Localizer as IStringLocalizer<HomeController>;
     var categories = ViewBag.Categories as List<GetCategoryDTO>;
     var heroSection = ViewBag.HeroSection as List<GetHeroSectionDTO>;
@@ -42,8 +43,7 @@
     </div>
 </div>
 <!-- Carousel End -->
-
-@*  <!-- Service Start -->
+ <!-- Service Start -->
 <div class="container-xxl py-5">
     <div class="container">
         <div class="row g-4">
@@ -86,7 +86,7 @@
         </div>
     </div>
 </div>
-<!-- Service End -->  *@
+<!-- Service End -->  
 
 
 
@@ -95,7 +95,7 @@
 <div class="container-xxl py-5">
     <div class="container">
         <div class="row g-4">
-            @foreach (var category in ViewBag.Categories)
+            @foreach (var category in Model.Categories)
             {
                 <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="service-item text-center pt-3">
@@ -107,7 +107,7 @@
                     </div>
                 </div>
             }
-        </div>
+        </div> 
     </div>
 </div>
 <!-- Service End -->
@@ -389,4 +389,18 @@
         </div>
     </div>
 </div>
-<!-- Testimonial End -->
+
+    @if (!string.IsNullOrEmpty(message as string))
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                Toastify({
+                    text: @Json.Serialize(message),
+                    duration: 3000,
+                    gravity: "top", // "top" və ya "bottom"
+                    position: "right", // "left", "center" və ya "right"
+                    backgroundColor: "linear-gradient(to right, #FF0000 )",
+                }).showToast();
+            });
+        </script>
+    }<!-- Testimonial End -->

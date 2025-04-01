@@ -1,38 +1,60 @@
-﻿@using EventEdu.Application.DTOs.Language
+﻿﻿@using EventEdu.Application.DTOs.Language
 @model CreateLanguageDTO
 
-<form asp-area="Admin" asp-controller="Language" asp-action="Create" method="post">
-    <h4 style="margin-left:40px">Add Language</h4>
+<form asp-action="Create" method="post" asp-validation-summary="All" enctype="multipart/form-data">
+    <h4 style="margin-left:40px">Add Sponsor</h4>
 
-    <span class="text-danger" asp-validation-summary="all"></span>
-
-    <div class="card-body">
-     
-
-
-
-        <!-- Category Name (inside CategoryDetails) -->
-        <div>
-            <label asp-for="Name" class="form-label"> </label>
-            <input type="text" asp-for="Name" class="form-control" placeholder="Enter  Name">
-            <span class="form-text text-danger" asp-validation-for="Name"></span>
+    <div class="addOrEditCard card">
+        <!-- Image Preview -->
+        <div class="chosenImage">
+            <img id="imagePreview" src="~/client/assets/img/teams/team-2.jpg" alt="Language Image" />
         </div>
 
-        <div>
-            <label asp-for="IsoCode" class="form-label"> </label>
-            <input type="text" asp-for="IsoCode" class="form-control" placeholder="Enter  IsoCode">
-            <span class="form-text text-danger" asp-validation-for="IsoCode"></span>
+        <div class="card-body">
+
+            <!-- File Input for Image -->
+            <div class="mb-3">
+                <label asp-for="ImageFile" class="form-label">Language's Image</label>
+                <input class="form-control" type="file" asp-for="ImageFile" name="ImageFile" id="ImageFile" accept="image/*" onchange="previewImage(event)">
+                <span class="form-text text-danger" asp-validation-for="ImageFile"></span>
+            </div>
+
+            <!-- Language Name -->
+            <div>
+                <label asp-for="Name" class="form-label">Language Name</label>
+                <input type="text" asp-for="Name" name="Name" class="form-control" placeholder="Enter Language Name">
+                <span class="form-text text-danger" asp-validation-for="Name"></span>
+            </div>
+
+            <!-- IsoCode -->
+            <div>
+                <label asp-for="IsoCode" class="form-label">IsoCode</label>
+                <input type="text" asp-for="IsoCode" name="IsoCode" class="form-control" placeholder="Enter IsoCode">
+                <span class="form-text text-danger" asp-validation-for="IsoCode"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary mt-3">Save</button>
         </div>
-        <div>
-            <label asp-for="ImagePath" class="form-label"> </label>
-            <input type="text" asp-for="ImagePath" class="form-control" placeholder="Enter  ImagePath">
-            <span class="form-text text-danger" asp-validation-for="ImagePath"></span>
-        </div>
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary mt-3">Save</button>
-    </div>
     </div>
 </form>
 
+<!-- Image Preview Script -->
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var output = document.getElementById('imagePreview');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
 
+        document.getElementById("PhoneNumber").addEventListener("input", function (e) {
+        this.value = this.value.replace(/[^0-9+ ]/g, ''); // Allows only numbers, space, and +
+    });
+</script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>

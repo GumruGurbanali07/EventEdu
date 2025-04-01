@@ -12,7 +12,7 @@ namespace EventEdu.Domain.Entities
 	
    public class CategoryDetail:BaseEntity
     {
-		public string ImagePath { get; set; }
+		//public string? ImagePath { get; set; }
 
 		[NotMapped]
 		public IFormFile FormFile { get; set; }

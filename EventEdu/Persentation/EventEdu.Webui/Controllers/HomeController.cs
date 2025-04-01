@@ -10,21 +10,21 @@ namespace EventEdu.Webui.Controllers;
 
 public class HomeController : Controller
 {
-	private readonly ILogger<HomeController> _logger;
-	private readonly IStringLocalizer<HomeController> _localizer;
-	private readonly ICategoryService _categoryService;
+    private readonly ILogger<HomeController> _logger;
+    private readonly IStringLocalizer<HomeController> _localizer;
+    private readonly ICategoryService _categoryService;
     private readonly IAboutSectionService _aboutSectionService;
     private readonly ISponsorService _sponsorService;
 
-    public HomeController(ILogger<HomeController> logger, IStringLocalizer<HomeController> localizer, ICategoryService categoryService, 
+    public HomeController(ILogger<HomeController> logger, IStringLocalizer<HomeController> localizer, ICategoryService categoryService,
         IAboutSectionService aboutSectionService, ISponsorService sponsorService)
-	{
-		_logger = logger;
-		_localizer = localizer;
-		_categoryService = categoryService;
-		_aboutSectionService = aboutSectionService;
+    {
+        _logger = logger;
+        _localizer = localizer;
+        _categoryService = categoryService;
+        _aboutSectionService = aboutSectionService;
         _sponsorService = sponsorService;
-	}
+    }
     //[HttpGet]
     public async Task<IActionResult> Index()
     {
@@ -36,30 +36,15 @@ public class HomeController : Controller
 
         ViewBag.Localizer = _localizer;
         ViewBag.Categories = categories;
-		var categories = await _categoryService.GetCategoriesByLanguageAsync(lang);
-		
-		ViewBag.Localizer = _localizer ;
 
-
-		var vm = new HomeIndexVM()
-		{
-			Categories = categories.Item2
-
-		};
-
-
-        // HomeIndexVM modelini doldururuq
         var viewModel = new HomeIndexVM
         {
+            Categories = categories.Item2,
             AboutSection = aboutSection,
             Sponsors = sponsors,
         };
 
         return View(viewModel);
     }
-        return View(vm);
-	}
-
-
 
 }

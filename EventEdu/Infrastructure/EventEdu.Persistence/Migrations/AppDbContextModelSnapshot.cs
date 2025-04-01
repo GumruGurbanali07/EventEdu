@@ -43,7 +43,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AboutSections");
+                    b.ToTable("AboutSections", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.AboutSectionDetail", b =>
@@ -81,7 +81,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("AboutSectionDetails");
+                    b.ToTable("AboutSectionDetails", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Category", b =>
@@ -101,7 +101,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.CategoryDetail", b =>
@@ -120,10 +120,6 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ImagePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -139,7 +135,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("CategoryDetails");
+                    b.ToTable("CategoryDetails", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Event", b =>
@@ -157,10 +153,6 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -174,7 +166,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Events");
+                    b.ToTable("Events", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.EventDetail", b =>
@@ -212,7 +204,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("EventDetails");
+                    b.ToTable("EventDetails", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.EventSpeaker", b =>
@@ -239,7 +231,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("SpeakerId");
 
-                    b.ToTable("EventSpeakers");
+                    b.ToTable("EventSpeakers", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.EventSponsor", b =>
@@ -266,7 +258,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("SponsorId");
 
-                    b.ToTable("EventSponsors");
+                    b.ToTable("EventSponsors", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.FeedBack", b =>
@@ -304,7 +296,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("SubscriptionId");
 
-                    b.ToTable("FeedBacks");
+                    b.ToTable("FeedBacks", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.FeedBackDetail", b =>
@@ -337,7 +329,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("FeedBackDetails");
+                    b.ToTable("FeedBackDetails", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.HeroSection", b =>
@@ -361,7 +353,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("HeroSections");
+                    b.ToTable("HeroSections", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.HeroSectionDetails", b =>
@@ -399,7 +391,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("HeroSectionDetails");
+                    b.ToTable("HeroSectionDetails", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Identity.AppUser", b =>
@@ -581,7 +573,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Languages");
+                    b.ToTable("Languages", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Speaker", b =>
@@ -621,7 +613,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Speakers");
+                    b.ToTable("Speakers", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.SpeakerDetail", b =>
@@ -659,7 +651,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("SpeakerId");
 
-                    b.ToTable("SpeakerDetails");
+                    b.ToTable("SpeakerDetails", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Sponsor", b =>
@@ -695,7 +687,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sponsors");
+                    b.ToTable("Sponsors", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.SponsorDetail", b =>
@@ -733,7 +725,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("SponsorId");
 
-                    b.ToTable("SponsorDetails");
+                    b.ToTable("SponsorDetails", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.SubsEvent", b =>
@@ -760,7 +752,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasIndex("SubscriptionId");
 
-                    b.ToTable("SubsEvents");
+                    b.ToTable("SubsEvents", (string)null);
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Subscription", b =>
@@ -792,7 +784,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subscriptions");
+                    b.ToTable("Subscriptions", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -969,7 +961,7 @@ namespace EventEdu.Persistence.Migrations
             modelBuilder.Entity("EventEdu.Domain.Entities.Event", b =>
                 {
                     b.HasOne("EventEdu.Domain.Entities.Category", "Category")
-                        .WithMany("Events")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1211,8 +1203,6 @@ namespace EventEdu.Persistence.Migrations
             modelBuilder.Entity("EventEdu.Domain.Entities.Category", b =>
                 {
                     b.Navigation("CategoryDetail");
-
-                    b.Navigation("Events");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Event", b =>

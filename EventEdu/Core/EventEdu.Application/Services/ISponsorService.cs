@@ -1,4 +1,5 @@
 ﻿using EventEdu.Application.DTOs.Sponsor;
+using EventEdu.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -94,7 +94,7 @@ namespace EventEdu.Persistence.Services
 				CategoryName = createCategoryDTO.CategoryName,
 				CategoryId = category.Id,
 				LanguageId = createCategoryDTO.LanguageId,
-				ImagePath=newFile,
+				//ImagePath=newFile,
 				CreatedDate = DateTime.UtcNow,
 				UpdatedDate = DateTime.UtcNow,
 			};
@@ -161,9 +161,9 @@ namespace EventEdu.Persistence.Services
 
 			if (updateCategoryDTO.FormFile != null)
 			{
-				_fileService.Delete(categoryDetail.ImagePath);
-				var newFile = await _fileService.UploadAsync(updateCategoryDTO.FormFile);
-				categoryDetail.ImagePath = newFile;
+				//_fileService.Delete(categoryDetail.ImagePath);
+				//var newFile = await _fileService.UploadAsync(updateCategoryDTO.FormFile);
+				//categoryDetail.ImagePath = newFile;
 
 			}
 			_mapper.Map(updateCategoryDTO, categoryDetail);

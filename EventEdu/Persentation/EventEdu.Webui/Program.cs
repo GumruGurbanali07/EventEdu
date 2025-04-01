@@ -16,17 +16,10 @@ using EventEdu.Application.Profiles;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
-using EventEdu.Application.Validators.HeroSection;
-using FluentValidation.AspNetCore;
-using EventEdu.Application.Validators.AboutSection;
-using EventEdu.Application.Validators.Language;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using EventEdu.Domain.Entities.Identity;
 using EventEdu.Persistence.Context;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.Extensions.Options;
-using EventEdu.Application.Validators.AccountForUserPersonalData;
-//using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,39 +31,31 @@ builder.Services.AddControllersWithViews().AddViewLocalization();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-	options.IdleTimeout = TimeSpan.FromMinutes(30); // Sessiyanın bitmə müddəti
-	options.Cookie.HttpOnly = true;
-	options.Cookie.IsEssential = true;
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Sessiyanın bitmə müddəti
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
-builder.Services.AddLocalization();
-builder.Services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizationFactory>();
-builder.Services.AddAutoMapper(typeof(AutoMapping));
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(
     options =>
     {
         options.Cookie.HttpOnly = true;
-        options.ExpireTimeSpan = TimeSpan.FromDays(7); 
-        options.SlidingExpiration = true; 
+        options.ExpireTimeSpan = TimeSpan.FromDays(7);
+        options.SlidingExpiration = true;
         options.Cookie.IsEssential = true;
     });
 
 
-builder.Services.AddPersistenceServices(builder.Configuration);
-builder.Services.AddInfrastructureServices();
-builder.Services.AddApplicationServices();
-builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-
+builder.Services.AddLocalization();
+builder.Services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizationFactory>();
 builder.Services.AddAutoMapper(typeof(AutoMapping));
-
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     //options.SignIn.RequireConfirmedAccount = false;
     //options.User.RequireUniqueEmail = false;
 
+    options.User.RequireUniqueEmail = true;
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequiredLength = 6;
@@ -83,21 +68,35 @@ builder.Services.AddControllersWithViews();
 }).AddEntityFrameworkStores<AppDbContext>()
   .AddDefaultTokenProviders();
 
+
+
+builder.Services.AddPersistenceServices(builder.Configuration);
+builder.Services.AddInfrastructureServices();
+builder.Services.AddApplicationServices();
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+
+
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+
+
 builder.Services.AddResponseCompression(option =>
 {
-	option.EnableForHttps = true;
-	option.Providers.Add<BrotliCompressionProvider>();
-	option.Providers.Add<GzipCompressionProvider>();
+    option.EnableForHttps = true;
+    option.Providers.Add<BrotliCompressionProvider>();
+    option.Providers.Add<GzipCompressionProvider>();
 
 });
 builder.Services.AddHttpContextAccessor();
 builder.Services.Configure<BrotliCompressionProviderOptions>(option =>
 {
-	option.Level = CompressionLevel.SmallestSize;
+    option.Level = CompressionLevel.SmallestSize;
 });
 builder.Services.Configure<GzipCompressionProviderOptions>(option =>
 {
-	option.Level = CompressionLevel.SmallestSize;
+    option.Level = CompressionLevel.SmallestSize;
 });
 var app = builder.Build();
 
@@ -142,6 +141,8 @@ app.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}")
         .WithStaticAssets();
+
+
 
 
 app.Run();

@@ -11,7 +11,7 @@ namespace EventEdu.Application.DTOs.Category
 {
     public class CreateCategoryDTO
     {
-		public string ImagePath { get; set; }
+		public string? ImagePath { get; set; }
 
 		[NotMapped]
 		public IFormFile FormFile { get; set; }

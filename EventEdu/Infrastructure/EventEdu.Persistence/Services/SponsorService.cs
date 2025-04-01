@@ -12,6 +12,7 @@ using FluentValidation;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.Metadata;
+using Microsoft.AspNetCore.Http;
 
 namespace EventEdu.Persistence.Services
 {
@@ -86,10 +87,10 @@ namespace EventEdu.Persistence.Services
 				throw new Exception("Invalid file type. Please upload an image.");
 			}
 
-            if (!addSponsorDTO.ImageFile.CheckFileSize(200))
-            {
-                throw new Exception("File size is too large. Maximum allowed size is 200MB.");
-            }
+			if (!addSponsorDTO.ImageFile.CheckFileSize(200))
+			{
+				throw new Exception("File size is too large. Maximum allowed size is 200MB.");
+			}
 
 
 			string imagePath = await _fileService.UploadAsync(addSponsorDTO.ImageFile);
@@ -287,11 +288,11 @@ namespace EventEdu.Persistence.Services
 					throw new Exception("File size is too large. Maximum allowed size is 10MB.");
 				}
 
-			         _fileService.Delete(sponsor.ImagePath);
-					string newImagePath = await _fileService.UploadAsync(updateSponsorDTO.ImageFile);
-					 
+				_fileService.Delete(sponsor.ImagePath);
+				string newImagePath = await _fileService.UploadAsync(updateSponsorDTO.ImageFile);
 
-				
+
+
 
 			}
 
@@ -299,27 +300,6 @@ namespace EventEdu.Persistence.Services
 			_sponsorDetailWriteRepository.Update(sponsorDetail);
 			await _sponsorDetailWriteRepository.SaveChangeAsync();
 
-
-        }
-
-        public async Task<List<GetSponsorDTO>> SearchSponsors(string search)
-        {
-            if (string.IsNullOrWhiteSpace(search))
-            {
-                return new List<GetSponsorDTO>();
-            }
-
-            var sponsors = await _sponsorReadRepository.GetAll()
-                .Where(s => !s.IsDeleted &&
-                            s.SponsorsDetail.Any(sd =>
-                                sd.SponsorName.ToLower().Contains(search.ToLower()) ||
-                                sd.SponsorDescription.ToLower().Contains(search.ToLower())))
-                .Select(s => new GetSponsorDTO 
-                {
-                    SponsorName = s.SponsorsDetail.FirstOrDefault().SponsorName,
-                    ImagePath = s.ImagePath
-                })
-                .ToListAsync();
 
 		}
 
@@ -345,14 +325,33 @@ namespace EventEdu.Persistence.Services
 			var eventSponsor = await _eventSponsorReadRepository.GetAll().FirstOrDefaultAsync(a => a.EventId == Guid.Parse(eventId));
 			var sponsor = await _sponsorDetailReadRepository.GetAll().Where(a => a.SponsorId == eventSponsor.SponsorId && a.LanguageId == language.Id).ToListAsync();
 
+
+			return sponsor;
+		}
+
+        public async Task<List<GetSponsorDTO>> SearchSponsors(string search)
+        {
+            if (string.IsNullOrWhiteSpace(search))
+            {
+                return new List<GetSponsorDTO>();
+            }
+
+            var sponsors = await _sponsorReadRepository.GetAll()
+                .Where(s => !s.IsDeleted &&
+                            s.SponsorsDetail.Any(sd =>
+                                sd.SponsorName.ToLower().Contains(search.ToLower()) ||
+                                sd.SponsorDescription.ToLower().Contains(search.ToLower())))
+                .Select(s => new GetSponsorDTO
+                {
+                    SponsorName = s.SponsorsDetail.FirstOrDefault().SponsorName,
+                    ImagePath = s.ImagePath
+                })
+                .ToListAsync();
             return sponsors.GroupBy(s => s.SponsorName)
                            .Select(g => g.First())
                            .ToList();
         }
-			return sponsor;
-		}
-
-
 
     }
+
 }

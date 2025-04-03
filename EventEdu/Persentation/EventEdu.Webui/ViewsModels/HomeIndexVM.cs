@@ -7,7 +7,7 @@ namespace EventEdu.Webui.ViewsModels
 	public class HomeIndexVM
 	{
 		public List<HeroSection>? HeroSections { get; set; }
-		public HeroSectionDetails HeroSectionDetails { get; set; }
+		public HeroSectionDetails? HeroSectionDetails { get; set; }
 	
 
 	}

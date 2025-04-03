@@ -434,13 +434,15 @@ namespace EventEdu.Persistence.Services
 			return null;
 		}
 
-		public Task<List<EventSpeaker>> GetEventSpeakerById(string eventId)
-		{
-			var eventSpeak = _eventSpeakerReadRepository.GetAll().Where(a=>a.EventId==Guid.Parse(eventId)).ToListAsync
+        public async Task<List<EventSpeaker>> GetEventSpeakerById(string eventId)
+        {
+            return await _eventSpeakerReadRepository.GetAll()
+                .Where(a => a.EventId == Guid.Parse(eventId))
+                .ToListAsync();
+        }
 
-		}
 
-		public Task<List<EventSponsor>> GetEventSponsorById(string eventId)
+        public Task<List<EventSponsor>> GetEventSponsorById(string eventId)
 		{
 			throw new NotImplementedException();
 		}

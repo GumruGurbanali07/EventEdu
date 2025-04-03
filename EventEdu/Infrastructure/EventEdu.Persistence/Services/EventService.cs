@@ -64,7 +64,7 @@ namespace EventEdu.Persistence.Services
 			{
 				throw new ValidationException(validationResult.Errors);
 			}
-			var language = await _languageReadRepository.GetByIdAsync(createEventDTO.LanguageId.ToString());
+            var language = await _languageReadRepository.GetByIdAsync(createEventDTO.LanguageId);
 			if (language == null)
 			{
 				throw new NotFoundException("Language not found");
@@ -147,7 +147,7 @@ namespace EventEdu.Persistence.Services
 					CategoryId = e.CategoryId,
 					LanguageId = language.Id,
 					IsoCode = language.IsoCode,
-					ImageUrl = e.ImageUrl
+                    //ImageUrl = e.ImageUrl
 				})
 				.ToListAsync();
 
@@ -180,7 +180,7 @@ namespace EventEdu.Persistence.Services
 						.Select(ed => ed.Description)
 						.FirstOrDefault(),
 					IsoCode = language.IsoCode,
-					ImageUrl = e.ImageUrl,
+                    //ImageUrl = e.ImageUrl,
 					CategoryName = e.Category.CategoryDetail
 						.Where(cd => cd.LanguageId == language.Id)
 						.Select(cd => cd.CategoryName)
@@ -267,7 +267,7 @@ namespace EventEdu.Persistence.Services
 		}
 		public async Task SoftDeleteEventAsync(Guid eventId)
 		{
-			var eventEntity = await _eventReadRepository.GetByIdAsync(eventId.ToString());
+            var eventEntity = await _eventReadRepository.GetByIdAsync(eventId);
 			if (eventEntity == null)
 			{
 				throw new NotFoundException("Event not found.");
@@ -291,7 +291,7 @@ namespace EventEdu.Persistence.Services
 		}
 		public async Task RestoreEventAsync(Guid eventId)
 		{
-			var eventEntity = await _eventReadRepository.GetByIdAsync(eventId.ToString());
+            var eventEntity = await _eventReadRepository.GetByIdAsync(eventId);
 			if (eventEntity == null)
 			{
 				throw new NotFoundException("Event not found.");

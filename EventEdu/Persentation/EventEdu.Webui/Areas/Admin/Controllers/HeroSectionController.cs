@@ -3,11 +3,13 @@ using EventEdu.Application.DTOs.Sponsor;
 using EventEdu.Application.Services;
 using EventEdu.Persistence.Context;
 using EventEdu.Persistence.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class HeroSectionController : Controller
     {
         private readonly IHeroSectionService _sliderService;

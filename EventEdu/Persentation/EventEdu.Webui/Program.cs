@@ -42,11 +42,22 @@ builder.Services.AddApplicationServices();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 
+builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+{
+    //options.SignIn.RequireConfirmedAccount = false;
+    //options.User.RequireUniqueEmail = false;
 
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+    options.Lockout.AllowedForNewUsers = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(1);
+    options.Lockout.MaxFailedAccessAttempts = 300;
+}).AddEntityFrameworkStores<AppDbContext>()
+  .AddDefaultTokenProviders();
 
 builder.Services.AddResponseCompression(option =>
 {
@@ -69,9 +80,9 @@ var app = builder.Build();
 // mvc
 if (!app.Environment.IsDevelopment())
 {
-	app.UseExceptionHandler("/Home/Error");
-	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-	app.UseHsts();
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
 //mvc 
 app.UseSession();
@@ -85,7 +96,7 @@ app.UseStaticFiles();
 // app.UseRequestLocalization(locOptions!.Value);
 app.UseRequestLocalization(new RequestLocalizationOptions
 {
-	DefaultRequestCulture = new RequestCulture(new CultureInfo("az-AZ"))
+    DefaultRequestCulture = new RequestCulture(new CultureInfo("az-AZ"))
 });
 
 app.UseMiddleware<LocalizationMiddleware>();

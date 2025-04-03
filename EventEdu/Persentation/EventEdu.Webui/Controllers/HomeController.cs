@@ -12,12 +12,17 @@ public class HomeController : Controller
 	private readonly ILogger<HomeController> _logger;
 	private readonly IStringLocalizer<HomeController> _localizer;
 	private readonly ICategoryService _categoryService;
+    private readonly IAboutSectionService _aboutSectionService;
+    private readonly ISponsorService _sponsorService;
 
-	public HomeController(ILogger<HomeController> logger, IStringLocalizer<HomeController> localizer, ICategoryService categoryService)
+    public HomeController(ILogger<HomeController> logger, IStringLocalizer<HomeController> localizer, ICategoryService categoryService, 
+        IAboutSectionService aboutSectionService, ISponsorService sponsorService)
 	{
 		_logger = logger;
 		_localizer = localizer;
 		_categoryService = categoryService;
+		_aboutSectionService = aboutSectionService;
+        _sponsorService = sponsorService;
 	}
 	
 	public async Task<IActionResult> Index()
@@ -38,6 +43,7 @@ public class HomeController : Controller
 
         return View(vm);
 	}
+
 
 
 }

@@ -12,8 +12,8 @@ namespace EventEdu.Application.Services
     {
         Task AddAboutSection(CreateAboutSectionDTO addAboutSectionDTO);
         Task<List<GetAboutSectionDTO>> GetAllAboutSectionsAsync();
-        Task<GetAboutSectionDTO> GetAboutSectionById(Guid id);
-        Task<CreateAboutSectionDTO> EditAboutSection(Guid id, CreateAboutSectionDTO updateAboutSectionDTO);
+        Task<GetAboutSectionDTO> GetAboutSectionById(Guid id, string IsoCode);
+        Task EditAboutSection(Guid id, CreateAboutSectionDTO updateAboutSectionDTO);
         Task DeleteAboutSection(Guid id);
         Task RestoreAboutSection(Guid id);
     }

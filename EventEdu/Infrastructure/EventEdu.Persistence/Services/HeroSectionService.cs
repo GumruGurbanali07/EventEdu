@@ -91,9 +91,9 @@ namespace EventEdu.Persistence.Services
                 throw new Exception("Invalid file type. Please upload an image.");
             }
 
-            if (!addSliderDTO.ImageFile.CheckFileSize(10))
+            if (!addSliderDTO.ImageFile.CheckFileSize(200))
             {
-                throw new Exception("File size is too large. Maximum allowed size is 10MB.");
+                throw new Exception("File size is too large. Maximum allowed size is 200MB.");
             }
 
             string webRootPath = _environment.WebRootPath;

@@ -1,4 +1,5 @@
 ﻿using EventEdu.Application.DTOs.Event;
+using EventEdu.Application.Exceptions;
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
 using Microsoft.AspNetCore.Http;
@@ -10,8 +11,10 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 {
 	[Area(nameof(Admin))]
 
-	public class EventController : Controller
-	{
+    public class EventController : Controller
+    {
+        private readonly IEventService _eventService;
+        private readonly AppDbContext _context;
 
 		readonly private IEventService _eventService;
 		readonly private ILanguageService _languageService;
@@ -20,35 +23,39 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 		readonly private ISpeakerService _speakerService;
 
 		public EventController(IEventService eventService, ILanguageService languageService, ICategoryService categoryService, ISpeakerService speakerService, ISponsorService sponsorService)
-		{
-			_eventService = eventService;
+        {
+            _eventService = eventService;
 			_languageService = languageService;
 			_categoryService = categoryService;
 			_speakerService = speakerService;
 			_sponsorService = sponsorService;
-		}
+        }
 
+        [HttpGet]
+        public async Task<IActionResult> AddEvent()
+        {
+            var languages = _context.Languages.ToList();
 
 		public async Task<IActionResult> Index()
-		{
+            {
 
 			var events = await _eventService.GetEventDetailAll();
 
 			return View(events);
-		}
+            }
 
 		public async Task<IActionResult> Details(string id)
 		{
 			var events = await _eventService.GetEventById(id);
 
 			return View(events);
-		}
+        }
 
 		public async Task<IActionResult> Create()
-		{
+        {
 			var getLanguage = await _languageService.GetLanguagesAsync();
 			ViewBag.Language = getLanguage.Select(a => new SelectListItem()
-			{
+            {
 				Text = a.Name,
 				Value = a.Id.ToString()
 			});
@@ -57,29 +64,29 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 			ViewBag.Sponsor = sponsor.Item2;
 			var category = await _categoryService.GetCategoriesAllAsync();
 			ViewBag.Category = category.Select(a => new SelectListItem()
-			{
+            {
 				Text = a.CategoryName,
 				Value = a.Id.ToString()
 			});
 
 			return View();
-		}
+            }
 
 		[HttpPost]
 		public async Task<IActionResult> Create(CreateEventDTO createEventDTO)
-		{
+        {
 			if (!ModelState.IsValid)
-			{
+            {
 
 				var getLanguage = await _languageService.GetLanguagesAsync();
 				ViewBag.Language = getLanguage.Select(a => new SelectListItem()
-				{
+                {
 					Text = a.Name,
 					Value = a.Id.ToString()
 				});
 				var category = await _categoryService.GetCategoriesAllAsync();
 				ViewBag.Category = category.Select(a => new SelectListItem()
-				{
+            {
 					Text = a.CategoryName,
 					Value = a.Id.ToString()
 				});
@@ -89,23 +96,23 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 				ViewBag.Sponsor = sponsor.Item2;
 				ViewBag.Speak = speak.Item2;
 				return View(createEventDTO);
-			}
+            }
 			await _eventService.AddEventWithLanguageAsync(createEventDTO);
 
 			return RedirectToAction(nameof(Index));
-		}
+        }
 
 		public async Task<IActionResult> Edit(string Id)
-		{
+        {
 			var getLanguage = await _languageService.GetLanguagesAsync();
 			ViewBag.Language = getLanguage.Select(a => new SelectListItem()
-			{
+            {
 				Text = a.Name,
 				Value = a.Id.ToString()
 			});
 			var category = await _categoryService.GetCategoriesAllAsync();
 			ViewBag.Category = category.Select(a => new SelectListItem()
-			{
+                {
 				Text = a.CategoryName,
 				Value = a.Id.ToString()
 			});
@@ -113,7 +120,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 			var events = await _eventService.GetEventById(Id);
 			var eventDetails =await _eventService.GetEventDetailsById(events.Id.ToString());
 			var eu = new UpdateEventDTO()
-			{
+            {
 				CategoryId = events.CategoryId,
 				Id = events.Id,
 				ImageUrl = events.ImageUrl,
@@ -122,49 +129,59 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 				LanguageId = eventDetails.LanguageId,
 				Title=eventDetails.Title,
 				Description=eventDetails.Description,
-				
+
 			};
 
+        [HttpPost]
+        public async Task<IActionResult> UpdateEvent(Guid eventId, [FromForm] UpdateEventDTO updateEventDTO)
+        {
+            try
+            {
+                // Call the service layer to update the event
+                await _eventService.UpdateEventAsync(eventId, updateEventDTO);
 
+                // Return a NoContent response indicating the update was successful
+                return NoContent();
+            }
 
 			return View(events);
-		}
-		[HttpPost]
+        }
+        [HttpPost]
 		public async Task<IActionResult> Edit(Guid Id, UpdateEventDTO updateEventDTO)
-		{
+        {
 			if (!ModelState.IsValid)
-			{
+            {
 				var getLanguage = await _languageService.GetLanguagesAsync();
 				ViewBag.Language = getLanguage.Select(a => new SelectListItem()
-				{
+            {
 					Text = a.Name,
 					Value = a.Id.ToString()
 				});
 				var category = await _categoryService.GetCategoriesAllAsync();
 				ViewBag.Category = category.Select(a => new SelectListItem()
-				{
+            {
 					Text = a.CategoryName,
 					Value = a.Id.ToString()
 				}); ;
 				return View(updateEventDTO);
-			}
+            }
 			await _eventService.UpdateEventAsync(Id, updateEventDTO);
 
 			return Redirect(nameof(Index));
-		}
+        }
 
-		[HttpPost]
+        [HttpPost]
 		public async Task<IActionResult> Restore(Guid Id)
-		{
+            {
 			await _eventService.RestoreEventAsync(Id);
 			return Redirect(nameof(Index));
-		}
+            }
 
 		[HttpPost]
 		public async Task<IActionResult> Delete(Guid Id)
-		{
+            {
 			await _eventService.SoftDeleteEventAsync(Id);
 			return Redirect(nameof(Index));
-		}
-	}
+        }
+    }
 }

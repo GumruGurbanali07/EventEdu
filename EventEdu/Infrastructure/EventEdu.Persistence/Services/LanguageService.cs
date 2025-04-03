@@ -6,8 +6,10 @@ using EventEdu.Application.Services;
 using EventEdu.Application.ViewModel;
 using EventEdu.Domain.Entities;
 using EventEdu.Persistence.Context;
+using EventEdu.Persistence.Extensions;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,14 +25,23 @@ namespace EventEdu.Persistence.Services
 		private readonly ILanguageWriteRepository _languageWriteRepository;
 		private readonly IValidator<CreateLanguageDTO> _createLanguageValidator;
 		private readonly IValidator<UpdateLanguageDTO> _updateLanguageValidator;
-		private readonly IMapper _mapper;
-		public LanguageService(ILanguageReadRepository languageReadRepository, ILanguageWriteRepository languageWriteRepository, IMapper mapper, IValidator<CreateLanguageDTO> createLanguageValidator, IValidator<UpdateLanguageDTO> updateLanguageValidator)
+        private readonly IFileService _fileService;
+        private readonly IHostingEnvironment _environment;
+        private readonly IMapper _mapper;
+		public LanguageService(ILanguageReadRepository languageReadRepository, 
+			ILanguageWriteRepository languageWriteRepository, IMapper mapper, 
+			IValidator<CreateLanguageDTO> createLanguageValidator, 
+			IValidator<UpdateLanguageDTO> updateLanguageValidator, 
+			IFileService fileService,
+			IHostingEnvironment environment)
 		{
 			_languageReadRepository = languageReadRepository;
 			_languageWriteRepository = languageWriteRepository;
 			_mapper = mapper;
 			_createLanguageValidator = createLanguageValidator;
 			_updateLanguageValidator = updateLanguageValidator;
+			_fileService = fileService;
+			_environment = environment;
 		}
 
 		public async Task<Language> CreateAsync(CreateLanguageDTO languageDTO)
@@ -50,19 +61,33 @@ namespace EventEdu.Persistence.Services
 				throw new BadRequestException("Bu ISO kodlu dil artıq mövcuddur.");
 
 			}
-			//var newLang = new Language
-			//{
-			//	IsoCode = languageDTO.IsoCode,
-			//	ImagePath = languageDTO.ImagePath,
-			//	Name = languageDTO.Name
-			//};
+			var newLang = new Language
+			{
+				IsoCode = languageDTO.IsoCode,
+				
+				Name = languageDTO.Name
+			};
 
-			var newLang = _mapper.Map<Language>(languageDTO);
-			await _languageWriteRepository.AddAsync(newLang);
+			if (!languageDTO.ImageFile.CheckFileType("image"))
+            {
+                throw new Exception("Invalid file type. Please upload an image.");
+            }
+
+            if (!languageDTO.ImageFile.CheckFileSize(10))
+            {
+                throw new Exception("File size is too large. Maximum allowed size is 10MB.");
+            }
+
+            string webRootPath = _environment.WebRootPath;
+            string imagePath = await _fileService.SaveFilesAsync(languageDTO.ImageFile, webRootPath, "client", "assets", "img", "languageMedias");
+
+
+			newLang = _mapper.Map<Language>(languageDTO);
+            newLang.ImagePath = imagePath;
+            await _languageWriteRepository.AddAsync(newLang);
 			await _languageWriteRepository.SaveChangeAsync();
 			return newLang;
 		}
-
 
 		public async Task<LanguageGetDTO> GetLanguageAsync(string isoCode)
 		{

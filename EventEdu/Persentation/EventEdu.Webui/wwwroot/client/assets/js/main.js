@@ -1,5 +1,4 @@
-﻿
-(function ($) {
+﻿(function ($) {
     "use strict";
 
     // Spinner (Hide after 1ms)
@@ -91,23 +90,41 @@ const totalSlides = document.querySelectorAll('.slide').length;
 
 function moveSlide(step) {
     index = (index + step + totalSlides) % totalSlides;
-    slides.style.transform = `translateX(-${index * 100}%)`;
+slides.style.transform = `translateX(-${index * 100}%)`;
 }
 
-// Event Slider
 document.querySelectorAll('.eventSlider-container').forEach(sliderContainer => {
     let currentIndex = 0;
-    const totalEventSlides = sliderContainer.querySelectorAll('.eventSlide').length;
+    const visibleSlides = 5; // Number of slides to show at once
     const eventSlider = sliderContainer.querySelector('.eventSlider');
-    const eventSlideWidth = 100 / 5;
+    const eventSlides = sliderContainer.querySelectorAll('.eventSlide');
+    const totalEventSlides = eventSlides.length;
+    const eventSlideWidth = 100 / visibleSlides; // Adjust width so 5 slides are visible
 
+    // Make sure each eventSlide has the correct width
+    eventSlides.forEach(slide => {
+        slide.style.width = `${eventSlideWidth}%`;
+    });
+
+    // Function to move the event slider
     function moveEventSlide(direction) {
         currentIndex += direction;
-        currentIndex = Math.max(0, Math.min(currentIndex, totalEventSlides - 5));
+
+        // Loop the slides around
+        if (currentIndex >= totalEventSlides - visibleSlides + 1) {
+            currentIndex = 0; // Reset to the beginning
+        } else if (currentIndex < 0) {
+            currentIndex = totalEventSlides - visibleSlides; // Reset to the last group of slides
+        }
+
+        // Adjust the slider's position
         eventSlider.style.transform = `translateX(-${currentIndex * eventSlideWidth}%)`;
     }
 
+    // Automatically move slides every 3 seconds
     setInterval(() => moveEventSlide(1), 3000);
+
+    // Navigation buttons
     sliderContainer.querySelector('.prev').addEventListener('click', () => moveEventSlide(-1));
     sliderContainer.querySelector('.next').addEventListener('click', () => moveEventSlide(1));
 });
@@ -432,7 +449,20 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+const searchInput = document.getElementById("searchInput");
+const searchBody = document.getElementById("searchBody"); // Ensure this ID exists in your HTML
 
+if (searchInput) {
+    searchInput.addEventListener("keyup", function () {
+        console.log(this.value);
 
-
-
+        fetch(`/sponsor/search?search=${encodeURIComponent(this.value)}`)
+            .then(res => res.text())
+            .then(data => {
+                if (searchBody) {
+                    searchBody.innerHTML = data; // Ensuring searchBody exists before updating
+                }
+            })
+            .catch(error => console.error("Error fetching data:", error));
+    });
+}

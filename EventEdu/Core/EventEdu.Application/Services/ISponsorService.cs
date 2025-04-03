@@ -1,5 +1,4 @@
-﻿using EventEdu.Application.DTOs.Category;
-using EventEdu.Application.DTOs.Sponsor;
+﻿using EventEdu.Application.DTOs.Sponsor;
 using EventEdu.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -21,5 +20,6 @@ namespace EventEdu.Application.Services
         Task EditSponsor(Guid id, CreateSponsorDTO updateSponsorDTO);
         Task DeleteSponsor(Guid id);
         Task RestoreSponsor(Guid id);
+        Task<List<GetSponsorDTO>> SearchSponsors(string search);
     }
 }

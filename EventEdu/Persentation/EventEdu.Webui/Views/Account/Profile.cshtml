@@ -1,37 +1,48 @@
-﻿<div class="profile-container container">
+﻿@using EventEdu.Application.DTOs.PersonalData
+@model CreatePersonalDataDTO
+
+<div class="profile-container container">
     <div class="profile-form">
         <h2>Personal Data</h2>
-        <form>
+        <form asp-action="Profile" method="post" enctype="multipart/form-data">
             <div class="form-group">
-                <label>Email</label>
-                <input type="email" value="sonaabbasovx@gmail.com">
+                <label asp-for="Email">Email</label>
+                <input asp-for="Email" name="Email" type="email" >
+                <span class="form-text text-danger" asp-validation-for="Email"></span>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label>First Name</label>
-                    <input type="text" value="Sona">
+                    <label asp-for="Firstname">First Name</label>
+                    <input asp-for="Firstname" name="Firstname" type="text">
+                    <span class="form-text text-danger" asp-validation-for="Firstname"></span>
                 </div>
                 <div class="form-group">
-                    <label>Last Name</label>
-                    <input type="text" value="Abbasova">
+                    <label asp-for="Lastname">Last Name</label>
+                    <input asp-for="Lastname" name="Lastname" type="text">
+                    <span class="form-text text-danger" asp-validation-for="Lastname"></span>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label>Phone Number</label>
-                    <input type="text" value="05555555555">
+                    <label asp-for ="PhoneNumber">Phone Number</label>
+                    <input asp-for="PhoneNumber" name="PhoneNumber" type="text">
+                    <span class="form-text text-danger" asp-validation-for="PhoneNumber"></span>
                 </div>
                 <div class="form-group">
-                    <label>Birthday</label>
-                    <input type="text" value="01.06.2004">
+                    <label asp-for="Birthday">Birthday</label>
+                    <input asp-for="Birthday" name="Birthday" type="date" class="form-control">
+                    <span class="form-text text-danger" asp-validation-for="Birthday"></span>
                 </div>
+
             </div>
             <div class="form-group">
-                <label>Gender</label>
+                <label asp-for="Gender">Gender</label>
                 <div class="gender-toggle">
-                    <button type="button" class="active">Male</button>
-                    <button type="button">Female</button>
+                    <button type="button" class="gender-btn @(Model.Gender == "Male" ? "active" : "")" data-value="Male">Male</button>
+                    <button type="button" class="gender-btn @(Model.Gender == "Female" ? "active" : "")" data-value="Female">Female</button>
                 </div>
+                <input type="hidden" id="Gender" name="Gender" value="@Model.Gender" />
+                <span asp-validation-for="Gender" class="text-danger"></span>
             </div>
             <div class="button-group">
                 <button type="submit" class="save">Save Changes</button>
@@ -48,3 +59,35 @@
         </ul>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let genderInput = document.getElementById('Gender');
+        let selectedGender = genderInput.value;
+
+        // Set active class based on the saved value
+        if (selectedGender) {
+            document.querySelectorAll('.gender-btn').forEach(button => {
+                if (button.getAttribute('data-value') === selectedGender) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+        }
+
+        // Add click event listeners
+        document.querySelectorAll('.gender-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                // Remove 'active' class from all buttons
+                document.querySelectorAll('.gender-btn').forEach(btn => btn.classList.remove('active'));
+
+                // Add 'active' class to the clicked button
+                this.classList.add('active');
+
+                // Update hidden input value
+                genderInput.value = this.getAttribute('data-value');
+            });
+        });
+    });
+</script>

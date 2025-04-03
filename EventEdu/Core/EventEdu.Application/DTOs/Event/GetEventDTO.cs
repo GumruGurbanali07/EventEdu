@@ -21,5 +21,6 @@ namespace EventEdu.Application.DTOs.Event
 
 		public Guid LanguageId { get; set; }
 		public Guid CategoryId { get; set; }
+        public bool IsDeleted { get; set; }
 	}
 }

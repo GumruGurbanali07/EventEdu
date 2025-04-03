@@ -2,15 +2,15 @@
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
 using EventEdu.Persistence.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Threading.Tasks;
 
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
-    //[ApiController]
-    //[Route("api/[controller]")]
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class SpeakerController : Controller
     {
         private readonly ISpeakerService _speakerService;

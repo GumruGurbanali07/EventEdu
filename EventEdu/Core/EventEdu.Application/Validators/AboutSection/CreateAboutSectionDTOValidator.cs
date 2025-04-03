@@ -14,15 +14,15 @@ namespace EventEdu.Application.Validators.AboutSection
         public CreateAboutSectionDTOValidator()
         {
             RuleFor(x => x.Title)
-                .NotEmpty().WithMessage("Hero Section Title is required.")
-                .Length(3, 100).WithMessage("Hero Section Title must be between 3 and 100 characters.");
+                .NotEmpty().WithMessage("About Section Title is required.")
+                .Length(3, 100).WithMessage("About Section Title must be between 3 and 100 characters.");
 
             RuleFor(x => x.Description)
-               .NotEmpty().WithMessage("Hero Section Description is required.")
-                .Length(20, 500).WithMessage("Hero Section Description must be between 20 and 500 characters.");
+               .NotEmpty().WithMessage("About Section Description is required.")
+                .Length(20, 500).WithMessage("About Section Description must be between 20 and 500 characters.");
 
             RuleFor(x => x.LanguageId)
-                .NotEqual(Guid.Empty).WithMessage("Language ID is required.");
+                .NotEqual(Guid.Empty).WithMessage("Language is required.");
 
             RuleFor(x => x.ImageFile)
                 .NotEmpty().WithMessage("Image is required.");

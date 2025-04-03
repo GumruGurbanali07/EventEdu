@@ -1,4 +1,4 @@
-﻿using EventEdu.Application.DTOs.User;
+﻿﻿using EventEdu.Application.DTOs.User;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -14,5 +14,5 @@ namespace EventEdu.Application.Services
 		Task<SignInResult> LoginAsync(UserLoginDTO userLoginDTO);
 		Task LogOutAsync();
 
-	}
+    }
 }

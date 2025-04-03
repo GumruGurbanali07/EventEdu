@@ -1,0 +1,84 @@
+﻿@using EventEdu.Application.DTOs.User
+@model UserLoginDTO
+
+@section PageStyles {
+    <link rel="stylesheet" href="~/vendor/css/pages/page-auth.css">
+}
+
+@{
+    Layout = "_BlankLayout";
+}
+
+@* ************** Content ************** *@
+
+<div class="position-relative">
+    <div style="width: 58%; margin: auto;" class="authentication-wrapper authentication-basic container-p-y">
+        <div class="authentication-inner py-6 mx-4">
+
+            <!-- Register Card -->
+            <div class="card p-7">
+                <!-- Logo -->
+                <div class="app-brand justify-content-center mt-5">
+                    <a href="/" class="app-brand-link gap-3">
+                        <span class="app-brand-text demo text-heading fw-semibold">EventEdu</span>
+                    </a>
+                </div>
+                <!-- /Logo -->
+                <div class="card-body mt-1">
+                    <h4 class="mb-2">Login Page</h4>
+
+                    <form asp-controller="User" asp-action="Login" method="post" id="formAuthentication" class="mb-5">
+                    @*     <div class="form-floating form-floating-outline mb-5">
+                            <input type="text" class="form-control" id="username" asp-for="Username" name="Username" placeholder="Enter your username" autofocus>
+                            <label asp-for="Username">Username</label>
+                            <span class="form-text text-danger" asp-validation-for="Username"></span>
+                        </div> *@
+                        <div class="form-floating form-floating-outline mb-5">
+                            <input type="text" class="form-control" id="email" asp-for="Email" name="Email" value="@ViewBag.RememberMeEmail" placeholder="Enter your email">
+                            <label asp-for="Email">Email</label>
+                             <span class="form-text text-danger" asp-validation-for="Email"></span>
+                        </div>
+                        <div class="form-password-toggle">
+                            <div class="input-group input-group-merge">
+                                <div class="form-floating form-floating-outline">
+                                    <input type="password" id="password" class="form-control" asp-for="Password" name="Password" value="@ViewBag.RememberMePassword" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
+                                    <label asp-for="Password">Password</label>
+                                    <span class="form-text text-danger" asp-validation-for="Password"></span>
+                                </div>
+                                <span style="height:48px" class="input-group-text cursor-pointer"><i class="ri-eye-off-line ri-20px"></i></span>
+                            </div>
+                        </div>
+
+                        @if (@ViewBag.RememberMeEmail is null)
+                        {
+                            <div class="mb-5 py-2">
+                                <div class="form-check mb-0">
+                                    <input style="height:20px !important;" class="form-check-input" type="checkbox" id="terms-conditions" asp-for="RememberMe" name="RememberMe">
+                                    <label class="form-check-label" asp-for="RememberMe">
+                                        <span>Remember Me</span>
+                                    </label>
+                                </div>
+                            </div>
+                     }
+                        <button type="submit" class="btn btn-primary d-grid w-100 mb-5">
+                            Sign in
+                        </button>
+                    </form>
+
+                    <p class="text-center mb-5">
+                        <span>Don't have an account?</span>
+                        <a asp-controller="User" asp-action="Register">
+                            <span>Sign up instead</span>
+                        </a>
+                    </p>
+                    <p class="text-center mb-5">
+                        <span>Forgot Password?</span>
+                        <a asp-controller="User" asp-action="VerifyEmail">
+                            <span>Reset Password</span>
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

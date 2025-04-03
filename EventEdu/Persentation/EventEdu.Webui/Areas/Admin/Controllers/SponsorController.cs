@@ -6,6 +6,7 @@ using EventEdu.Domain.Entities;
 using EventEdu.Persistence.Context;
 using EventEdu.Persistence.Extensions;
 using EventEdu.Persistence.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ using static System.Reflection.Metadata.BlobBuilder;
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class SponsorController : Controller
     {
         private readonly ISponsorService _sponsorService;

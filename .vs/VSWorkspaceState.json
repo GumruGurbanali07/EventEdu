@@ -6,11 +6,16 @@
     "\\EventEdu\\Persentation\\EventEdu.Webui",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin",
-    "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Controllers",
     "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views",
-    "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Sponsor",
-    "\\EventEdu\\Persentation\\EventEdu.Webui\\Controllers"
+    "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Shared",
+    "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Shared\\Sections",
+    "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Views\\Shared\\Sections\\Menu",
+    "\\EventEdu\\Persentation\\EventEdu.Webui\\Controllers",
+    "\\EventEdu\\Persentation\\EventEdu.Webui\\wwwroot",
+    "\\EventEdu\\Persentation\\EventEdu.Webui\\wwwroot\\client",
+    "\\EventEdu\\Persentation\\EventEdu.Webui\\wwwroot\\client\\assets",
+    "\\EventEdu\\Persentation\\EventEdu.Webui\\wwwroot\\client\\assets\\js"
   ],
-  "SelectedNode": "\\EventEdu\\Persentation\\EventEdu.Webui\\Areas\\Admin\\Controllers\\SponsorController.cs",
+  "SelectedNode": "\\EventEdu\\Persentation\\EventEdu.Webui\\wwwroot\\client\\assets\\js\\main.js",
   "PreviewInSolutionExplorer": false
 }

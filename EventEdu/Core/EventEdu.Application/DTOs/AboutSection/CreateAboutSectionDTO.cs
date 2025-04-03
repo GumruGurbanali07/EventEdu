@@ -11,10 +11,9 @@ namespace EventEdu.Application.DTOs.AboutSection
     {
         public Guid Id { get; set; }
         public Guid LanguageId { get; set; }
-        public string ImagePath { get; set; }
+        public string? ImagePath { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        //public List<string> Features { get; set; }
-        public IFormFile ImageFile { get; set; }
+        public IFormFile? ImageFile { get; set; }
     }
 }

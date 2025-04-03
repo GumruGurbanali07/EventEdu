@@ -21,7 +21,7 @@ namespace EventEdu.Persistence
 {
 	public static class ServiceRegistration
 	{
-		public static void AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
+		public static async void AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
 		{
 			services.Configure<RequestLocalizationOptions>(options =>
 			{
@@ -36,13 +36,37 @@ namespace EventEdu.Persistence
 			});
 
 			services.AddDbContext<AppDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("SqlServer")));
-			services.AddIdentity<AppUser, AppRole>(options => options.SignIn.RequireConfirmedAccount = false)
-			.AddEntityFrameworkStores<AppDbContext>()
-			.AddDefaultTokenProviders();
 
-			//Services
-			//services.AddAutoMapper(Assembly.GetExecutingAssembly());
-			services.AddScoped<ILanguageService, LanguageService>();
+      //      services.AddIdentity<AppUser, IdentityRole>(options =>
+      //      {
+      //          //options.SignIn.RequireConfirmedAccount = false;
+      //          //options.User.RequireUniqueEmail = false;
+
+      //          options.User.RequireUniqueEmail = true;
+
+      //          options.Password.RequireDigit = true;
+      //          options.Password.RequireLowercase = true;
+      //          options.Password.RequiredLength = 6;
+
+      //          options.Lockout.AllowedForNewUsers = true;
+      //          options.Password.RequireNonAlphanumeric = false;
+      //          options.Password.RequireUppercase = false;
+      //          options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(1);
+      //          options.Lockout.MaxFailedAccessAttempts = 300;
+      //      }).AddEntityFrameworkStores<AppDbContext>()
+      //.AddDefaultTokenProviders();
+
+			
+
+				//Services
+				//services.AddAutoMapper(Assembly.GetExecutingAssembly());
+				services.AddScoped<IFileService, FileService>();
+            services.AddScoped<ISponsorService, SponsorService>();
+            services.AddScoped<IHeroSectionService, HeroSectionService>();
+            services.AddScoped<IAboutSectionService, AboutSectionService>();
+            services.AddScoped<IEventSponsorService, EventSponsorService>();
+            services.AddScoped<IEventSpeakerService, EventSpeakerService>();
+            services.AddScoped<ILanguageService, LanguageService>();
 			services.AddScoped<ICategoryService, CategoryService>();
 			services.AddScoped<ISpeakerService, SpeakerService>();
 			services.AddScoped<ISponsorService, SponsorService>();
@@ -52,8 +76,8 @@ namespace EventEdu.Persistence
 			services.AddScoped<IFeedbackService, FeedbackService>();
 			services.AddTransient<IFileService, FileService>();
 
-			//Repositories
-			services.AddSingleton<StringLocalizerService>();
+            //Repositories
+            services.AddSingleton<StringLocalizerService>();
 
 			services.AddScoped<ILanguageReadRepository, LanguageReadRepository>();
 			services.AddScoped<ILanguageWriteRepository, LanguageWriteRepository>();
@@ -106,7 +130,6 @@ namespace EventEdu.Persistence
 			services.AddScoped<IAboutSectionDetailWriteRepository, AboutSectionDetailWriteRepository>();
 
 
-
-		}
+        }
 	}
 }

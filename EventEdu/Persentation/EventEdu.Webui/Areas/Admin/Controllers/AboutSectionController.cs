@@ -3,11 +3,14 @@ using EventEdu.Application.DTOs.HeroSection;
 using EventEdu.Application.Repository;
 using EventEdu.Application.Services;
 using EventEdu.Persistence.Context;
+using EventEdu.Persistence.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class AboutSectionController : Controller
     {
         private readonly IAboutSectionService _aboutSectionService;
@@ -86,25 +89,23 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         {
             try
             {
-                var AboutSection = await _aboutSectionService.GetAboutSectionById(id);
+                var aboutSection = await _aboutSectionService.GetAboutSectionById(id, "az-AZ");
 
-                if (AboutSection == null)
+                if (aboutSection == null)
                 {
-                    return NotFound();
+                    return NotFound("About section not found.");
                 }
 
-                //var updateSponsorDTO = new CreateSponsorDTO
-                //{
-                //    SponsorName = sponsor.SponsorName,
-                //    SponsorDescription = sponsor.SponsorDescription,
-                //    Email = sponsor.Email,
-                //    PhoneNumber = sponsor.PhoneNumber,
-                //    Website = sponsor.Website,
-                //    //LanguageId = sponsorDTO.LanguageId
-                //};
+                var updateAboutSectionDTO = new CreateAboutSectionDTO
+                {
+                    Title = aboutSection.Title,
+                    Description = aboutSection.Description,
+                    ImagePath = aboutSection?.ImagePath,
+                    LanguageId = aboutSection.LanguageId
+                };
 
 
-                return View(AboutSection);
+                return View(updateAboutSectionDTO);
             }
             catch (Exception ex)
             {
@@ -114,13 +115,18 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditAboutSection(Guid id, CreateAboutSectionDTO updateAboutSectionDTO)
+        public async Task<IActionResult> EditAboutSection(Guid id, [FromForm] CreateAboutSectionDTO updateAboutSectionDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(updateAboutSectionDTO);
+            }
+
             try
             {
-                var updatedAbouutSection = await _aboutSectionService.EditAboutSection(id, updateAboutSectionDTO);
+                await _aboutSectionService.EditAboutSection(id, updateAboutSectionDTO);
                 TempData["Success"] = "About Section updated successfully!";
-                return View(updateAboutSectionDTO);
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {

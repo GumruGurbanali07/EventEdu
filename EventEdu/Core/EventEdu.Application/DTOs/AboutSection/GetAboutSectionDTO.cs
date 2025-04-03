@@ -14,5 +14,6 @@ namespace EventEdu.Application.DTOs.AboutSection
         public string ImagePath { get; set; }
         public bool IsDeleted { get; set; }
         public string IsoCode { get; set; }
+        public Guid LanguageId { get; set; }
     }
 }

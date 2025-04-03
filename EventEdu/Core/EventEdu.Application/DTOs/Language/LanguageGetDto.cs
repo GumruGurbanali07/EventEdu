@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +13,7 @@ namespace EventEdu.Application.DTOs.Language
 		public string Name { get; set; }
 		public string IsoCode { get; set; }
 		public string ImagePath { get; set; }
-	}
+        public IFormFile ImageFile { get; set; }    
+        public bool IsDeleted { get; set; }
+    }
 }

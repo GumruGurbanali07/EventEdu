@@ -1,7 +1,7 @@
 ﻿@using EventEdu.Application.DTOs.Speaker
 @model CreateSpeakerDTO
 
-<form asp-controller="Speaker" asp-action="AddSpeakerWithLanguage" method="post" enctype="multipart/form-data">
+<form asp-controller="Speaker" asp-action="Create" method="post" enctype="multipart/form-data">
     <h4 style="margin-left:40px">Add Speaker</h4>
 
     <div class="addOrEditCard card">
@@ -22,9 +22,9 @@
 
             <!-- File Input for Image -->
             <div class="mb-3">
-                <label asp-for="ImageFile" class="form-label">Speaker's Image</label>
-                <input class="form-control" type="file" asp-for="FullName" id="ImageFile">
-                <span class="form-text text-danger" asp-validation-for="ImageFile"></span>
+                <label asp-for="FormFile" class="form-label">Speaker's Image</label>
+                <input class="form-control" type="file" asp-for="FormFile" id="ImageFile">
+                <span class="form-text text-danger" asp-validation-for="FormFile"></span>
             </div>
 
             <!-- Speaker Name (inside SpeakerDetails) -->
@@ -47,8 +47,21 @@
                 <input type="email" asp-for="Email" class="form-control" placeholder="Enter Email">
                 <span class="form-text text-danger" asp-validation-for="Email"></span>
             </div>
-
-
+            <div>
+                <label asp-for="FacebookLink" class="form-label"></label>
+                <input  asp-for="FacebookLink" class="form-control" placeholder="Enter Email">
+                <span class="form-text text-danger" asp-validation-for="FacebookLink"></span>
+            </div>
+            <div>
+                <label asp-for="InstagramLink" class="form-label"></label>
+                <input asp-for="InstagramLink" class="form-control" placeholder="Enter Email">
+                <span class="form-text text-danger" asp-validation-for="InstagramLink"></span>
+            </div>
+            <div>
+                <label asp-for="TwitterLink" class="form-label"></label>
+                <input asp-for="TwitterLink" class="form-control" placeholder="Enter Email">
+                <span class="form-text text-danger" asp-validation-for="TwitterLink"></span>
+            </div>
             <!-- Submit Button -->
             <button type="submit" class="btn btn-primary mt-3">Save</button>
         </div>

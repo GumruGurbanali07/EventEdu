@@ -34,20 +34,20 @@ namespace EventEdu.Persistence.Services
 		private readonly IMapper _mapper;
 		private readonly IValidator<CreateSpeakerDTO> _createSpeakerValidator;
 		private readonly IValidator<UpdateSpeakerDTO> _updateSpeakerValidator;
-		
+		private readonly IFileService _fileService;
 		readonly private IHttpContextAccessor _contextAccessor;
 		public SpeakerService(AppDbContext context,
 			ISpeakerWriteRepository speakerWriteRepository,
 			ISpeakerReadRepository speakerReadRepository,
-			ISpeakerDetailWriteRepository speakerDetailWriteRepository, 
+			ISpeakerDetailWriteRepository speakerDetailWriteRepository,
 			ISpeakerDetailReadRepository speakerDetailReadRepository,
 			ILanguageReadRepository languageReadRepository, IMapper mapper,
-			IValidator<CreateSpeakerDTO> createSpeakerValidator, 
+			IValidator<CreateSpeakerDTO> createSpeakerValidator,
 			IValidator<UpdateSpeakerDTO> updateSpeakerValidator
 			, IHttpContextAccessor contextAccessor,
 			IEventSpeakerReadRepository eventSpeakerReadRepository,
 			IEventSpeakerWriteRepository eventSpeakerWriteRepository
-			)
+, IFileService fileService)
 		{
 			_context = context;
 			_speakerWriteRepository = speakerWriteRepository;
@@ -61,7 +61,7 @@ namespace EventEdu.Persistence.Services
 			_contextAccessor = contextAccessor;
 			_eventSpeakerReadRepository = eventSpeakerReadRepository;
 			_eventSpeakerWriteRepository = eventSpeakerWriteRepository;
-			
+			_fileService = fileService;
 		}
 
 		public async Task AddSpeakerWithLanguageAsync(CreateSpeakerDTO createSpeakerDTO)
@@ -73,17 +73,10 @@ namespace EventEdu.Persistence.Services
 			//	throw new Exception("Selected language not found");
 			//}
 
-			var validationResult = await _createSpeakerValidator.ValidateAsync(createSpeakerDTO);
-			if (!validationResult.IsValid)
-			{
-				throw new ValidationException(validationResult.Errors);
-			}
+
 
 			var language = await _languageReadRepository.GetByIdAsync(createSpeakerDTO.LanguageId.ToString());
-			if (language == null)
-			{
-				throw new NotFoundException("Selected language not found");
-			}
+
 
 			//bool isSpeakerExist = await _context.SpeakerDetails.AnyAsync(x => x.FullName == createSpeakerDTO.FullName && x.LanguageId == createSpeakerDTO.LanguageId);
 			//if (isSpeakerExist)
@@ -108,8 +101,9 @@ namespace EventEdu.Persistence.Services
 			//	TwitterLink = createSpeakerDTO.TwitterLink,
 			//	InstagramLink = createSpeakerDTO.InstagramLink
 			//};
+			var newFile = await _fileService.UploadAsync(createSpeakerDTO.FormFile);
 			var speaker = _mapper.Map<Speaker>(createSpeakerDTO);
-			speaker.Id = Guid.NewGuid();
+			speaker.ImageUrl = newFile;
 			speaker.CreatedDate = DateTime.UtcNow;
 			speaker.UpdatedDate = DateTime.UtcNow;
 
@@ -137,7 +131,7 @@ namespace EventEdu.Persistence.Services
 			//};
 
 			var speakerDetail = _mapper.Map<SpeakerDetail>(createSpeakerDTO);
-			speakerDetail.Id = Guid.NewGuid();
+
 			speakerDetail.SpeakerId = speaker.Id;
 			speakerDetail.CreatedDate = DateTime.UtcNow;
 			speakerDetail.UpdatedDate = DateTime.UtcNow;
@@ -230,77 +224,59 @@ namespace EventEdu.Persistence.Services
 
 		public async Task UpdateSpeakerAsync(Guid speakerId, UpdateSpeakerDTO updateSpeakerDTO)
 		{
+			// Model validasiyasını yoxlayırıq
 			var validationResult = await _updateSpeakerValidator.ValidateAsync(updateSpeakerDTO);
 			if (!validationResult.IsValid)
 			{
-				throw new ValidationException(validationResult.Errors);
+				// Validasiya uğursuz olarsa, istisna atmaq lazımdır
+				throw new ValidationException("Validation failed");
 			}
-			//var speakerDetail = await _context.SpeakerDetails.FirstOrDefaultAsync(x => x.Id == speakerId);
+
+			// SpeakerDetail məlumatını tapırıq
 			var speakerDetail = await _speakerDetailReadRepository.GetBySpeakerIdAndLanguageIdAsync(speakerId, updateSpeakerDTO.LanguageId);
 			if (speakerDetail == null)
 			{
-				throw new NotFoundException("Speaker not found.");
+				throw new NotFoundException("SpeakerDetail not found.");
 			}
 
-			//	bool isSpeakerExist = await _context.SpeakerDetails
-			//.AnyAsync(x => x.FullName == updateSpeakerDTO.FullName &&
-			//			   x.LanguageId == updateSpeakerDTO.LanguageId &&
-			//			   x.Id != speakerId);
-
-			//	if (isSpeakerExist)
-			//	{
-			//		throw new Exception("This speaker name already exists for the selected language.");
-			//	}
-
-
-			//var isSpeakerExist = await _speakerDetailReadRepository.GetBySpeakerIdAndLanguageIdAsync(speakerId, updateSpeakerDTO.LanguageId);
-			//if (isSpeakerExist != null && isSpeakerExist.Id != speakerId)
-			//{
-			//	throw new BadRequestException("This speaker name already exists for the selected language.");
-			//}
-
-			////
-			var isSpeakerExist = await _speakerDetailReadRepository.GetBySpeakerIdAsync(speakerId);
-			if (isSpeakerExist == null)
+			// Speaker məlumatını tapırıq
+			var speaker = await _speakerReadRepository.GetByIdAsync(speakerDetail.SpeakerId.ToString());
+			if (speaker == null)
 			{
 				throw new NotFoundException("Speaker not found.");
 			}
 
-
-			//	bool isSpeakerExist = await _speakerDetailReadRepository.Table
-			//.AnyAsync(x => x.FullName == updateSpeakerDTO.FullName &&
-			//			   x.LanguageId == updateSpeakerDTO.LanguageId &&
-			//			   x.SpeakerId != speakerDetail.SpeakerId); // **DÜZƏLİŞ BURADADIR!**
-
-			//	if (isSpeakerExist)
-			//	{
-			//		throw new Exception("This speaker name already exists for the selected language.");
-			//	}
-
-			//speakerDetail.FullName = updateSpeakerDTO.FullName;
-			//speakerDetail.Bio = updateSpeakerDTO.Bio;
-			//speakerDetail.LanguageId = updateSpeakerDTO.LanguageId;
-			//speakerDetail.UpdatedDate = DateTime.UtcNow;
-
-			_mapper.Map(updateSpeakerDTO, speakerDetail);
-			speakerDetail.UpdatedDate = DateTime.UtcNow;
-
-			//var speaker = await _context.Speakers.FirstOrDefaultAsync(x => x.Id == speakerDetail.SpeakerId);
-			var speaker = await _speakerReadRepository.GetByIdAsync(speakerId.ToString());
-			if (speaker != null)
+			// Yeni şəkil yükləndiyi halda
+			if (updateSpeakerDTO.FormFile != null)
 			{
-				//speaker.ImageUrl = updateSpeakerDTO.ImageUrl;
-				//speaker.Email = updateSpeakerDTO.Email;
-				//speaker.FacebookLink = updateSpeakerDTO.FacebookLink;
-				//speaker.TwitterLink = updateSpeakerDTO.TwitterLink;
-				//speaker.InstagramLink = updateSpeakerDTO.InstagramLink;
-				//speaker.UpdatedDate = DateTime.UtcNow;
+				// Əgər köhnə şəkil varsa, onu silirik
+				if (!string.IsNullOrEmpty(speaker.ImageUrl))
+				{
+					_fileService.Delete(speaker.ImageUrl);
+				}
 
-				_mapper.Map(updateSpeakerDTO, speaker);
-				speaker.UpdatedDate = DateTime.UtcNow;
+				// Yeni şəkil yükləyirik
+				var newFile = await _fileService.UploadAsync(updateSpeakerDTO.FormFile);
+				speaker.ImageUrl = newFile;
+				await _speakerWriteRepository.SaveChangeAsync();
 			}
-			//await _context.SaveChangesAsync();
+
+			// Speaker məlumatını yeniləyirik
+			
+			speaker.Id= speakerDetail.SpeakerId; 
+			speaker.FacebookLink=updateSpeakerDTO.FacebookLink;	
+			speaker.InstagramLink=updateSpeakerDTO.InstagramLink;
+			speaker.TwitterLink=updateSpeakerDTO.TwitterLink;
+			speaker.Email=updateSpeakerDTO.Email;
+		
+			_speakerWriteRepository.Update(speaker);
 			await _speakerWriteRepository.SaveChangeAsync();
+			// SpeakerDetail məlumatını yeniləyirik
+			_mapper.Map(updateSpeakerDTO, speakerDetail);
+			_speakerDetailWriteRepository.Update(speakerDetail);
+			await _speakerDetailWriteRepository.SaveChangeAsync(); // SpeakerDetail repository üçün saxlayırıq
+
+		
 		}
 
 		public async Task SoftDeleteSpeakerAsync(Guid speakerId)
@@ -346,21 +322,28 @@ namespace EventEdu.Persistence.Services
 			await _speakerWriteRepository.SaveChangeAsync();
 		}
 
-		public async Task<(List<Speaker>, List<SpeakerDetail>)> GetSpeakersAllAsync()
+		public async Task<(List<Speaker>, SpeakerDetail)> GetSpeakersAllAsync()
 		{
 			var language = _contextAccessor.HttpContext.Request.Headers["accept-language"].FirstOrDefault();
 			var isoCode = language.Split(",").FirstOrDefault();
 			var languages = await _languageReadRepository.GetByIsoCodeAsync(isoCode);
-			var speakerDetails = await _speakerDetailReadRepository.GetAll().Where(a => a.LanguageId == languages.Id).ToListAsync();
 			var speak = await _speakerReadRepository.GetAll()
 				.Include(a => a.EventSpeakers)
 				.Include(a => a.SpeakerDetails)
 
 				.ToListAsync();
+			var speaker = new SpeakerDetail();
+			foreach (var sp in speak)
+			{
+
+				var speakerDetails = await _speakerDetailReadRepository.GetAll().FirstOrDefaultAsync(a => a.LanguageId == languages.Id && sp.Id == a.SpeakerId);
+				speaker = speakerDetails;
+			}
 
 
 
-			return (speak, speakerDetails);
+
+			return (speak, speaker);
 		}
 
 		public async Task<SpeakDetailsVM> GetSpeakersByIdAsync(string id)
@@ -384,9 +367,9 @@ namespace EventEdu.Persistence.Services
 
 		public async Task<List<SpeakerDetail>> GetSpeakersEventByIdAsync(string eventId)
 		{
-			var language =  _contextAccessor.HttpContext.Request.Headers["accept-language"].FirstOrDefault();
-			var isoCode = language.Split(",").FirstOrDefault();	
-			var languages= await _languageReadRepository.GetByIsoCodeAsync(isoCode);
+			var language = _contextAccessor.HttpContext.Request.Headers["accept-language"].FirstOrDefault();
+			var isoCode = language.Split(",").FirstOrDefault();
+			var languages = await _languageReadRepository.GetByIsoCodeAsync(isoCode);
 			var eventSpeaker = await _eventSpeakerReadRepository.GetAll().FirstOrDefaultAsync(a => a.EventId == Guid.Parse(eventId));
 
 			var speaker = await _speakerDetailReadRepository.GetAll().Where(a => a.SpeakerId == eventSpeaker.SpeakerId && a.LanguageId == languages.Id).ToListAsync();
@@ -394,5 +377,8 @@ namespace EventEdu.Persistence.Services
 			return speaker;
 
 		}
+
+		public async Task<List<SpeakerDetail>> GetSpeakersAsync()
+		=> await _speakerDetailReadRepository.GetAll().ToListAsync();
 	}
 }

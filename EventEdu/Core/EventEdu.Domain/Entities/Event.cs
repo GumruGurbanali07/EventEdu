@@ -15,7 +15,7 @@ namespace EventEdu.Domain.Entities
 		public DateTime EndDate { get; set; }
 		public string ImageUrl { get; set; }
 
-		
+		[ForeignKey(nameof(Category))]		
 		public Guid CategoryId { get; set; }
 		public Category Category { get; set; }
 		public ICollection<EventDetail> EventDetails { get; set; }

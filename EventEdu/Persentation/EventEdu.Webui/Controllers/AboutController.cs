@@ -13,14 +13,10 @@ public class AboutController : Controller
     {
         _aboutSectionService = aboutSectionService;
     }
-    public async Task<IActionResult> IndexAsync()
+    public async Task<IActionResult> Index()
     {
-        var aboutSection = await _aboutSectionService.GetAllAboutSectionsAsync();
-        var viewModel = new HomeIndexVM
-        {
-            AboutSection = aboutSection,
-        };
-
-        return View(viewModel);
+       
+        
+        return View();
     }
 }

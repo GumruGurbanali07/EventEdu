@@ -62,6 +62,7 @@ namespace EventEdu.Persistence
 				//services.AddAutoMapper(Assembly.GetExecutingAssembly());
 				services.AddScoped<IFileService, FileService>();
             services.AddScoped<ISponsorService, SponsorService>();
+			services.AddScoped<IUserService, UserService>();
             services.AddScoped<IHeroSectionService, HeroSectionService>();
             services.AddScoped<IAboutSectionService, AboutSectionService>();
             services.AddScoped<IEventSponsorService, EventSponsorService>();
@@ -78,6 +79,8 @@ namespace EventEdu.Persistence
 
             //Repositories
             services.AddSingleton<StringLocalizerService>();
+
+
 
 			services.AddScoped<ILanguageReadRepository, LanguageReadRepository>();
 			services.AddScoped<ILanguageWriteRepository, LanguageWriteRepository>();
@@ -133,3 +136,7 @@ namespace EventEdu.Persistence
         }
 	}
 }
+
+
+
+

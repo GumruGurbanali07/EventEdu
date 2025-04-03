@@ -290,6 +290,9 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
+                    b.Property<int>("RatingEvenets")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("SubscriptionId")
                         .HasColumnType("uniqueidentifier");
 
@@ -549,7 +552,7 @@ namespace EventEdu.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PersonalDatas", (string)null);
+                    b.ToTable("PersonalDatas");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.Language", b =>

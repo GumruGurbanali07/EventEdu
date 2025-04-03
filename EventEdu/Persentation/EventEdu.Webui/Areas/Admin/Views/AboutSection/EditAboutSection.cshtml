@@ -1,7 +1,8 @@
 ﻿@using EventEdu.Application.DTOs.AboutSection
 @model CreateAboutSectionDTO
 
-<form asp-action="EditAboutSection" method="post" enctype="multipart/form-data">
+<form asp-area="admin" asp-controller="AboutSection" asp-action="EditAboutSection" asp-route-Id="@Model.Id" method="post" enctype="multipart/form-data">
+   <input type="hidden"  value="@Model.Id" />
     <h4 style="margin-left:40px">Edit About Section</h4>
 
     <div class="addOrEditCard card">
@@ -20,11 +21,9 @@
         <div class="card-body">
             <!-- Language Dropdown -->
             <div class="form-floating form-floating-outline mb-3">
-                <select asp-for="LanguageId" name="LanguageId" class="form-select" aria-label="Choose a Language">
+                <select asp-for="LanguageId" name="LanguageId" asp-items="@ViewBag.Languages" class="form-select" aria-label="Choose a Language">
                     <option selected disabled value="">Choose a Language</option>
-                    <option value="B3284054-E7FA-48FB-7C70-08DD595D715B">Aze</option>
-                    <option value="4C11A351-B8D5-4D69-7C72-08DD595D715B">Ru</option>
-                    <option value="C9B1E706-D934-4B46-7C71-08DD595D715B">Eng</option>
+                 
                 </select>
                 <label asp-for="LanguageId">Language</label>
                 <span class="form-text text-danger" asp-validation-for="LanguageId"></span>
@@ -34,7 +33,7 @@
             <!-- File Input for Image -->
             <div class="mb-3">
                 <label asp-for="ImageFile" class="form-label">About Section's Image</label>
-                <input class="form-control" type="file" name="ImageFile" asp-for="ImageFile" id="ImageFile" accept="image/*" onchange="previewImage(event)">
+                <input class="form-control" type="file"  asp-for="ImageFile" id="ImageFile" accept="image/*" onchange="previewImage(event)">
                 <span class="form-text text-danger" asp-validation-for="ImageFile"></span>
             </div>
 

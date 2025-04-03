@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventEdu.Webui.Areas.Admin.Controllers;
-[Area("Admin")]
-[Authorize(Roles = "Admin")]
+
+[Area(nameof(Admin))]
 public class DashboardsController : Controller
 {
     private readonly AppDbContext _context;

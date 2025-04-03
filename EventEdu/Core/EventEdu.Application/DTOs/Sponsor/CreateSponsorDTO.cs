@@ -1,7 +1,9 @@
 ﻿using EventEdu.Domain.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,12 +14,15 @@ namespace EventEdu.Application.DTOs.Sponsor
     {
         public Guid Id { get; set; }
         public Guid LanguageId { get; set; }
+
+        public List<SelectListItem>? Languages { get; set; }
         public string Email { get; set; } 
         public string PhoneNumber { get; set; } 
-        public string Website { get; set; } 
+        public string? Website { get; set; } 
         public string? ImagePath { get; set; }
-        public string SponsorName { get; set; }
-        public string SponsorDescription { get; set; }
+        public string? SponsorName { get; set; }
+        public string? SponsorDescription { get; set; }
+        [NotMapped]
         public IFormFile? ImageFile { get; set; }
     }
 }

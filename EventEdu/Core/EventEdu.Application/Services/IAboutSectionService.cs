@@ -1,5 +1,6 @@
 ﻿using EventEdu.Application.DTOs.AboutSection;
 using EventEdu.Application.DTOs.HeroSection;
+using EventEdu.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,9 @@ namespace EventEdu.Application.Services
     {
         Task AddAboutSection(CreateAboutSectionDTO addAboutSectionDTO);
         Task<List<GetAboutSectionDTO>> GetAllAboutSectionsAsync();
-        Task<GetAboutSectionDTO> GetAboutSectionById(Guid id, string IsoCode);
+
+        Task<(AboutSection, AboutSectionDetail)> GetAboutSectionAll();
+        Task<(AboutSection, AboutSectionDetail)> GetAboutSectionById(Guid id);
         Task EditAboutSection(Guid id, CreateAboutSectionDTO updateAboutSectionDTO);
         Task DeleteAboutSection(Guid id);
         Task RestoreAboutSection(Guid id);

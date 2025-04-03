@@ -26,7 +26,7 @@
         </div>
         <div>
             <label asp-for="FormFile" class="form-label">Upload Files</label>
-            <input type="text" asp-for="FormFile" class="form-control" placeholder="Upload file">
+            <input type="file" asp-for="FormFile" name="FormFile" class="form-control" placeholder="Upload file">
             <span class="form-text text-danger" asp-validation-for="FormFile"></span>
         </div>
           

@@ -1,5 +1,6 @@
 ﻿using EventEdu.Application.DTOs.HeroSection;
 using EventEdu.Application.DTOs.Sponsor;
+using EventEdu.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace EventEdu.Application.Services
 {
     public interface IHeroSectionService
     {
+        Task<(List<HeroSection>, HeroSectionDetails)> GetHeroSectionAll();
         Task AddSlider(CreateHeroSectionDTO addSliderDTO);
         Task<List<GetHeroSectionDTO>> GetAllSlidersAsync();
         Task<GetHeroSectionDTO> GetSLiderById(Guid id, string isoCode);

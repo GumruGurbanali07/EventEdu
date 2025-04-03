@@ -1,15 +1,9 @@
 ﻿using EventEdu.Application.Services;
-using EventEdu.Persistence.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using e=System.IO;
 namespace EventEdu.Persistence.Services
 {
     public class FileService : IFileService
@@ -23,8 +17,8 @@ namespace EventEdu.Persistence.Services
 
 		public void Delete(string path)
 		{
-            if (File.Exists(path))
-                File.Delete(path);
+            if (e::File.Exists(path))
+				e::File.Delete(path);
 		}
 
 		public async Task<string> SaveFilesAsync(IFormFile file, string webRootPath, params string[] subfolders)

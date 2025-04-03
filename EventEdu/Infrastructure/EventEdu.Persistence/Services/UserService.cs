@@ -29,14 +29,14 @@ namespace EventEdu.Persistence.Services
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<AppRole> _roleManager;
         private readonly IMapper _mapper;
         private readonly IHostingEnvironment _environment;
         private readonly IFileService _fileService;
         private readonly AppDbContext _context;
 
         public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
-            IMapper mapper, RoleManager<IdentityRole> roleManager, 
+            IMapper mapper, RoleManager<AppRole> roleManager, 
             IHostingEnvironment environment, IFileService fileService, AppDbContext context)
         {
             _userManager = userManager;

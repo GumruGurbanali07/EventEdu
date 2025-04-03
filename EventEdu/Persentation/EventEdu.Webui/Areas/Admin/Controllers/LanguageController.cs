@@ -20,7 +20,7 @@ public class LanguageController : Controller
         _languageService = languageService;
     }
 
-		public async Task<IActionResult> Index()
+		public async Task<IActionResult> Index( string lang)
     {
         if (!string.IsNullOrEmpty(lang))
         {
@@ -45,32 +45,15 @@ public class LanguageController : Controller
 
 
         }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, "Daxili server xətası: " + ex.Message);
-        }
-    }
-    [HttpGet]
-    public async Task<IActionResult> Get(string isoCode)
-    {
-        try
-        {
-            var language = await _languageService.GetLanguagesAsync();
-            return Ok(language);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, "Daxili server xətası: " + ex.Message);
-        }
-    }
+       
+    
+  
+
 
     [HttpGet]
 		public async Task<IActionResult>  Edit (Guid id)
     {
+            try { 
             var language = await _languageService.GetLanguageById(id);
 
             if (language == null) return NotFound();
@@ -83,7 +66,6 @@ public class LanguageController : Controller
             };
             return View(ud);
 
-            return View(updateLanguageDTO);
         }
         catch (Exception ex)
         {

@@ -11,37 +11,33 @@ public class HomeController : Controller
 {
 	private readonly ILogger<HomeController> _logger;
 	private readonly IStringLocalizer<HomeController> _localizer;
-	private readonly ICategoryService _categoryService;
-    private readonly IAboutSectionService _aboutSectionService;
-    private readonly ISponsorService _sponsorService;
+	private readonly IHeroSectionService _heroSectionService;
 
-    public HomeController(ILogger<HomeController> logger, IStringLocalizer<HomeController> localizer, ICategoryService categoryService, 
-        IAboutSectionService aboutSectionService, ISponsorService sponsorService)
+	public HomeController(ILogger<HomeController> logger, IHeroSectionService heroSectionService, IStringLocalizer<HomeController> localizer)
 	{
 		_logger = logger;
 		_localizer = localizer;
-		_categoryService = categoryService;
-		_aboutSectionService = aboutSectionService;
-        _sponsorService = sponsorService;
+		_heroSectionService = heroSectionService;
+
 	}
-	
+
+
+
 	public async Task<IActionResult> Index()
 	{
 		var lang = HttpContext.Session.GetString("lang") ?? "en-US";
-
-		var categories = await _categoryService.GetCategoriesByLanguageAsync(lang);
-		
-		ViewBag.Localizer = _localizer ;
-
+		var slider = await _heroSectionService.GetHeroSectionAll();
 
 		var vm = new HomeIndexVM()
 		{
-			Categories = categories.Item2
-
+			HeroSectionDetails = slider.Item2,
+			HeroSections = slider.Item1
 		};
 
 
-        return View(vm);
+		ViewBag.Localizer = _localizer;
+
+		return View(vm);
 	}
 
 

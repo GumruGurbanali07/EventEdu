@@ -1,7 +1,9 @@
-﻿using EventEdu.Application.DTOs.Speaker;
+﻿using EventEdu.Application.DTOs.Social;
+using EventEdu.Application.DTOs.Speaker;
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
 using EventEdu.Persistence.Services;
+using EventEdu.Webui.ViewsModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,12 +12,11 @@ using System.Threading.Tasks;
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class SpeakerController : Controller
     {
         private readonly ISpeakerService _speakerService;
         private readonly ILanguageService _languageService;
-
 
 		public SpeakerController(ISpeakerService speakerService, ILanguageService languageService)
 		{
@@ -27,8 +28,14 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 		public async Task<IActionResult> Index()
         {
             var speaker = await _speakerService.GetSpeakersAllAsync();
+            
+            var vm = new SpeakerIndexVM()
+            {
+                Speakers = speaker.Item1,
+                SpeakerDetail = speaker.Item2,
+            };
 
-            return View(speaker);
+            return View(vm);
         }
         //[HttpPost("AddSpeakerWithLanguage")]
         [HttpGet]
@@ -40,6 +47,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 				Text = a.Name,
 				Value = a.Id.ToString()
 			});
+
             return View();
 		}
 
@@ -58,6 +66,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 				return View(model);
             }
             await _speakerService.AddSpeakerWithLanguageAsync(model);
+          
 
             return Redirect(nameof(Index));
         }
@@ -74,12 +83,14 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 			});
 			var us = new UpdateSpeakerDTO()
             {
+                Id= speaker.SpeakerDetail.Id,
                 FullName = speaker.SpeakerDetail.FullName,
                 Bio = speaker.SpeakerDetail.Bio,
                 Email = speaker.Speaker.Email,
-                FacebookLink = speaker.Speaker.FacebookLink,
-                InstagramLink = speaker.Speaker.InstagramLink,
-                TwitterLink = speaker.Speaker.TwitterLink,
+                FacebookLink=speaker.Speaker.FacebookLink,
+                InstagramLink=speaker.Speaker.InstagramLink,
+                TwitterLink= speaker.Speaker.TwitterLink,
+
                 ImageUrl = speaker.Speaker.ImageUrl,
                 LanguageId = speaker.SpeakerDetail.LanguageId,
 
@@ -103,7 +114,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
             }
             await _speakerService.UpdateSpeakerAsync(Guid.Parse(id), model);
 
-            return Redirect(nameof(Index));
+            return RedirectToAction(nameof(Index), nameof(Speaker));
         }
 
         [HttpPost]

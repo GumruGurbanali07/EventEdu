@@ -2,6 +2,7 @@
 using EventEdu.Domain.Entities;
 using EventEdu.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,17 +17,24 @@ namespace EventEdu.Persistence.Repository
         {
         }
 
-		public async Task<SpeakerDetail> GetBySpeakerIdAndLanguageIdAsync(Guid speakerId, Guid languageId)
+		public async Task<SpeakerDetail> GetBySpeakerIdAndLanguageIdAsync(Guid speakerId, Guid languageId,  bool traking=true)
 		{
-			return await Table.FirstOrDefaultAsync(x => x.SpeakerId == speakerId && x.LanguageId == languageId);
+			var query = traking ? Table.AsQueryable() : Table.AsNoTracking();
+
+
+			return await query.FirstOrDefaultAsync(x => x.Id == speakerId && x.LanguageId == languageId);
 		}
-		public async Task<SpeakerDetail> GetBySpeakerIdAsync(Guid speakerId)
+		public async Task<SpeakerDetail> GetBySpeakerIdAsync(Guid speakerId, bool traking = true)
 		{
-			return await Table.FirstOrDefaultAsync(x => x.SpeakerId == speakerId);
+			var query = traking ? Table.AsQueryable() : Table.AsNoTracking();
+
+			return await query.FirstOrDefaultAsync(x => x.Id == speakerId);
 		}
-		public async Task<List<SpeakerDetail>> GetByLanguageIdAsync(Guid languageId)
+		public async Task<List<SpeakerDetail>> GetByLanguageIdAsync(Guid languageId , bool traking = true)
 		{
-			return await Table.Where(x => x.LanguageId == languageId).ToListAsync();
+			var query = traking ? Table.AsQueryable() : Table.AsNoTracking();
+
+			return await query.Where(x => x.LanguageId == languageId).ToListAsync();
 		}
 	}
 }

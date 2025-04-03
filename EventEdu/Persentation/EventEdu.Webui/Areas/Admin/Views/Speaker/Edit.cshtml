@@ -1,23 +1,24 @@
 ﻿@using EventEdu.Application.DTOs.Speaker
-@model CreateSpeakerDTO
+@model UpdateSpeakerDTO
 
-<form asp-controller="Speaker" asp-action="UpdateSpeaker" method="post" enctype="multipart/form-data">
+<form asp-area="admin" asp-controller="Speaker" asp-action="Edit" asp-route-Id="@Model.Id" method="post" enctype="multipart/form-data">
+  
+    <input type="hidden"  value="@Model.Id" />
     <h4 style="margin-left:40px">Update Speaker</h4>
 
     <div class="addOrEditCard card">
         <!-- Image Preview -->
         <div class="chosenImage">
-            <img id="imagePreview" src="~/client/assets/img/teams/team-2.jpg" alt="Speaker Image" />
+            <img id="imagePreview" src="~/assets/img/@Model.ImageUrl" alt="Speaker Image" />
+            <input type="hidden" asp-for="ImageUrl" />
         </div>
 
         <div class="card-body">
             <!-- Language Dropdown -->
             <div class="form-floating form-floating-outline mb-3">
-                <select asp-for="LanguageId" class="form-select" aria-label="Choose a Language">
+                <select asp-for="LanguageId" class="form-select" asp-items="@ViewBag.Language" aria-label="Choose a Language">
                     <option selected disabled value="">Choose a Language</option>
-                    <option value="B3284054-E7FA-48FB-7C70-08DD595D715B">Aze</option>
-                    <option value="4C11A351-B8D5-4D69-7C72-08DD595D715B">Ru</option>
-                    <option value="C9B1E706-D934-4B46-7C71-08DD595D715B">Eng</option>
+                 
                 </select>
                 <label for="LanguageId">Language</label>
                 <span class="form-text text-danger" asp-validation-for="LanguageId"></span>
@@ -25,9 +26,10 @@
 
             <!-- File Input for Image -->
             <div class="mb-3">
-                <label asp-for="ImageFile" class="form-label">Speaker's Image</label>
-                <input class="form-control" type="file" asp-for="ImageFile" id="ImageFile" accept="image/*" onchange="previewImage(event)">
-                <span class="form-text text-danger" asp-validation-for="ImageFile"></span>
+                <label asp-for="FormFile" class="form-label">Speaker's Image</label>
+               
+                <input class="form-control" type="file" asp-for="FormFile" id="ImageFile" accept="image/*" onchange="previewImage(event)">
+                <span class="form-text text-danger" asp-validation-for="FormFile"></span>
             </div>
 
             <!-- Speaker Name (inside SpeakerDetails) -->
@@ -52,6 +54,21 @@
             </div>
 
 
+            <div>
+                <label asp-for="InstagramLink" class="form-label">Instagram</label>
+                <input type="url" asp-for="InstagramLink" class="form-control" placeholder="Enter instagram link">
+                <span class="form-text text-danger" asp-validation-for="InstagramLink"></span>
+            </div>
+            <div>
+                <label asp-for="FacebookLink" class="form-label">Facebook</label>
+                <input type="url" asp-for="FacebookLink" class="form-control" placeholder="Enter faceboook link">
+                <span class="form-text text-danger" asp-validation-for="FacebookLink"></span>
+            </div>
+            <div>
+                <label asp-for="TwitterLink" class="form-label">X</label>
+                <input type="url" asp-for="TwitterLink" class="form-control" placeholder="Enter X link">
+                <span class="form-text text-danger" asp-validation-for="TwitterLink"></span>
+            </div>
             <!-- Submit Button -->
             <button type="submit" class="btn btn-primary mt-3">Save</button>
         </div>

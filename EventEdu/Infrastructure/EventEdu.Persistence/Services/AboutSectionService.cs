@@ -10,16 +10,18 @@ using EventEdu.Persistence.Context;
 using EventEdu.Persistence.Extensions;
 using FluentValidation;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace EventEdu.Persistence.Services
 {
-    public class AboutSectionService : IAboutSectionService
+	public class AboutSectionService : IAboutSectionService
     {
         private readonly AppDbContext _context;
         private readonly IAboutSectionReadRepository _aboutReadRepository;
@@ -31,30 +33,33 @@ namespace EventEdu.Persistence.Services
         private readonly IHostingEnvironment _environment;
         private readonly IMapper _mapper;
         private readonly IValidator<CreateAboutSectionDTO> _createAboutSectionValidator;
+        readonly private IHttpContextAccessor _httpContextAccessor;
 
-        public AboutSectionService(AppDbContext context,
-            IAboutSectionReadRepository aboutReadRepository,
-            IAboutSectionWriteRepository aboutWriteRepository,
-            IAboutSectionDetailReadRepository aboutDetailReadRepository,
-            IAboutSectionDetailWriteRepository aboutDetailWriteRepository,
-            ILanguageReadRepository languageReadRepository,
-            IFileService fileService,
-            IHostingEnvironment environment,
-            IMapper mapper,
-            IValidator<CreateAboutSectionDTO> createAboutSectionValidator)
-        {
-            _context = context;
-            _aboutReadRepository = aboutReadRepository;
-            _aboutWriteRepository = aboutWriteRepository;
-            _aboutDetailReadRepository = aboutDetailReadRepository;
-            _aboutDetailWriteRepository = aboutDetailWriteRepository;
-            _languageReadRepository = languageReadRepository;
-            _fileService = fileService;
-            _environment = environment;
-            _mapper = mapper;
-            _createAboutSectionValidator = createAboutSectionValidator;
-        }
-        public async Task AddAboutSection(CreateAboutSectionDTO addAboutSectionDTO)
+		public AboutSectionService(AppDbContext context,
+			IAboutSectionReadRepository aboutReadRepository,
+			IAboutSectionWriteRepository aboutWriteRepository,
+			IAboutSectionDetailReadRepository aboutDetailReadRepository,
+			IAboutSectionDetailWriteRepository aboutDetailWriteRepository,
+			ILanguageReadRepository languageReadRepository,
+			IFileService fileService,
+			IHostingEnvironment environment,
+			IMapper mapper,
+			IValidator<CreateAboutSectionDTO> createAboutSectionValidator,
+			IHttpContextAccessor httpContextAccessor)
+		{
+			_context = context;
+			_aboutReadRepository = aboutReadRepository;
+			_aboutWriteRepository = aboutWriteRepository;
+			_aboutDetailReadRepository = aboutDetailReadRepository;
+			_aboutDetailWriteRepository = aboutDetailWriteRepository;
+			_languageReadRepository = languageReadRepository;
+			_fileService = fileService;
+			_environment = environment;
+			_mapper = mapper;
+			_createAboutSectionValidator = createAboutSectionValidator;
+			_httpContextAccessor = httpContextAccessor;
+		}
+		public async Task AddAboutSection(CreateAboutSectionDTO addAboutSectionDTO)
         {
             //bool isAboutSectionExist = await _context.AboutSectionDetails.AnyAsync(x => x.AboutSectionId == addAboutSectionDTO.Id && x.LanguageId == addAboutSectionDTO.LanguageId);
 
@@ -112,7 +117,7 @@ namespace EventEdu.Persistence.Services
             aboutSection.CreatedDate = DateTime.UtcNow.AddHours(4);
             aboutSection.UpdatedDate = DateTime.UtcNow.AddHours(4);
 
-            _aboutWriteRepository.AddAsync(aboutSection);
+            await _aboutWriteRepository.AddAsync(aboutSection);
             await _aboutWriteRepository.SaveChangeAsync();
 
 
@@ -134,7 +139,7 @@ namespace EventEdu.Persistence.Services
             aboutSectionDetail.CreatedDate = DateTime.UtcNow.AddHours(4);
             aboutSectionDetail.UpdatedDate = DateTime.UtcNow.AddHours(4);
 
-            _aboutDetailWriteRepository.AddAsync(aboutSectionDetail);
+            await _aboutDetailWriteRepository.AddAsync(aboutSectionDetail);
             await _aboutDetailWriteRepository.SaveChangeAsync();
         }
 
@@ -156,25 +161,13 @@ namespace EventEdu.Persistence.Services
             return about;
         }
 
-        public async Task<GetAboutSectionDTO> GetAboutSectionById(Guid id, string IsoCode)
+        public async Task<(AboutSection, AboutSectionDetail)> GetAboutSectionById(Guid id)
         {
-            var aboutSection = await _aboutReadRepository.GetAll()
-                 .Include(s => s.AboutSectionDetails)
-                 .ThenInclude(sd => sd.Language)
-                 .Where(s => s.Id == id)
-                 .Select(s => new GetAboutSectionDTO
-                 {
-                     Id = s.Id,
-                     IsoCode = s.AboutSectionDetails.FirstOrDefault().Language.Name,
-                     LanguageId = s.AboutSectionDetails.FirstOrDefault().Language.Id,
-                     Title = s.AboutSectionDetails.FirstOrDefault().Title,
-                     Description = s.AboutSectionDetails.FirstOrDefault().Description,
-                     ImagePath = s.ImagePath,
-                     IsDeleted = s.IsDeleted
-                 })
-                 .FirstOrDefaultAsync();
 
-            return aboutSection;
+            var aboutSectionDetails = await _aboutDetailReadRepository.GetByIdAsync(id.ToString());
+            var aboutSection = await _aboutReadRepository.GetByIdAsync(aboutSectionDetails.AboutSectionId.ToString());
+
+			return (aboutSection, aboutSectionDetails) ;
         }
 
         public async Task DeleteAboutSection(Guid id)
@@ -218,29 +211,16 @@ namespace EventEdu.Persistence.Services
         public async Task EditAboutSection(Guid id, CreateAboutSectionDTO updateAboutSectionDTO)
         {
 
-            var AboutSection = _aboutReadRepository.GetAll()
-           .Include(s => s.AboutSectionDetails)
-           .FirstOrDefault(s => s.Id == id);
 
-            if (AboutSection == null)
-            {
-                throw new Exception("About Section not found.");
-            }
-            var AboutSectionDetail = AboutSection.AboutSectionDetails
-                .FirstOrDefault(sd => sd.AboutSectionId == id);
-
+            var AboutSectionDetail = await _aboutDetailReadRepository.GetByIdAsync(id.ToString());
+            var aboutSection = await _aboutReadRepository.GetByIdAsync(AboutSectionDetail.AboutSectionId.ToString());
+               
             if (AboutSectionDetail == null)
             {
                 throw new Exception("About Section detail for the selected language not found.");
             }
 
-            var validationResult = await _createAboutSectionValidator.ValidateAsync(updateAboutSectionDTO);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-
-            }
-
+            
             AboutSectionDetail.Title = updateAboutSectionDTO.Title?.Trim() ?? AboutSectionDetail.Title;
             AboutSectionDetail.Description = updateAboutSectionDTO.Description?.Trim() ?? AboutSectionDetail.Description;
             AboutSectionDetail.UpdatedDate = DateTime.UtcNow.AddHours(4);
@@ -260,14 +240,25 @@ namespace EventEdu.Persistence.Services
                 string webRootPath = _environment.WebRootPath;
                 string newImagePath = await _fileService.SaveFilesAsync(updateAboutSectionDTO.ImageFile, webRootPath, "client", "assets", "img", "AboutSectionMedias");
 
-                AboutSection.ImagePath = newImagePath.Trim();
-            }
+                aboutSection.ImagePath = newImagePath.Trim();
+				_aboutWriteRepository.Update(aboutSection);
+                await _aboutWriteRepository.SaveChangeAsync();
+			}
 
-            _aboutWriteRepository.Update(AboutSection);
+
             _aboutDetailWriteRepository.Update(AboutSectionDetail);
             await _aboutDetailWriteRepository.SaveChangeAsync();
 
         }
 
-    }
+		public async Task<(AboutSection, AboutSectionDetail)> GetAboutSectionAll()
+		{
+			var languages = _httpContextAccessor.HttpContext.Request.Headers["accept-language"].FirstOrDefault().Split(',').FirstOrDefault();
+			var language = await _languageReadRepository.GetAll().FirstOrDefaultAsync(a => a.IsoCode == languages);
+            var aboutSectionDetails = await _aboutDetailReadRepository.GetAll().FirstOrDefaultAsync(a=>a.LanguageId==language.Id);
+			var aboutSection = await _aboutReadRepository.GetAll().FirstOrDefaultAsync();
+
+            return(aboutSection, aboutSectionDetails);
+		}
+	}
 }

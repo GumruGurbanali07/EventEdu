@@ -16,6 +16,9 @@ using EventEdu.Application.Profiles;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
+using EventEdu.Domain.Entities.Identity;
+using EventEdu.Persistence.Context;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +26,7 @@ var builder = WebApplication.CreateBuilder(args);
 // builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 builder.Services.AddControllersWithViews().AddViewLocalization();
+
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -42,14 +46,13 @@ builder.Services.AddApplicationServices();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 
-builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+builder.Services.AddIdentity<AppUser, AppRole>(options =>
 {
     //options.SignIn.RequireConfirmedAccount = false;
     //options.User.RequireUniqueEmail = false;
 
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
 
     options.Lockout.AllowedForNewUsers = true;
     options.Password.RequireNonAlphanumeric = false;

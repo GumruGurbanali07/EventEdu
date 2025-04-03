@@ -11,10 +11,12 @@ namespace EventEdu.Application.Services
     public interface ISponsorService
     {
         Task AddSponsor(CreateSponsorDTO addSponsorDTO);
+
+        Task<List<SponsorDetail>> GetSponsorDetails();
         Task<List<GetSponsorDTO>> GetAllSponsorsByLanguageAsync(string isoCode);
 
         Task<List<SponsorDetail>> GetSponsorsById(string eventId);
-        Task<(List<Sponsor>, List<SponsorDetail>)> GetSponsorAll();
+        Task<(List<Sponsor>,SponsorDetail)> GetSponsorAll();
 
 		Task<GetSponsorDTO> GetSponsorById(Guid id, string isoCode);
         Task EditSponsor(Guid id, CreateSponsorDTO updateSponsorDTO);

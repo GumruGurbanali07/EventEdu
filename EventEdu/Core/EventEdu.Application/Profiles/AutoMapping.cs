@@ -14,6 +14,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EventEdu.Application.DTOs.Feedback;
+using EventEdu.Application.DTOs.PersonalData;
+using EventEdu.Domain.Entities.Identity;
 
 namespace EventEdu.Application.Profiles
 {

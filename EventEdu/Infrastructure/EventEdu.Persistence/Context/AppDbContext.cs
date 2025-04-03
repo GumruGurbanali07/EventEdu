@@ -14,14 +14,14 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Persistence.Context
 {
-    public class AppDbContext : IdentityDbContext<AppUser>
+    public class AppDbContext : IdentityDbContext<AppUser, AppRole, string>
     {
 		public AppDbContext(DbContextOptions options) : base(options)
 		{
 
 		}
-
-        public DbSet<PersonalData> PersonalDatas { get; set; }
+		
+		public DbSet<PersonalData> PersonalDatas { get; set; }
         public DbSet<AppUser> AppUsers { get; set; }
         public DbSet<Category> Categories { get; set; }
 		public DbSet<CategoryDetail> CategoryDetails { get; set; }
@@ -34,6 +34,7 @@ namespace EventEdu.Persistence.Context
 		public DbSet<FeedBackDetail> FeedBackDetails { get; set; }
 		public DbSet<Language> Languages { get; set; }	
 		public DbSet<Speaker> Speakers { get; set; }
+		
 		public DbSet<SpeakerDetail> SpeakerDetails { get; set; }
 		public DbSet<Sponsor> Sponsors { get; set; }
 		public DbSet<SponsorDetail> SponsorDetails { get; set; }
@@ -43,52 +44,65 @@ namespace EventEdu.Persistence.Context
 		public DbSet<HeroSectionDetails> HeroSectionDetails { get; set; }
 		public DbSet<AboutSection> AboutSections { get; set; }
 		public DbSet<AboutSectionDetail> AboutSectionDetails { get; set; }
+		
+			protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+			{
+				base.OnConfiguring(optionsBuilder);
+				optionsBuilder.EnableSensitiveDataLogging();
+			}
+
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
 
-			// EventSpeaker əlaqəsi
+			// **EventSpeaker əlaqəsi**
 			modelBuilder.Entity<EventSpeaker>()
-				.HasKey(es => new { es.EventId, es.SpeakerId }); //composite key
+				.HasKey(es => new { es.EventId, es.SpeakerId }); // Composite Key
 
 			modelBuilder.Entity<EventSpeaker>()
 				.HasOne(es => es.Event)
 				.WithMany(e => e.EventSpeakers)
-				.HasForeignKey(es => es.EventId);
+				.HasForeignKey(es => es.EventId)
+				.OnDelete(DeleteBehavior.Cascade); // Foreign Key silinəndə nə olacaq?
 
 			modelBuilder.Entity<EventSpeaker>()
 				.HasOne(es => es.Speaker)
 				.WithMany(s => s.EventSpeakers)
-				.HasForeignKey(es => es.SpeakerId);
+				.HasForeignKey(es => es.SpeakerId)
+				.OnDelete(DeleteBehavior.Restrict); // Parent silinməsin
 
-			// EventSponsor əlaqəsi
+			// **EventSponsor əlaqəsi**
 			modelBuilder.Entity<EventSponsor>()
 				.HasKey(es => new { es.EventId, es.SponsorId });
 
 			modelBuilder.Entity<EventSponsor>()
 				.HasOne(es => es.Event)
 				.WithMany(e => e.EventSponsors)
-				.HasForeignKey(es => es.EventId);
+				.HasForeignKey(es => es.EventId)
+				.OnDelete(DeleteBehavior.Cascade);
 
 			modelBuilder.Entity<EventSponsor>()
 				.HasOne(es => es.Sponsor)
 				.WithMany(s => s.EventSponsors)
-				.HasForeignKey(es => es.SponsorId);
+				.HasForeignKey(es => es.SponsorId)
+				.OnDelete(DeleteBehavior.Restrict);
 
-			//SubsEvent əlaqəsi
+			// **SubsEvent əlaqəsi**
 			modelBuilder.Entity<SubsEvent>()
 			   .HasKey(se => new { se.EventId, se.SubscriptionId });
 
 			modelBuilder.Entity<SubsEvent>()
 				.HasOne(se => se.Event)
 				.WithMany(e => e.SubsEvents)
-				.HasForeignKey(se => se.EventId);
+				.HasForeignKey(se => se.EventId)
+				.OnDelete(DeleteBehavior.Cascade);
 
 			modelBuilder.Entity<SubsEvent>()
 				.HasOne(se => se.Subscription)
 				.WithMany(s => s.SubsEvents)
-				.HasForeignKey(se => se.SubscriptionId);
+				.HasForeignKey(se => se.SubscriptionId)
+				.OnDelete(DeleteBehavior.Restrict);
 		}
 
 

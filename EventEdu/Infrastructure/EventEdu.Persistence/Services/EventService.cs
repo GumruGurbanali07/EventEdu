@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using EventEdu.Application.DTOs.Event;
 using EventEdu.Application.Exceptions;
+using EventEdu.Application.Repositor;
 using EventEdu.Application.Repository;
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
 using EventEdu.Persistence.Context;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ValidationException = FluentValidation.ValidationException;
 
 
@@ -32,10 +34,12 @@ namespace EventEdu.Persistence.Services
 		private readonly IValidator<UpdateEventDTO> _updateValidator;
 		private readonly IMapper _mapper;
 		private readonly AppDbContext _context;
-
+		private readonly ISpeakerDetailReadRepository _speakerDetailReadRepository;
+		private readonly ISponsorDetailReadRepository _sponsorDetailReadRepository;
+		private readonly ISponsorReadRepository  _sponsorReadRepository;
 		private readonly IFileService _fileService;
 
-		public EventService(IEventReadRepository eventReadRepository, IEventWriteRepository eventWriteRepository, IEventDetailReadRepository eventDetailReadRepository, IEventDetailWriteRepository eventDetailWriteRepository, ILanguageReadRepository languageReadRepository, ILanguageWriteRepository languageWriteRepository, IValidator<CreateEventDTO> createValidator, IValidator<UpdateEventDTO> updateValidator, IMapper mapper, AppDbContext context, IFileService fileService, ICategoryReadRepository categoryReadRepository, ICategoryDetailReadRepository categoryDetailReadRepository, ICategoryWriteRepository categoryWriteRepository, IEventSpeakerWriteRepository eventSpeakerWriteRepository = null, IEventSpeakerReadRepository eventSpeakerReadRepository = null, IEventSponsorReadRepository eventSponsorReadRepository = null, IEventSponsorWriteRepository eventSponsorWriteRepository = null)
+		public EventService(IEventReadRepository eventReadRepository, IEventWriteRepository eventWriteRepository, IEventDetailReadRepository eventDetailReadRepository, IEventDetailWriteRepository eventDetailWriteRepository, ILanguageReadRepository languageReadRepository, ILanguageWriteRepository languageWriteRepository, IValidator<CreateEventDTO> createValidator, IValidator<UpdateEventDTO> updateValidator, IMapper mapper, AppDbContext context, IFileService fileService, ICategoryReadRepository categoryReadRepository, ICategoryDetailReadRepository categoryDetailReadRepository, ICategoryWriteRepository categoryWriteRepository, IEventSpeakerWriteRepository eventSpeakerWriteRepository = null, IEventSpeakerReadRepository eventSpeakerReadRepository = null, IEventSponsorReadRepository eventSponsorReadRepository = null, IEventSponsorWriteRepository eventSponsorWriteRepository = null, ISpeakerDetailReadRepository speakerDetailReadRepository = null, ISponsorDetailReadRepository sponsorDetailReadRepository = null, ISponsorReadRepository sponsorReadRepository = null)
 		{
 			_eventReadRepository = eventReadRepository;
 			_eventWriteRepository = eventWriteRepository;
@@ -55,67 +59,98 @@ namespace EventEdu.Persistence.Services
 			_eventSpeakerReadRepository = eventSpeakerReadRepository;
 			_eventSponsorReadRepository = eventSponsorReadRepository;
 			_eventSponsorWriteRepository = eventSponsorWriteRepository;
+			_speakerDetailReadRepository = speakerDetailReadRepository;
+			_sponsorDetailReadRepository = sponsorDetailReadRepository;
+			_sponsorReadRepository = sponsorReadRepository;
 		}
 
 		public async Task AddEventWithLanguageAsync(CreateEventDTO createEventDTO)
 		{
-			var validationResult = await _createValidator.ValidateAsync(createEventDTO);
-			if (!validationResult.IsValid)
-			{
-				throw new ValidationException(validationResult.Errors);
-			}
-            var language = await _languageReadRepository.GetByIdAsync(createEventDTO.LanguageId);
+			// Language mövcudluğunu yoxlayaq
+			var language = await _languageReadRepository.GetByIdAsync(createEventDTO.LanguageId.ToString());
 			if (language == null)
 			{
 				throw new NotFoundException("Language not found");
 			}
+
+			var categoryDetails = await _categoryDetailReadRepository.GetByIdAsync(createEventDTO.CategoriesId.ToString());
 			var newFile = await _fileService.UploadAsync(createEventDTO.FormFile);
+			// Yeni Event yaradılır
 			var eventEntity = new Event()
 			{
 				StartDate = createEventDTO.StartDate,
 				EndDate = createEventDTO.EndDate,
-				CategoryId = createEventDTO.CategoryId,
+				CategoryId = categoryDetails.CategoryId, // CategoryId düzgün ötürülməli
 				ImageUrl = newFile
 			};
-			
-			await _eventWriteRepository.AddAsync(eventEntity);
-			await _eventWriteRepository.SaveChangeAsync();
 
- 			
-
-			var eventDetail = new EventDetail
+			try
 			{
+				// Event əlavə edilir
+				await _eventWriteRepository.AddAsync(eventEntity);
+				await _eventWriteRepository.SaveChangeAsync();
+
+				// EventDetail yaradılır
+				var eventDetail = new EventDetail
+				{
+					EventId = eventEntity.Id,
+					Title = createEventDTO.Title,
+					Description = createEventDTO.Description,
+					LanguageId = createEventDTO.LanguageId // LanguageId düzgün ötürülməli
+				};
+
+				await _eventDetailWriteRepository.AddAsync(eventDetail);
+				await _eventDetailWriteRepository.SaveChangeAsync();
+
 			
-				EventId = eventEntity.Id,
-				Title = createEventDTO.Title,
-				Description = createEventDTO.Description,
-				LanguageId = createEventDTO.LanguageId,
-			};
-			await _eventDetailWriteRepository.AddAsync(eventDetail);
-			await _eventDetailWriteRepository.SaveChangeAsync();
 
+				 
+				// EventSpeaker əlaqələri yaradılır
+			var speakerEvent = new List<EventSpeaker>();
+			var sponsorEvent = new List<EventSponsor>();
 
-			var speaketEvent = createEventDTO.SpeakerId.Select(a => new EventSpeaker
+				foreach (var a in createEventDTO.EventSpeaker)
+				{
+					var sponsor = await _sponsorDetailReadRepository.GetByIdAsync(a.ToString());
+
+					if (sponsor != null)
+					{
+						speakerEvent.Add(new EventSpeaker
+						{
+							EventId = eventEntity.Id,
+							SpeakerId = sponsor.SponsorId
+						});
+					}
+				}
+
+				await _eventSpeakerWriteRepository.AddRangeAsync(speakerEvent);
+				await _eventSpeakerWriteRepository.SaveChangeAsync();
+
+				// EventSponsor əlaqələri yaradılır
+
+				foreach (var a in createEventDTO.EventSpeaker)
+				{
+					var sponsor = await _sponsorDetailReadRepository.GetByIdAsync(a.ToString());
+
+					if (sponsor != null)
+					{
+						sponsorEvent.Add(new EventSponsor
+						{
+							EventId = eventEntity.Id,
+							SponsorId = sponsor.SponsorId
+						});
+					}
+				}
+
+				await _eventSponsorWriteRepository.AddRangeAsync(sponsorEvent);
+				await _eventSponsorWriteRepository.SaveChangeAsync();
+			}
+			catch (Exception ex)
 			{
-				EventId = eventEntity.Id,
-				SpeakerId = a
-			}).ToList();
-
-			await _eventSpeakerWriteRepository.AddRangeAsync(speaketEvent);
-			await _eventSpeakerWriteRepository.SaveChangeAsync();
-
-			var sponsorEvent = createEventDTO.SponsorId.Select(a => new EventSponsor() {
-			
-				EventId = eventEntity.Id,
-			    SponsorId = a
-			
-			}).ToList();
-
-			await _eventSponsorWriteRepository.AddRangeAsync(sponsorEvent);
-			await _eventSponsorWriteRepository.SaveChangeAsync();
-			
+				// Hər hansı bir səhv olarsa, tətbiqdə idarə edilməsi lazım olan səhv
+				throw new Exception("Error occurred while creating event: " + ex.Message);
+			}
 		}
-
 
 
 		public async Task<List<GetEventDTO>> GetEventsByLanguageAsync(string isoCode)
@@ -241,33 +276,58 @@ namespace EventEdu.Persistence.Services
 			_eventWriteRepository.Update(eventEntity);
 			await _eventWriteRepository.SaveChangeAsync();
 
+			var _eventSponsor = await _eventSponsorReadRepository.GetByIdAsync(eventId.ToString());
+			var _eventSpeak = await _eventSpeakerReadRepository.GetByIdAsync(eventId.ToString());
+			var speakerEvent = new List<EventSpeaker>();
+			var sponsorEvent = new List<EventSponsor>();
+
 			if (updateEventDTO.SpeakerId.Count != null)
 			{
-				var speaketEvent = updateEventDTO.SpeakerId.Select(a => new EventSpeaker
+				foreach (var a in updateEventDTO.SponsorId)
 				{
-					EventId = eventEntity.Id,
-					SpeakerId = a
-				}).ToList();
+					var sponsor = await _speakerDetailReadRepository.GetByIdAsync(a.ToString());
 
-				 _eventSpeakerWriteRepository.UpdateRange(speaketEvent);
+					if (sponsor != null)
+					{
+						speakerEvent.Add(new EventSpeaker
+						{
+							EventId = eventEntity.Id,
+							SpeakerId = sponsor.SpeakerId
+						});
+					}
+				}
+
+				_eventSpeakerWriteRepository.UpdateRange(speakerEvent);
 				await _eventSpeakerWriteRepository.SaveChangeAsync();
 			}
 
-			if (updateEventDTO.SponsorId.Count() != null) {
+			
+			if (updateEventDTO.SponsorId.Count() != null ) {
 
-				var eventSponsor = updateEventDTO.SponsorId.Select(a => new EventSponsor()
+
+				foreach (var a in updateEventDTO.SponsorId)
 				{
-					EventId = eventEntity.Id,
-					SponsorId = a
-				}).ToList();
+					var sponsor = await _sponsorDetailReadRepository.GetByIdAsync(a.ToString());
 
-				_eventSponsorWriteRepository.UpdateRange(eventSponsor);
+					if (sponsor != null)
+					{
+						sponsorEvent.Add(new EventSponsor
+						{
+							EventId = eventEntity.Id,
+							SponsorId = sponsor.SponsorId
+						});
+					}
+				}
+
+				
+
+				_eventSponsorWriteRepository.UpdateRange(sponsorEvent);
 				await _eventSponsorWriteRepository.SaveChangeAsync();
 			}
 		}
 		public async Task SoftDeleteEventAsync(Guid eventId)
 		{
-            var eventEntity = await _eventReadRepository.GetByIdAsync(eventId);
+            var eventEntity = await _eventReadRepository.GetByIdAsync(eventId.ToString());
 			if (eventEntity == null)
 			{
 				throw new NotFoundException("Event not found.");
@@ -291,7 +351,7 @@ namespace EventEdu.Persistence.Services
 		}
 		public async Task RestoreEventAsync(Guid eventId)
 		{
-            var eventEntity = await _eventReadRepository.GetByIdAsync(eventId);
+            var eventEntity = await _eventReadRepository.GetByIdAsync(eventId.ToString());
 			if (eventEntity == null)
 			{
 				throw new NotFoundException("Event not found.");
@@ -369,10 +429,20 @@ namespace EventEdu.Persistence.Services
 					EventDetails = a.EventDetails.Where(ed => ed.LanguageId == language.Id && ed.EventId == a.Id).ToList(),
 					EventSpeakers = a.EventSpeakers.Where(ed => ed.EventId == a.Id).ToList(),
 				}).ToListAsync();
-
 				return events;
 			}
 			return null;
+		}
+
+		public Task<List<EventSpeaker>> GetEventSpeakerById(string eventId)
+		{
+			var eventSpeak = _eventSpeakerReadRepository.GetAll().Where(a=>a.EventId==Guid.Parse(eventId)).ToListAsync
+
+		}
+
+		public Task<List<EventSponsor>> GetEventSponsorById(string eventId)
+		{
+			throw new NotImplementedException();
 		}
 	}
 

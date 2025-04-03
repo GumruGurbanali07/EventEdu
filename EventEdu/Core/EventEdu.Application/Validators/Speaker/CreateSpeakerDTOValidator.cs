@@ -23,7 +23,7 @@ namespace EventEdu.Application.Validators.Speaker
 			RuleFor(x => x.LanguageId)
 				.NotEqual(Guid.Empty).WithMessage("Language ID is required.");
 
-			RuleFor(x => x.ImageUrl)
+			RuleFor(x => x.FormFile)
 				.NotEmpty().WithMessage("Image URL is required.");
 
 			RuleFor(x => x.Email)

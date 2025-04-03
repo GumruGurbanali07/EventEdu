@@ -17,7 +17,7 @@ namespace EventEdu.Application.Validators.Category
 				.Length(3, 100).WithMessage("Category Name must be between 3 and 100 characters.");
 
 			RuleFor(x => x.LanguageId)
-				.NotEqual(Guid.Empty).WithMessage("Language ID is required.");
+				.NotEmpty().WithMessage("Language ID is required.");
 		}
 	}
 }

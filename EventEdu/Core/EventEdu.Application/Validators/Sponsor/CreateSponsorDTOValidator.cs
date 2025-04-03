@@ -24,13 +24,14 @@ namespace EventEdu.Application.Validators.Sponsor
                  .NotEmpty().WithMessage("Email is required.")
                  .EmailAddress().WithMessage("Invalid Email format.");
 
-            RuleFor(x => x.Website)
-                .NotEmpty().WithMessage("Website is required.")
-                .Matches(@"^(https?:\/\/|www\.)[a-zA-Z0-9-]+(\.[a-zA-Z]{2,}){1,2}$")
-                .WithMessage("Invalid Website format.");
+			RuleFor(x => x.Website)
+	.NotEmpty().WithMessage("Website is required.")
+	.Matches(@"^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,}){1,2}(\/[^\s]*)?$")
+	.WithMessage("Invalid Website format.");
 
 
-            RuleFor(x => x.PhoneNumber)
+
+			RuleFor(x => x.PhoneNumber)
                 .NotEmpty().WithMessage("Phone Number is required.")
                 .Matches(@"^(\+994\s?0?|0)(10|12|50|51|55|70|77)\s?\d{3}\s?\d{2}\s?\d{2}$")
                 .WithMessage("Invalid phone number format. Examples: +994501234567, 0501234567, 501234567, +994 50 123 45 67, +994 050 123 45 67");

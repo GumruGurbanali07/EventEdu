@@ -66,18 +66,12 @@ namespace EventEdu.Persistence.Services
 			//}
 
 			var validationResult = await _createSponsorValidator.ValidateAsync(addSponsorDTO);
-			if (!validationResult.IsValid)
-			{
-				throw new ValidationException(validationResult.Errors);
-			}
+			
 
 
 			var language = await _context.Languages.FirstOrDefaultAsync(l => l.Id == addSponsorDTO.LanguageId);
 
-			if (language == null)
-			{
-				throw new Exception("Selected language not found.");
-			}
+		
 
 
 			if (!addSponsorDTO.ImageFile.CheckFileType("image"))
@@ -119,7 +113,7 @@ namespace EventEdu.Persistence.Services
 			////////////    throw new Exception("This speaker already exists for the selected language.");
 			////////////}
 
-			_sponsorWriteRepository.AddAsync(sponsor);
+			await _sponsorWriteRepository.AddAsync(sponsor);
 			await _sponsorWriteRepository.SaveChangeAsync();
 
 
@@ -141,7 +135,7 @@ namespace EventEdu.Persistence.Services
 			sponsorDetail.CreatedDate = DateTime.UtcNow.AddHours(4);
 			sponsorDetail.UpdatedDate = DateTime.UtcNow.AddHours(4);
 
-			_sponsorDetailWriteRepository.AddAsync(sponsorDetail);
+			await _sponsorDetailWriteRepository.AddAsync(sponsorDetail);
 			await _sponsorDetailWriteRepository.SaveChangeAsync();
 		}
 
@@ -287,8 +281,7 @@ namespace EventEdu.Persistence.Services
 				}
 
 			         _fileService.Delete(sponsor.ImagePath);
-					string newImagePath = await _fileService.UploadAsync(updateSponsorDTO.ImageFile);
-					 
+					string newImagePath = await _fileService.UploadAsync(updateSponsorDTO.ImageFile);			 
 
 				
 
@@ -301,31 +294,53 @@ namespace EventEdu.Persistence.Services
 
 		}
 
-		public async Task<(List<Sponsor>, List<SponsorDetail>)> GetSponsorAll()
+		public async Task<(List<Sponsor>,SponsorDetail)> GetSponsorAll()
 		{
 
-			var languages = _httpContext.HttpContext.Request.Headers["accept-language"].FirstOrDefault();
-			var isoCode = languages.Split(';').FirstOrDefault();
-			var language = await _languageReadRepository.GetAll().FirstOrDefaultAsync(a => a.IsoCode == isoCode);
-			var sponsor = await _sponsorReadRepository.GetAll().ToListAsync();
-
-			var sponsorDetail = await _sponsorDetailReadRepository.GetAll().Where(a => a.LanguageId == language.Id).ToListAsync();
+			var languages = _httpContext.HttpContext.Request.Headers["accept-language"].FirstOrDefault()?.Split(',').FirstOrDefault();
+			var language = await _languageReadRepository.GetAll()
+								.FirstOrDefaultAsync(a => a.IsoCode == languages);	
+			var sponsors = await _sponsorReadRepository.GetAll().ToListAsync();
 
 
-			return (sponsor, sponsorDetail);
+			
+				var sponsorDetails = await _sponsorDetailReadRepository.GetAll()
+													.Where(a => a.LanguageId == language.Id ).FirstOrDefaultAsync();
+													
+			
+	             
+			// Bütün SponsorDetail-ləri birdəfəlik gətiririk ki, performans aşağı düşməsin
+			
+
+			
+			return (sponsors, sponsorDetails);
 		}
 
 		public async Task<List<SponsorDetail>> GetSponsorsById(string eventId)
 		{
 
-			var languages = _httpContext.HttpContext.Request.Headers["accept-language"].ToString();
+			var languages = _httpContext?.HttpContext?.Request?.Headers["accept-language"].FirstOrDefault().Split(',').FirstOrDefault();
+	
 			var language = await _languageReadRepository.GetAll().FirstOrDefaultAsync(a => a.IsoCode == languages);
 			var eventSponsor = await _eventSponsorReadRepository.GetAll().FirstOrDefaultAsync(a => a.EventId == Guid.Parse(eventId));
+
 			var sponsor = await _sponsorDetailReadRepository.GetAll().Where(a => a.SponsorId == eventSponsor.SponsorId && a.LanguageId == language.Id).ToListAsync();
 
 			return sponsor;
 		}
 
-	
+		public Task<List<GetSponsorDTO>> SearchSponsors(string search)
+		{
+			throw new NotImplementedException();
+		}
+
+		public async Task<List<SponsorDetail>> GetSponsorDetails()
+		{
+			var languages = _httpContext?.HttpContext?.Request?.Headers["accept-language"].FirstOrDefault().Split(',').FirstOrDefault();
+
+			var language = await _languageReadRepository.GetAll().FirstOrDefaultAsync(a => a.IsoCode == languages);
+			var sponsorDetail = await _sponsorDetailReadRepository.GetAll().Where(a => a.LanguageId == language.Id).ToListAsync();
+			return sponsorDetail;
+		}
 	}
 }

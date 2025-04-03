@@ -14,9 +14,8 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
     public class EventController : Controller
     {
         private readonly IEventService _eventService;
-        private readonly AppDbContext _context;
-
-		readonly private IEventService _eventService;
+      
+		
 		readonly private ILanguageService _languageService;
 		readonly private ICategoryService _categoryService;
 		readonly private ISponsorService _sponsorService;
@@ -31,37 +30,43 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 			_sponsorService = sponsorService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> AddEvent()
-        {
-            var languages = _context.Languages.ToList();
-
+	
 		public async Task<IActionResult> Index()
             {
 
 			var events = await _eventService.GetEventDetailAll();
-
 			return View(events);
             }
 
 		public async Task<IActionResult> Details(string id)
 		{
 			var events = await _eventService.GetEventById(id);
-
 			return View(events);
         }
 
 		public async Task<IActionResult> Create()
-        {
+        {			
 			var getLanguage = await _languageService.GetLanguagesAsync();
 			ViewBag.Language = getLanguage.Select(a => new SelectListItem()
             {
 				Text = a.Name,
 				Value = a.Id.ToString()
 			});
-			var sponsor = await _sponsorService.GetSponsorAll();
 
-			ViewBag.Sponsor = sponsor.Item2;
+			var sponsor = await _sponsorService.GetSponsorDetails();
+
+			var speak = await _speakerService.GetSpeakersAsync();
+			ViewBag.Speak = speak.Select(a=> new SpeakerDetail() {
+			 Id= a.Id,
+			 FullName=a.FullName
+			}).ToList();
+
+			ViewBag.Sponsor = sponsor.Select(a=> new SponsorDetail()
+			{
+				Id=a.Id,
+				SponsorName=a.SponsorName
+			}).ToList();
+
 			var category = await _categoryService.GetCategoriesAllAsync();
 			ViewBag.Category = category.Select(a => new SelectListItem()
             {
@@ -73,79 +78,91 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
             }
 
 		[HttpPost]
+		[HttpPost]
 		public async Task<IActionResult> Create(CreateEventDTO createEventDTO)
-        {
+		{
+			// Əgər ModelState səhvdirsə, məlumatları yenidən yükləyirik
 			if (!ModelState.IsValid)
-            {
-
+			{
 				var getLanguage = await _languageService.GetLanguagesAsync();
 				ViewBag.Language = getLanguage.Select(a => new SelectListItem()
-                {
+				{
 					Text = a.Name,
 					Value = a.Id.ToString()
 				});
+
 				var category = await _categoryService.GetCategoriesAllAsync();
 				ViewBag.Category = category.Select(a => new SelectListItem()
-            {
+				{
 					Text = a.CategoryName,
 					Value = a.Id.ToString()
 				});
 
-				var sponsor = await _sponsorService.GetSponsorAll();
-				var  speak = await _speakerService.GetSpeakersAllAsync();
-				ViewBag.Sponsor = sponsor.Item2;
-				ViewBag.Speak = speak.Item2;
-				return View(createEventDTO);
-            }
-			await _eventService.AddEventWithLanguageAsync(createEventDTO);
+				var sponsor = await _sponsorService.GetSponsorDetails();
+				ViewBag.Sponsor = sponsor.Select(a => new SponsorDetail()
+				{
+					Id = a.Id,
+					SponsorName = a.SponsorName
+				}).ToList();
 
-			return RedirectToAction(nameof(Index));
-        }
+				var speak = await _speakerService.GetSpeakersAsync();
+				ViewBag.Speak = speak.Select(a => new SpeakerDetail()
+				{
+					Id = a.Id,
+					FullName = a.FullName
+				}).ToList();
+
+				// Görünüşə uyğun View göndəririk
+				return View(createEventDTO);
+			}
+
+			// Əgər ModelState düzgün olsa, əlavə edirik
+			try
+			{
+				await _eventService.AddEventWithLanguageAsync(createEventDTO);
+				return RedirectToAction(nameof(Index));
+			}
+			catch (Exception ex)
+			{
+				// Hər hansısa bir səhv varsa, səhv mesajı ilə geri dönə bilərsən
+				ModelState.AddModelError("", "An error occurred while creating the event: " + ex.Message);
+				return View(createEventDTO);
+			}
+		}
 
 		public async Task<IActionResult> Edit(string Id)
-        {
+		{
 			var getLanguage = await _languageService.GetLanguagesAsync();
 			ViewBag.Language = getLanguage.Select(a => new SelectListItem()
-            {
+			{
 				Text = a.Name,
 				Value = a.Id.ToString()
 			});
 			var category = await _categoryService.GetCategoriesAllAsync();
 			ViewBag.Category = category.Select(a => new SelectListItem()
-                {
+			{
 				Text = a.CategoryName,
 				Value = a.Id.ToString()
 			});
 
 			var events = await _eventService.GetEventById(Id);
-			var eventDetails =await _eventService.GetEventDetailsById(events.Id.ToString());
+			var eventSponsor = await  _eventService.GetEventSponsorById(events.Id.ToString());
+			var eventDetails = await _eventService.GetEventDetailsById(events.Id.ToString());
 			var eu = new UpdateEventDTO()
-            {
+			{
 				CategoryId = events.CategoryId,
 				Id = events.Id,
 				ImageUrl = events.ImageUrl,
 				EndDate = events.EndDate,
 				StartDate = events.StartDate,
 				LanguageId = eventDetails.LanguageId,
-				Title=eventDetails.Title,
-				Description=eventDetails.Description,
+				Title = eventDetails.Title,
+				Description = eventDetails.Description,
 
 			};
 
-        [HttpPost]
-        public async Task<IActionResult> UpdateEvent(Guid eventId, [FromForm] UpdateEventDTO updateEventDTO)
-        {
-            try
-            {
-                // Call the service layer to update the event
-                await _eventService.UpdateEventAsync(eventId, updateEventDTO);
-
-                // Return a NoContent response indicating the update was successful
-                return NoContent();
-            }
-
-			return View(events);
-        }
+			return View(eu);
+		}
         [HttpPost]
 		public async Task<IActionResult> Edit(Guid Id, UpdateEventDTO updateEventDTO)
         {

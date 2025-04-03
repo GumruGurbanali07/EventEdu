@@ -11,42 +11,50 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using static System.Reflection.Metadata.BlobBuilder;
 
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Area(nameof(Admin))]
     public class SponsorController : Controller
     {
         private readonly ISponsorService _sponsorService;
+        private readonly ILanguageService _languageService; 
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
-        public SponsorController(ISponsorService sponsorService, AppDbContext context, IMapper mapper)
-        {
-            _sponsorService = sponsorService;
-            _context = context;
-            _mapper = mapper;
-        }
+		public SponsorController(ISponsorService sponsorService, AppDbContext context, IMapper mapper, ILanguageService languageService)
+		{
+			_sponsorService = sponsorService;
+			_context = context;
+			_mapper = mapper;
+			_languageService = languageService;
+		}
 
-        public async Task<IActionResult> Index()
+		public async Task<IActionResult> Index()
         {
             var sponsors = await _sponsorService.GetAllSponsorsByLanguageAsync("en");
             return View(sponsors);
         }
 
         [HttpGet]
-        public IActionResult AddSponsor()
+        public async Task<IActionResult> AddSponsor()
         {
-            var languages = _context.Languages.ToList();
+            var languages =await _languageService.GetLanguagesAsync();
 
             if (languages == null || !languages.Any())
             {
                 ModelState.AddModelError("", "No languages found. Please add languages first.");
             }
 
-            ViewBag.Languages = languages;
-            return View();
+			ViewBag.Languages = languages.Select(a => new SelectListItem()
+			{
+
+				Value = a.Id.ToString(),
+				Text = a.Name
+
+			});
+			return View();
         }
 
         [HttpPost]
@@ -56,7 +64,21 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 
             if (!ModelState.IsValid)
             {
-                return View(addSponsorDTO);
+				var languages = await _languageService.GetLanguagesAsync();
+
+				if (languages == null || !languages.Any())
+				{
+					ModelState.AddModelError("", "No languages found. Please add languages first.");
+				}
+
+				ViewBag.Languages = languages.Select(a => new SelectListItem()
+				{
+
+					Value = a.Id.ToString(),
+					Text = a.Name
+
+				});
+				return View(addSponsorDTO);
             }
 
 
@@ -146,7 +168,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
             {
                 await _sponsorService.EditSponsor(id, updateSponsorDTO);
                 TempData["Success"] = "Sponsor updated successfully!";
-                return RedirectToAction("Index");  
+                return Redirect("Index");  
             }
             catch (Exception ex)
             {

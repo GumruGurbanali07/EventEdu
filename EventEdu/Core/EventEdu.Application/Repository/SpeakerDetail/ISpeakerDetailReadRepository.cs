@@ -9,8 +9,8 @@ namespace EventEdu.Application.Repository
 {
     public interface ISpeakerDetailReadRepository : IReadRepository<SpeakerDetail>
     {
-        Task<SpeakerDetail> GetBySpeakerIdAndLanguageIdAsync(Guid speakerId, Guid languageId);
-        Task<List<SpeakerDetail>> GetByLanguageIdAsync(Guid languageId);
-        Task<SpeakerDetail> GetBySpeakerIdAsync(Guid speakerId);
+        Task<SpeakerDetail> GetBySpeakerIdAndLanguageIdAsync(Guid speakerId, Guid languageId, bool tracking=true);
+        Task<List<SpeakerDetail>> GetByLanguageIdAsync(Guid languageId, bool tracking = true);
+        Task<SpeakerDetail> GetBySpeakerIdAsync(Guid speakerId, bool tracking = true);
 	}
 }

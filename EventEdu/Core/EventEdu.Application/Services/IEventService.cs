@@ -18,8 +18,8 @@ namespace EventEdu.Application.Services
 		Task<EventDetail> GetEventDetailsById(string id);
 		Task<List<Event>> GetEventAll();
 		Task<Event> GetEventById(string id);
-		Task<List<EventSpeaker>> GetEventSpeakerById(string eventId);
-		Task<List<EventSponsor>> GetEventSponsorById(string eventId);
+		Task<(bool , bool)> GetEventSpeakerById(string eventId);
+	
 		Task<List<GetEventDTO>> GetEventsByLanguageAsync(string isoCode);
 		Task<GetEventDTO?> GetEventByIdAndLanguageAsync(Guid eventId, string isoCode);
 		Task UpdateEventAsync(Guid eventId, UpdateEventDTO updateEventDTO);

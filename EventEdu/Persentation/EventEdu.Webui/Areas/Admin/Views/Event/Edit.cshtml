@@ -2,7 +2,7 @@
 @model UpdateEventDTO;
 
 <form asp-area="Admin" asp-controller="Event" asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
-     <input type="hidden"  value="@Model.Id" />
+    <input type="hidden" value="@Model.Id" />
     <h4 style="margin-left:40px">Edit Event</h4>
 
     <span class="text-danger" asp-validation-summary="all"></span>
@@ -16,6 +16,36 @@
             <span class="form-text text-danger" asp-validation-for="LanguageId"></span>
         </div>
 
+        @{
+
+            var speaker = ViewBag.EventSpeaker==true ? "checked" : "";
+            var sponsor = ViewBag.EventSponsor==true ? "checked" : "";
+        }
+
+        <!-- Sponsors -->
+        <div style="display:flex; gap:1em; flex-wrap:wrap;">
+            <label style="display:block; width:100%">Sponsor</label>
+            @foreach (var ab in ViewBag.Sponsor)
+            {
+                <label style="display:flex;  gap:1em; place-items:center; border: 1px solid; border-radius:12px; padding:10px 14px; background-color:#54b973; color:#d7d7d7">
+                    <span>  @ab.SponsorName</span>
+                    <input type="checkbox" name="EventSponsor" @sponsor value="@ab.Id" />
+                </label>
+            }
+        </div>
+
+        <!-- Speakers -->
+        <div style="display:flex; gap:1em; flex-wrap:wrap; margin:12px 0">
+            <label style="display:block; width:100%;">Speaker</label>
+            @foreach (var a in ViewBag.Speak)
+            {
+                <label style="display:flex;  gap:1em; place-items:center; border: 1px solid; border-radius:12px; padding:10px 14px; background-color:#548c73; color:#d7d7d7">
+
+                    <span>@a.FullName</span>
+                    <input type="checkbox" name="EventSpeaker" @speaker value="@a.Id" />
+                </label>
+            }
+        </div>
 
 
         <!-- Category Name (inside CategoryDetails) -->
@@ -26,7 +56,7 @@
         </div>
 
         <div>
-            <label asp-for="StartDate"  class="form-label"></label>
+            <label asp-for="StartDate" class="form-label"></label>
             <input asp-for="StartDate" value="@Model.StartDate" class="form-control" placeholder="Enter Category Name">
             <span class="form-text text-danger" asp-validation-for="StartDate"></span>
         </div>
@@ -47,7 +77,7 @@
         <div>
             <label asp-for="FormFile" class="form-label"></label>
             <input asp-for="FormFile" class="form-control" placeholder="Enter upload images">
-             <input type="hidden" name="name" value="ImageUrl" />
+            <input type="hidden" name="name" value="ImageUrl" />
             <span class="form-text text-danger" asp-validation-for="FormFile"></span>
         </div>
         <div>

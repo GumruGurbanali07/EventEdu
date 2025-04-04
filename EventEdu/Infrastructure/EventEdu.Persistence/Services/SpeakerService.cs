@@ -66,41 +66,13 @@ namespace EventEdu.Persistence.Services
 
 		public async Task AddSpeakerWithLanguageAsync(CreateSpeakerDTO createSpeakerDTO)
 		{
-
-			//var language = await _context.Languages.FirstOrDefaultAsync(x => x.Id == createSpeakerDTO.LanguageId);
-			//if (language == null)
-			//{
-			//	throw new Exception("Selected language not found");
-			//}
-
+				
 
 
 			var language = await _languageReadRepository.GetByIdAsync(createSpeakerDTO.LanguageId.ToString());
 
 
-			//bool isSpeakerExist = await _context.SpeakerDetails.AnyAsync(x => x.FullName == createSpeakerDTO.FullName && x.LanguageId == createSpeakerDTO.LanguageId);
-			//if (isSpeakerExist)
-			//{
-			//	throw new Exception("This speaker already exists for the selected language.");
-			//}
-
-			//var isSpeakerExist = await _speakerDetailReadRepository.GetBySpeakerIdAndLanguageIdAsync(speaker.Id, createSpeakerDTO.LanguageId);
-			//if (isSpeakerExist != null)
-			//{
-			//	throw new Exception("This speaker already exists for the selected language.");
-			//}
-
-			//var speaker = new Speaker
-			//{
-			//	Id = Guid.NewGuid(),
-			//	CreatedDate = DateTime.UtcNow,
-			//	UpdatedDate = DateTime.UtcNow,
-			//	ImageUrl = createSpeakerDTO.ImageUrl,
-			//	Email = createSpeakerDTO.Email,
-			//	FacebookLink = createSpeakerDTO.FacebookLink,
-			//	TwitterLink = createSpeakerDTO.TwitterLink,
-			//	InstagramLink = createSpeakerDTO.InstagramLink
-			//};
+			
 			var newFile = await _fileService.UploadAsync(createSpeakerDTO.FormFile);
 			var speaker = _mapper.Map<Speaker>(createSpeakerDTO);
 			speaker.ImageUrl = newFile;
@@ -113,22 +85,12 @@ namespace EventEdu.Persistence.Services
 				throw new BadRequestException("This speaker already exists for the selected language.");
 			}
 
-			//_context.Speakers.Add(speaker);
-			//await _context.SaveChangesAsync();
+			
 
 			await _speakerWriteRepository.AddAsync(speaker);
 			await _speakerWriteRepository.SaveChangeAsync();
 
-			//var speakerDetail = new SpeakerDetail
-			//{
-			//	Id = Guid.NewGuid(),
-			//	FullName = createSpeakerDTO.FullName,
-			//	Bio = createSpeakerDTO.Bio,
-			//	SpeakerId = speaker.Id,
-			//	LanguageId = createSpeakerDTO.LanguageId,
-			//	CreatedDate = DateTime.UtcNow,
-			//	UpdatedDate = DateTime.UtcNow,
-			//};
+		
 
 			var speakerDetail = _mapper.Map<SpeakerDetail>(createSpeakerDTO);
 
@@ -136,65 +98,67 @@ namespace EventEdu.Persistence.Services
 			speakerDetail.CreatedDate = DateTime.UtcNow;
 			speakerDetail.UpdatedDate = DateTime.UtcNow;
 
-			//_context.SpeakerDetails.Add(speakerDetail);
-			//await _context.SaveChangesAsync();
+			
 			await _speakerDetailWriteRepository.AddAsync(speakerDetail);
 			await _speakerDetailWriteRepository.SaveChangeAsync();
 		}
 
-		public async Task<List<GetSpeakerDTO>> GetSpeakersByLanguageAsync(string isoCode)
-		{
-			//var language = await _context.Languages.FirstOrDefaultAsync(x => x.IsoCode == isoCode);
-			//if (language == null)
-			//{
-			//	language = await _context.Languages.FirstAsync();
-			//}
+		//public async Task<List<GetSpeakerDTO>> GetSpeakersByLanguageAsync(string isoCode)
+		//{
+		//	//var language = await _context.Languages.FirstOrDefaultAsync(x => x.IsoCode == isoCode);
+		//	//if (language == null)
+		//	//{
+		//	//	language = await _context.Languages.FirstAsync();
+		//	//}
 
-			var language = await _languageReadRepository.GetByIsoCodeAsync(isoCode);
-			if (language == null)
-			{
-				throw new NotFoundException("Language not found");
-			}
-			var speakers = await _speakerReadRepository.GetSpeakersByLanguageAsync(language.Id);
-			var speakerDetails = await _speakerDetailReadRepository.GetByLanguageIdAsync(language.Id);
-			var result = speakers.Select(s => new GetSpeakerDTO
-			{
-				Id = s.Id,
-				FullName = speakerDetails.FirstOrDefault(sd => sd.SpeakerId == s.Id)?.FullName,
-				Bio = speakerDetails.FirstOrDefault(sd => sd.SpeakerId == s.Id)?.Bio,
-				IsoCode = language.IsoCode,
-				ImagePath = s.ImageUrl,
-				Email = s.Email,
-				FacebookLink = s.FacebookLink,
-				TwitterLink = s.TwitterLink,
-				InstagramLink = s.InstagramLink
-			}).ToList();
-			return result;
+		//	var language = await _languageReadRepository.GetByIsoCodeAsync(isoCode);
+		//	if (language == null)
+		//	{
+		//		throw new NotFoundException("Language not found");
+		//	}
+		//	var speakers = await _speakerReadRepository.GetSpeakersByLanguageAsync(language.Id);
+		//	var speakerDetails = await _speakerDetailReadRepository.GetByLanguageIdAsync(language.Id);
+		//	var result = speakers.Select(s => new GetSpeakerDTO
+		//	{
+		//		Id = s.Id,
+		//		FullName = speakerDetails.FirstOrDefault(sd => sd.SpeakerId == s.Id)?.FullName,
+		//		Bio = speakerDetails.FirstOrDefault(sd => sd.SpeakerId == s.Id)?.Bio,
+		//		IsoCode = language.IsoCode,
+		//		ImagePath = s.ImageUrl,
+		//		Email = s.Email,
+		//		FacebookLink = s.FacebookLink,
+		//		TwitterLink = s.TwitterLink,
+		//		InstagramLink = s.InstagramLink
+		//	}).ToList();
+		//	return result;
 
-			//var speakers = await _context.Speakers
-			// .Where(s => _context.SpeakerDetails
-			//  .Any(sd => sd.SpeakerId == s.Id && sd.LanguageId == language.Id))
-			// .Select(s => new GetSpeakerDTO
-			// {
-			//  Id = s.Id,
-			//  FullName = _context.SpeakerDetails
-			//   .Where(sd => sd.SpeakerId == s.Id && sd.LanguageId == language.Id)
-			//   .Select(sd => sd.FullName)
-			//   .FirstOrDefault(),
-			//  Bio = _context.SpeakerDetails
-			//   .Where(sd => sd.SpeakerId == s.Id && sd.LanguageId == language.Id)
-			//   .Select(sd => sd.Bio)
-			//   .FirstOrDefault(),
-			//  IsoCode = language.IsoCode,
-			//  ImagePath = s.ImageUrl,
-			//  Email = s.Email,
-			//  FacebookLink = s.FacebookLink,
-			//  TwitterLink = s.TwitterLink,
-			//  InstagramLink = s.InstagramLink
-			// })
-			// .ToListAsync();
-			//return speakers;
-		}
+		//	//var speakers = await _context.Speakers
+		//	// .Where(s => _context.SpeakerDetails
+		//	//  .Any(sd => sd.SpeakerId == s.Id && sd.LanguageId == language.Id))
+		//	// .Select(s => new GetSpeakerDTO
+		//	// {
+		//	//  Id = s.Id,
+		//	//  FullName = _context.SpeakerDetails
+		//	//   .Where(sd => sd.SpeakerId == s.Id && sd.LanguageId == language.Id)
+		//	//   .Select(sd => sd.FullName)
+		//	//   .FirstOrDefault(),
+		//	//  Bio = _context.SpeakerDetails
+		//	//   .Where(sd => sd.SpeakerId == s.Id && sd.LanguageId == language.Id)
+		//	//   .Select(sd => sd.Bio)
+		//	//   .FirstOrDefault(),
+		//	//  IsoCode = language.IsoCode,
+		//	//  ImagePath = s.ImageUrl,
+		//	//  Email = s.Email,
+		//	//  FacebookLink = s.FacebookLink,
+		//	//  TwitterLink = s.TwitterLink,
+		//	//  InstagramLink = s.InstagramLink
+		//	// })
+		//	// .ToListAsync();
+		//	//return speakers;
+		//}
+
+
+
 
 		//	var speakers = await _speakerReadRepository.GetSpeakersByLanguageAsync(language.Id);
 
@@ -222,9 +186,45 @@ namespace EventEdu.Persistence.Services
 		//	return speakerDTOs;
 		//}
 
+		public async Task<List<GetSpeakerDTO>> GetSpeakersByLanguageAsync(string isoCode)
+		{
+			var language = await _languageReadRepository.GetByIsoCodeAsync(isoCode);
+			if (language == null)
+			{
+				throw new NotFoundException("Language not found");
+			}
+
+			var speakers = await _speakerReadRepository.GetSpeakersByLanguageAsync(language.Id);
+			var speakerDetails = await _speakerDetailReadRepository.GetByLanguageIdAsync(language.Id);
+
+			var result = new List<GetSpeakerDTO>();
+
+			foreach (var speaker in speakers)
+			{
+				var detail = speakerDetails.FirstOrDefault(sd => sd.SpeakerId == speaker.Id);
+
+				var dto = new GetSpeakerDTO
+				{
+					Id = speaker.Id,
+					FullName = detail?.FullName,
+					Bio = detail?.Bio,
+					IsoCode = language.IsoCode,
+					ImagePath = speaker.ImageUrl,
+					Email = speaker.Email,
+					FacebookLink = speaker.FacebookLink,
+					TwitterLink = speaker.TwitterLink,
+					InstagramLink = speaker.InstagramLink
+				};
+
+				result.Add(dto);
+			}
+
+			return result;
+		}
+
+
 		public async Task UpdateSpeakerAsync(Guid speakerId, UpdateSpeakerDTO updateSpeakerDTO)
 		{
-			// Model validasiyasını yoxlayırıq
 			var validationResult = await _updateSpeakerValidator.ValidateAsync(updateSpeakerDTO);
 			if (!validationResult.IsValid)
 			{

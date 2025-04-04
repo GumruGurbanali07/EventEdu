@@ -34,7 +34,6 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
                 Speakers = speaker.Item1,
                 SpeakerDetail = speaker.Item2,
             };
-
             return View(vm);
         }
         //[HttpPost("AddSpeakerWithLanguage")]

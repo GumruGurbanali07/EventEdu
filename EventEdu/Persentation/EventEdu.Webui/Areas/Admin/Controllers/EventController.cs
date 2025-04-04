@@ -78,7 +78,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
             }
 
 		[HttpPost]
-		[HttpPost]
+	
 		public async Task<IActionResult> Create(CreateEventDTO createEventDTO)
 		{
 			// Əgər ModelState səhvdirsə, məlumatları yenidən yükləyirik
@@ -145,9 +145,26 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 				Value = a.Id.ToString()
 			});
 
-			var events = await _eventService.GetEventById(Id);
-			var eventSponsor = await  _eventService.GetEventSponsorById(events.Id.ToString());
-			var eventDetails = await _eventService.GetEventDetailsById(events.Id.ToString());
+			var eventDetails= await _eventService.GetEventDetailsById(Id);
+			var events = await _eventService.GetEventById(eventDetails.EventId.ToString());
+			
+			var eventSpeakerandSponsor = await _eventService.GetEventSpeakerById(events.Id.ToString());
+			ViewBag.EventSponsor = eventSpeakerandSponsor.Item2;
+			ViewBag.EventSpeaker = eventSpeakerandSponsor.Item1;
+
+				var sponsor = await _sponsorService.GetSponsorDetails();
+				ViewBag.Sponsor = sponsor.Select(a => new SponsorDetail()
+				{
+					Id = a.Id,
+					SponsorName = a.SponsorName
+				}).ToList();
+
+				var speak = await _speakerService.GetSpeakersAsync();
+				ViewBag.Speak = speak.Select(a => new SpeakerDetail()
+				{
+					Id = a.Id,
+					FullName = a.FullName
+				}).ToList();
 			var eu = new UpdateEventDTO()
 			{
 				CategoryId = events.CategoryId,
@@ -179,7 +196,12 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
             {
 					Text = a.CategoryName,
 					Value = a.Id.ToString()
-				}); ;
+				});
+
+				var eventDetails = await _eventService.GetEventDetailsById(Id.ToString());
+
+				var eventSpeakerandSponsor = await _eventService.GetEventSpeakerById(Id.ToString());
+				ViewBag.eventDetails = eventSpeakerandSponsor;
 				return View(updateEventDTO);
             }
 			await _eventService.UpdateEventAsync(Id, updateEventDTO);

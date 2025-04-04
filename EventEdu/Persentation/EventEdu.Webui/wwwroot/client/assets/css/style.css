@@ -712,6 +712,7 @@ a, a:hover {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
+    cursor: pointer !important;
 }
 
 .about-nav, .language-nav {
@@ -724,16 +725,20 @@ a, a:hover {
     justify-content: center;
     align-items: center;
     color: #000;
+    cursor: pointer !important;
+}
+.toggle-btn{
+    cursor:pointer !important;
 }
 
-.event-description {
-    border: 2px solid #ccc;
-    border-radius: 15px;
-    padding: 20px;
-    height: 300px;
-    overflow-y: auto;
-    background-color: #fff;
-}
+    .event-description {
+        border: 2px solid #ccc;
+        border-radius: 15px;
+        padding: 20px;
+        height: 300px;
+        overflow-y: auto;
+        background-color: #fff;
+    }
 
 .event-img {
     height: 550px;
@@ -1106,4 +1111,41 @@ textarea {
     right: 229px;
     top: 60px;
     margin-right: 35px;
+}
+
+.event-img-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.event-img {
+    position: relative;
+}
+
+.img-nav {
+    font-size: 24px;
+    color: #333;
+    padding: 10px;
+}
+
+.left-arrow {
+    position: absolute;
+    left: 0;
+    z-index: 10;
+}
+
+.right-arrow {
+    position: absolute;
+    right: 0;
+    z-index: 10;
+}
+
+.speaker-image.hidden {
+    display: none;
+}
+
+.speaker-image.active {
+    display: block;
 }

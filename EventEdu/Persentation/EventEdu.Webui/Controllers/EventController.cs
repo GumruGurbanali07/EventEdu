@@ -66,8 +66,21 @@ public class EventController : Controller
 			// Modeli View'a gönder
 			return View(vm);
 		}
-		
-	}
+
+    public async Task<IActionResult> EventDetail(Guid id, string isoCode)
+    {
+        var eevent = await _eventService.GetEventByIdAndLanguageAsync(id,isoCode);
+
+        if (eevent == null)
+        {
+            return NotFound(); 
+        }
+
+        return View(eevent); 
+    }
+
+
+}
 
 
 

@@ -35,7 +35,7 @@ namespace EventEdu.Persistence
 				options.SupportedUICultures = suportedCultures;
 			});
 
-			services.AddDbContext<AppDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("SqlServer")));
+			services.AddDbContext<AppDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("SqlServer"), x => x.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
       //      services.AddIdentity<AppUser, IdentityRole>(options =>
       //      {

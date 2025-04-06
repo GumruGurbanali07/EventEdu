@@ -16,20 +16,18 @@
             <span class="form-text text-danger" asp-validation-for="LanguageId"></span>
         </div>
 
-        @{
-
-            var speaker = ViewBag.EventSpeaker==true ? "checked" : "";
-            var sponsor = ViewBag.EventSponsor==true ? "checked" : "";
-        }
-
+        
         <!-- Sponsors -->
         <div style="display:flex; gap:1em; flex-wrap:wrap;">
             <label style="display:block; width:100%">Sponsor</label>
             @foreach (var ab in ViewBag.Sponsor)
             {
+
+                var sponsor = ViewBag.EventSponsor.Contains(ab.SponsorId) ? "checked" : "";
+
                 <label style="display:flex;  gap:1em; place-items:center; border: 1px solid; border-radius:12px; padding:10px 14px; background-color:#54b973; color:#d7d7d7">
                     <span>  @ab.SponsorName</span>
-                    <input type="checkbox" name="EventSponsor" @sponsor value="@ab.Id" />
+                    <input type="checkbox" name="SponsorId" @sponsor value="@ab.SponsorId" />
                 </label>
             }
         </div>
@@ -39,10 +37,11 @@
             <label style="display:block; width:100%;">Speaker</label>
             @foreach (var a in ViewBag.Speak)
             {
+                var speaker = ViewBag.EventSpeaker.Contains(a.SpeakerId) ? "checked" : "";
                 <label style="display:flex;  gap:1em; place-items:center; border: 1px solid; border-radius:12px; padding:10px 14px; background-color:#548c73; color:#d7d7d7">
 
                     <span>@a.FullName</span>
-                    <input type="checkbox" name="EventSpeaker" @speaker value="@a.Id" />
+                    <input type="checkbox" name="SpeakerId" @speaker value="@a.SpeakerId" />
                 </label>
             }
         </div>

@@ -34,6 +34,7 @@ public class HomeController : Controller
 		var category = await _categoryService.GetCategoriesAllAsync();
 		var events = await _eventService.GetEventAll();
 
+		ViewBag.AlertMessage = TempData["Success"];
 		var vm = new HomeIndexVM()
 		{
 			HeroSectionDetails = slider.Item2,

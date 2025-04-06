@@ -76,20 +76,12 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 				return View(updateCategoryDTO);
 			}
 
-			try
-			{
-				await _categoryService.UpdateCategoryAsync(categoryId, updateCategoryDTO);
+			await _categoryService.UpdateCategoryAsync(categoryId, updateCategoryDTO);
 
-				// ✅ TempData ilə uğurlu mesajı saxlayırıq ki, GET sorğusunda göstərək.
-				TempData["SuccessMessage"] = "Category successfully updated!";
+			TempData["SuccessMessage"] = "Category successfully updated!";
 
-				return RedirectToAction(nameof(Update), new { id = categoryId }); // PRG Pattern istifadə edirik
-			}
-			catch (Exception ex)
-			{
-				ModelState.AddModelError(string.Empty, ex.Message);
-				return View(updateCategoryDTO);
-			}
+			return RedirectToAction(nameof(Index));
+
 		}
 
 		[HttpGet]
@@ -107,6 +99,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 
 			var uc = new UpdateCategoryDTO
 			{
+
 				CategoryId = category.CategoryId.ToString(),
 				CategoryName = category.CategoryName,
 				LanguageId = category.LanguageId,

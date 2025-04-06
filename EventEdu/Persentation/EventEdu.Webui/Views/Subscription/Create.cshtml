@@ -8,7 +8,7 @@
 @using EventEdu.Application.DTOs.Subscription
 @model  SubscribeDTO 
 
-<form asp-area="Admin" asp-controller="Subscription" asp-action="Create" method="post">
+<form asp-controller="Subscription" asp-action="Create" asp-route-eventId="@ViewBag.Event" method="post" style="margin:40px 0; gap:1em;display:flex; place-content:center; place-items:center; flex-direction:column">
 
 
 
@@ -16,18 +16,18 @@
 
     <!-- Category Name (inside CategoryDetails) -->
     <div>
-        <label asp-for="FirstName" class="form-label">Category Name</label>
+        <label asp-for="FirstName" class="form-label"></label>
         <input type="text" asp-for="FirstName" class="form-control" placeholder="Enter FirstName ">
         <span class="form-text text-danger" asp-validation-for="FirstName"></span>
     </div>
     <div>
-        <label asp-for="LastName" class="form-label">Upload Files</label>
-        <input type="text" asp-for="LastName" class="form-control" placeholder="Upload file">
+        <label asp-for="LastName" class="form-label"> </label>
+        <input type="text" asp-for="LastName" class="form-control" placeholder="Enter LastName ">
         <span class="form-text text-danger" asp-validation-for="LastName"></span>
     </div>
     <div>
-        <label asp-for="Email" class="form-label">Upload Files</label>
-        <input type="email" asp-for="Email" class="form-control" placeholder="Upload file">
+        <label asp-for="Email" class="form-label"></label>
+        <input type="email" asp-for="Email" class="form-control" placeholder="Enter Email">
         <span class="form-text text-danger" asp-validation-for="Email"></span>
     </div>
 
@@ -40,6 +40,7 @@
 
 @if (!string.IsNullOrEmpty(message as string))
 {
+    
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             Toastify({
@@ -47,7 +48,7 @@
                 duration: 3000,
                 gravity: "top", // "top" və ya "bottom"
                 position: "right", // "left", "center" və ya "right"
-                backgroundColor: "linear-gradient(to right, #FF0000 )",
+                background: "linear-gradient(to right, #FF0000 )",
             }).showToast();
         });
     </script>

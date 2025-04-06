@@ -148,28 +148,21 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 			var eventDetails= await _eventService.GetEventDetailsById(Id);
 			var events = await _eventService.GetEventById(eventDetails.EventId.ToString());
 			
-			var eventSpeakerandSponsor = await _eventService.GetEventSpeakerById(events.Id.ToString());
-			ViewBag.EventSponsor = eventSpeakerandSponsor.Item2;
-			ViewBag.EventSpeaker = eventSpeakerandSponsor.Item1;
+			var (hasSpeaker, hasSponsor) = await _eventService.GetEventSpeakerById(events.Id.ToString());
+			ViewBag.EventSponsor = hasSponsor;
+			ViewBag.EventSpeaker = hasSpeaker;
 
 				var sponsor = await _sponsorService.GetSponsorDetails();
-				ViewBag.Sponsor = sponsor.Select(a => new SponsorDetail()
-				{
-					Id = a.Id,
-					SponsorName = a.SponsorName
-				}).ToList();
+				ViewBag.Sponsor = sponsor.ToList();
 
 				var speak = await _speakerService.GetSpeakersAsync();
-				ViewBag.Speak = speak.Select(a => new SpeakerDetail()
-				{
-					Id = a.Id,
-					FullName = a.FullName
-				}).ToList();
+				ViewBag.Speak = speak.ToList();
 			var eu = new UpdateEventDTO()
 			{
 				CategoryId = events.CategoryId,
 				Id = events.Id,
 				ImageUrl = events.ImageUrl,
+	 
 				EndDate = events.EndDate,
 				StartDate = events.StartDate,
 				LanguageId = eventDetails.LanguageId,
@@ -187,26 +180,34 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
             {
 				var getLanguage = await _languageService.GetLanguagesAsync();
 				ViewBag.Language = getLanguage.Select(a => new SelectListItem()
-            {
+				{
 					Text = a.Name,
 					Value = a.Id.ToString()
 				});
 				var category = await _categoryService.GetCategoriesAllAsync();
 				ViewBag.Category = category.Select(a => new SelectListItem()
-            {
+				{
 					Text = a.CategoryName,
 					Value = a.Id.ToString()
 				});
 
-				var eventDetails = await _eventService.GetEventDetailsById(Id.ToString());
+				var eventDetails = await _eventService.GetEventDetailsById(updateEventDTO.Id.ToString());
+				var events = await _eventService.GetEventById(eventDetails.EventId.ToString());
 
-				var eventSpeakerandSponsor = await _eventService.GetEventSpeakerById(Id.ToString());
-				ViewBag.eventDetails = eventSpeakerandSponsor;
+				var (hasSpeaker, hasSponsor) = await _eventService.GetEventSpeakerById(events.Id.ToString());
+				ViewBag.EventSponsor = hasSponsor;
+				ViewBag.EventSpeaker = hasSpeaker;
+
+				var sponsor = await _sponsorService.GetSponsorDetails();
+				ViewBag.Sponsor = sponsor.ToList();
+
+				var speak = await _speakerService.GetSpeakersAsync();
+				ViewBag.Speak = speak.ToList();
 				return View(updateEventDTO);
-            }
+			}
 			await _eventService.UpdateEventAsync(Id, updateEventDTO);
 
-			return Redirect(nameof(Index));
+			return RedirectToAction(nameof(Index),"Event");
         }
 
         [HttpPost]

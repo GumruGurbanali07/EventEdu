@@ -12,6 +12,7 @@ namespace EventEdu.Services
 	public class SubscriptionService : ISubscriptionService
 	{
 		private readonly ISubscriptionReadRepository _subscriptionReadRepository;
+		private readonly IEventDetailReadRepository _eventDetailReadRepository;
 		private readonly ISubscriptionWriteRepository _subscriptionWriteRepository;
 		private readonly IEventReadRepository _eventReadRepository;
 		private readonly ISubsEventWriteRepository _subsEventWriteRepository;
@@ -24,7 +25,8 @@ namespace EventEdu.Services
 			IEventReadRepository eventReadRepository,
 			ISubsEventWriteRepository subsEventWriteRepository,
 			ISubsEventReadRepository subsEventReadRepository,
-			IMailService mailService)
+			IMailService mailService,
+			IEventDetailReadRepository eventDetailReadRepository = null)
 		{
 			_subscriptionReadRepository = subscriptionReadRepository;
 			_subscriptionWriteRepository = subscriptionWriteRepository;
@@ -32,12 +34,14 @@ namespace EventEdu.Services
 			_subsEventWriteRepository = subsEventWriteRepository;
 			_subsEventReadRepository = subsEventReadRepository;
 			_mailService = mailService;
+			_eventDetailReadRepository = eventDetailReadRepository;
 		}
 
 		public async Task SubscribeToEventAsync(SubscribeDTO subscribeDTO, Guid eventId)
 		{
 			// Check if the event exists
 			var eventEntity = await _eventReadRepository.GetByIdAsync(eventId.ToString());
+			var eventDetails = await _eventDetailReadRepository.GetAll().FirstOrDefaultAsync(a => a.EventId == eventEntity.Id);
 			if (eventEntity == null)
 			{
 				throw new ArgumentException("Event not found.");
@@ -61,12 +65,12 @@ namespace EventEdu.Services
 					FirstName = subscribeDTO.FirstName,
 					LastName = subscribeDTO.LastName,
 					Email = subscribeDTO.Email,
-				
+
 				};
 				await _subscriptionWriteRepository.AddAsync(existingSubscription);
 				await _subscriptionWriteRepository.SaveChangeAsync();
 
-				
+
 			}
 
 			// Link the subscription to the event
@@ -79,12 +83,25 @@ namespace EventEdu.Services
 
 			// Save changes to the database
 			await _subscriptionWriteRepository.SaveChangeAsync();
+			string subject = "Event Registration Confirmation";
 
-			// Send a confirmation email
-			string subject = "Successful Registration";
-			string body = $"Dear {subscribeDTO.FirstName} {subscribeDTO.LastName},\n\n" +
-						  $"You have successfully registered for the event: {eventEntity.GetFormattedStartDate()} - {eventEntity.GetFormattedEndDate()}.\n\n" +
-						  "Thank you for subscribing!";
+			string body = $@"
+<html>
+  <body style='font-family: Arial, sans-serif;'>
+    <p>Dear {subscribeDTO.FirstName} {subscribeDTO.LastName},</p>
+
+    <p>We are pleased to confirm your successful registration for the following event:</p>
+
+    <p><strong>Event Name:</strong> {eventDetails.Title}<br/>
+       <strong>Date:</strong> {eventEntity.GetFormattedStartDate()} – {eventEntity.GetFormattedEndDate()}</p>
+
+   
+    <p>We appreciate your interest and look forward to your participation. Should you have any questions or require further information, please do not hesitate to contact us.</p>
+
+    <p>Best regards,<br/>
+    Event Coordination Team</p>
+  </body>
+</html>";
 
 			await _mailService.SendMailAsync(subscribeDTO.Email, subject, body);
 		}
@@ -94,7 +111,7 @@ namespace EventEdu.Services
 			// Check if the event exists
 			var eventEntity = await _eventReadRepository.GetByIdAsync(eventId.ToString());
 			if (eventEntity == null)
-			{
+			{ 
 				throw new ArgumentException("Event not found.");
 			}
 

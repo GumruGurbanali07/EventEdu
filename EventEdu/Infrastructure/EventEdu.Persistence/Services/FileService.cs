@@ -55,12 +55,15 @@ namespace EventEdu.Persistence.Services
 
 			// Get the existing image files to calculate the new number
 			var existingFiles = Directory.GetFiles(imageDirectory, "image-*.png")
-				.Select(p => Path.GetFileNameWithoutExtension(p))
-				.Where(p => int.TryParse(p.Replace("image-", ""), out _))
-				.Select(p => p.Replace("image-", ""))
+				.Select(p => Path.GetFileNameWithoutExtension(p))         // "image-10"
+				.Select(p => p.Replace("image-", ""))                     // "10"
+				.Where(p => int.TryParse(p, out _))                       // sadece sayılar
+				.Select(int.Parse)                                        // int olarak al
 				.ToList();
 
-			int newNumber = existingFiles.Any() ? int.Parse(existingFiles.Max()) + 1 : 1;
+			// Yeni numara belirle
+			int newNumber = existingFiles.Any() ? existingFiles.Max() + 1 : 1;
+
 
 			var fileName = $"image-{newNumber}.png";
 			var tempPath = Path.Combine(tempDirectory, fileName);

@@ -1,36 +1,38 @@
-﻿@using EventEdu.Application.DTOs.Category
+﻿
+
+@using EventEdu.Application.DTOs.Category
 @model UpdateCategoryDTO;
 
-<form method="post" enctype="multipart/form-data">
-    <input type="hidden"   value="@Model.CategoryId" />
+<form method="post"  asp-action="Update" asp-controller="Category" asp-area="admin" asp-route-categoryId="@Model.CategoryId"    enctype="multipart/form-data">
+    <input type="hidden" value="@Model.CategoryId" />
     <h4 style="margin-left:40px">Update Category</h4>
-
+    
     <div class="addOrEditCard card">
         <!-- Image Preview -->
         <div class="chosenImage">
-            <img id="imagePreview" src="~/client/assets/img/@Model.ImagePath" alt="Category Image" />
+            <img id="imagePreview" src="~/assets/img/@Model.ImagePath" alt="Category Image" />
         </div>
 
         <div class="card-body">
             <!-- Language Dropdown -->
             <div class="form-floating form-floating-outline mb-3">
-                <select asp-for="LanguageId" value="@Model.LanguageId" class="form-select" onselect="LanguageId" asp-items="@ViewBag.Language">
-                
+                <select asp-for="LanguageId" class="form-select" asp-items="@ViewBag.Language">
                 </select>
                 <label for="LanguageId">Language</label>
-                <span class="form-text text-danger"  asp-validation-for="LanguageId"></span>
+                <span class="form-text text-danger" asp-validation-for="LanguageId"></span>
             </div>
 
-          
-            <!-- Category Name (inside CategoryDetails) -->
+            <!-- Category Name -->
             <div>
                 <label for="CategoryDetails_0__CategoryName" class="form-label">Category Name</label>
-                <input type="text" asp-for="CategoryName" value="@Model.CategoryName" class="form-control" placeholder="Enter Category Name">
+                <input type="text" asp-for="CategoryName" class="form-control" placeholder="Enter Category Name" />
                 <span class="form-text text-danger" asp-validation-for="CategoryName"></span>
             </div>
+
+            <!-- File Upload -->
             <div>
                 <label asp-for="FormFile" class="form-label">Upload Files</label>
-                <input type="text" asp-for="FormFile" class="form-control" placeholder="Upload file">
+                <input type="file" asp-for="FormFile" class="form-control" />
                 <span class="form-text text-danger" asp-validation-for="FormFile"></span>
             </div>
 

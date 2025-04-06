@@ -26,25 +26,35 @@ namespace EventEdu.Infrastructure.Mail
 
 		public async Task SendMailAsync(string[] tos, string subject, string body, bool isBodyHtml = true)
 		{
-			MailMessage mail = new MailMessage();
+			MailMessage mail = new();
 			mail.IsBodyHtml = isBodyHtml;
+
+
 			foreach (var to in tos)
-			{
 				mail.To.Add(to);
-				mail.Subject = subject;
-				mail.Body = body;
-				mail.From = new(_configuration["Mail:UserName"], "Nalburla", System.Text.Encoding.UTF8);
+
+
+			mail.Subject = subject;
+			mail.Body = body;
+
+
+			mail.From = new MailAddress(_configuration["Mail:UserName"], "EventSphereAda", System.Text.Encoding.UTF8);
+
+
+			using (SmtpClient smtp = new())
+			{
+				smtp.Credentials = new NetworkCredential(_configuration["Mail:UserName"], _configuration["Mail:Password"]);
+				smtp.Port = 587;
+				smtp.EnableSsl = true;
+				smtp.Host = _configuration["Mail:Host"];
+
+
+				await smtp.SendMailAsync(mail);
 			}
-
-
-			SmtpClient smtp = new SmtpClient();
-
-			smtp.Credentials = new NetworkCredential(_configuration["Mail:UserName"], _configuration["Mail:Password"]);
-			smtp.Port = 587;
-			smtp.EnableSsl = true;
-			smtp.Host = _configuration["Mail:Host"];
-			await smtp.SendMailAsync(mail);
-
 		}
+
+
+
+
 	}
 }

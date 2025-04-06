@@ -3,7 +3,7 @@
 
 
 @{
-    var message = ViewData["Success"];
+    var message = ViewBag.AlertMessage;
     var localizer = ViewBag.Localizer as IStringLocalizer<HomeController>;
 
 
@@ -111,9 +111,9 @@
                 <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="course-item bg-light">
                         <div class="position-relative overflow-hidden">
-                            <img class="img-fluid" src="~/client/assets/img/courses/course-1.jpg" alt="">
+                            <img class="img-fluid" src="/assets/img/@eevent.ImageUrl" alt="">
                             <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
-                                <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px 0 0 30px;">Registration</a>
+                                <a asp-controller="Subscription" asp-action="Create" asp-route-eventId="@eevent.Id" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px 0 0 30px;">Subscribe</a>
                                 <a asp-controller="Event" asp-action="EventDetail" asp-route-id="@eevent.Id" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Feedback</a>
                             </div>
                         </div>
@@ -153,19 +153,21 @@
 
 @await Component.InvokeAsync("Sponsor")
 <!-- Testimonial Start -->
+@if (!string.IsNullOrEmpty(message as string))
+{
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Toastify({
+                text: @Json.Serialize(message),
+                duration: 3000,
+                gravity: "top", // "top" və ya "bottom"
+                position: "right", // "left", "center" və ya "right"
+                background: "linear-gradient(to right, #4CAF50, #81C784)",  // Success (Green) color
+        ,
+            }).showToast();
+        });
+    </script>
+}
 
 
-    @if (!string.IsNullOrEmpty(message as string))
-    {
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                Toastify({
-                    text: @Json.Serialize(message),
-                    duration: 3000,
-                    gravity: "top", // "top" və ya "bottom"
-                    position: "right", // "left", "center" və ya "right"
-                    backgroundColor: "linear-gradient(to right, #FF0000 )",
-                }).showToast();
-            });
-        </script>
-    }<!-- Testimonial End -->

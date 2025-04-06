@@ -8,8 +8,10 @@ namespace EventEdu.Application.DTOs.Subscription
 {
     public class SubscribeDTO
     {
+	
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
 		public string Email { get; set; }
+
 	}
 }

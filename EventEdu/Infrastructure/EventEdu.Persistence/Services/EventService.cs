@@ -200,7 +200,7 @@ namespace EventEdu.Persistence.Services
 						.Select(ed => ed.Description)
 						.FirstOrDefault(),
 					IsoCode = language.IsoCode,
-					//ImageUrl = e.ImageUrl,
+					ImageUrl = e.ImageUrl,
 					CategoryName = e.Category.CategoryDetail
 						.Where(cd => cd.LanguageId == language.Id)
 						.Select(cd => cd.CategoryName)
@@ -220,84 +220,82 @@ namespace EventEdu.Persistence.Services
 
 			return eventData;
 		}
-		public async Task UpdateEventAsync(Guid eventId, UpdateEventDTO updateEventDTO)
+		public async Task UpdateEventAsync(Guid eventId, UpdateEventDTO dto)
 		{
-			// Validate the updateEventDTO using the relevant validator
-			var validationResult = await _updateValidator.ValidateAsync(updateEventDTO);
-			if (!validationResult.IsValid)
+			// 1. Event detalları və əsas entity-ni al
+			var eventEntity = await _eventReadRepository.GetByIdAsync(eventId.ToString());
+			var eventDetails = await _eventDetailReadRepository
+				.GetAll().FirstOrDefaultAsync
+				(a=>a.EventId== eventEntity.Id);
+
+
+
+			var category = await _categoryDetailReadRepository.GetByIdAsync(dto.CategoryId.ToString());
+				
+
+			// 2. Entity-nin əsas sahələrini yenilə
+			eventEntity.CategoryId = category.CategoryId;
+			eventEntity.StartDate = dto.StartDate;
+			eventEntity.EndDate = dto.EndDate;
+
+			if (dto.FormFile != null)
 			{
-				throw new ValidationException(validationResult.Errors);
+				_fileService.Delete(eventEntity.ImageUrl); 
+				var newImageUrl = await _fileService.UploadAsync(dto.FormFile);
+				eventEntity.ImageUrl = newImageUrl;
 			}
 
-			// Fetch the event to be updated
-			var eventEntity = await _eventReadRepository.GetAll()
-				.FirstOrDefaultAsync(x => x.Id == eventId);
-			if (eventEntity == null)
-			{
-				throw new NotFoundException("Event not found.");
-			}
-
-			// Check if the event with the same title, language, and category already exists (excluding the current event)
-			bool isEventExist = await _context.EventDetails
-				.AnyAsync(x => x.Title == updateEventDTO.Title && x.LanguageId == updateEventDTO.LanguageId
-				&& x.Event.CategoryId == updateEventDTO.CategoryId && x.EventId != eventId);
-
-			if (isEventExist)
-			{
-				throw new BadRequestException("This event title already exists for the selected language and category.");
-			}
-
-			_mapper.Map(updateEventDTO, eventEntity);
-			// Map the properties from the DTO to the existing event entity
-			if (updateEventDTO.FormFile != null)
-			{
-				_fileService.Delete(eventEntity.ImageUrl);
-				var newFile = await _fileService.UploadAsync(updateEventDTO.FormFile);
-				eventEntity.ImageUrl = newFile;
-			}
-			eventEntity.UpdatedDate = DateTime.UtcNow;
-
-			// Update the event entity in the repository
 			_eventWriteRepository.Update(eventEntity);
 			await _eventWriteRepository.SaveChangeAsync();
 
-			var _eventSponsor = await _eventSponsorReadRepository.GetByIdAsync(eventId.ToString());
-			var _eventSpeak = await _eventSpeakerReadRepository.GetByIdAsync(eventId.ToString());
-			var speakerEvent = new List<EventSpeaker>();
-			var sponsorEvent = new List<EventSponsor>();
+			eventDetails.Title = dto.Title;
+			eventDetails.Description = dto.Description;
+			eventDetails.LanguageId = dto.LanguageId;
 
-			if (updateEventDTO.SpeakerId.Count != null)
+			_eventDetailWriteRepository.Update(eventDetails);
+			await _eventDetailWriteRepository.SaveChangeAsync();
+
+		
+			if (dto.SponsorId != null && dto.SponsorId.Any())
 			{
-
-				var sponsorEvents = updateEventDTO.SponsorId.Select(a => new EventSponsor()
+				var sponsorEntities = dto.SponsorId.Select(id =>
 				{
+					var sponsor = _sponsorDetailReadRepository.GetAll().FirstOrDefault(s => s.SponsorId == id);
+					if (sponsor == null) throw new Exception("Sponsor not found.");
 
-					Id = Guid.NewGuid(),
-					SponsorId = _sponsorDetailReadRepository.GetAll().FirstOrDefault(sp => sp.Id == a).SponsorId,
-					EventId = eventEntity.Id,
-
+					return new EventSponsor
+					{
+						Id = Guid.NewGuid(),
+						EventId = eventEntity.Id,
+						SponsorId = sponsor.SponsorId
+					};
 				}).ToList();
-				_eventSponsorWriteRepository.UpdateRange(sponsorEvents);
-				await _eventSpeakerWriteRepository.SaveChangeAsync();
+
+				_eventSponsorWriteRepository.UpdateRange(sponsorEntities);
+				await _eventSponsorWriteRepository.SaveChangeAsync();
 			}
 
-
-			if (updateEventDTO.SponsorId.Count() != null)
+		
+			if (dto.SpeakerId != null && dto.SpeakerId.Any())
 			{
-
-
-				await _eventSponsorWriteRepository.SaveChangeAsync();
-				var speakerEvents = updateEventDTO.SpeakerId.Select(se => new EventSpeaker()
+				var speakerEntities = dto.SpeakerId.Select(id =>
 				{
-					Id = Guid.NewGuid(),
-					SpeakerId = _speakerDetailReadRepository.GetAll().FirstOrDefault(st => st.Id == se).SpeakerId,
-					EventId = eventEntity.Id,
+					var speaker = _speakerDetailReadRepository.GetAll().FirstOrDefault(s => s.SpeakerId== id);
+					if (speaker == null) throw new Exception("Speaker not found.");
+
+					return new EventSpeaker
+					{
+						Id = Guid.NewGuid(),
+						EventId = eventEntity.Id,
+						SpeakerId = speaker.SpeakerId
+					};
 				}).ToList();
 
-				_eventSpeakerWriteRepository.UpdateRange(speakerEvents);
+				_eventSpeakerWriteRepository.UpdateRange(speakerEntities);
 				await _eventSpeakerWriteRepository.SaveChangeAsync();
 			}
 		}
+
 		public async Task SoftDeleteEventAsync(Guid eventId)
 		{
 			var eventEntity = await _eventReadRepository.GetByIdAsync(eventId.ToString());
@@ -378,8 +376,7 @@ namespace EventEdu.Persistence.Services
 
 		public async Task<EventDetail> GetEventDetailsById(string id)
 		{
-			if (!Guid.TryParse(id, out var guid)) throw new BadRequestException("Invalid id format");
-
+		
 
 			var events = await _eventDetailReadRepository.GetByIdAsync(id);
 
@@ -407,13 +404,13 @@ namespace EventEdu.Persistence.Services
 			return null;
 		}
 
-		public async Task<(bool, bool)> GetEventSpeakerById(string eventId)
+		public async Task<(List<Guid>, List<Guid>)> GetEventSpeakerById(string eventId)
 		{
 			var eventSpeak = await _eventSpeakerReadRepository.GetAll(
-				).AnyAsync(a => a.EventId == Guid.Parse(eventId) );
+				).Where(a => a.EventId == Guid.Parse(eventId) ).Select(a=>a.SpeakerId).ToListAsync();
 			var eventSponsor = await _eventSponsorReadRepository.GetAll()
-				.AnyAsync(a => a.EventId == Guid.Parse(eventId));
-
+				.Where(a => a.EventId == Guid.Parse(eventId)).Select(a=>a.SponsorId).ToListAsync();
+			
 			return (eventSpeak, eventSponsor);
 		}
 	}

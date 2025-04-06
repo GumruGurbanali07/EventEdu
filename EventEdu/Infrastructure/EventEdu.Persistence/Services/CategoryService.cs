@@ -78,13 +78,7 @@ namespace EventEdu.Persistence.Services
 			category.CreatedDate = DateTime.UtcNow;
 			category.UpdatedDate = DateTime.UtcNow;
 			
-
-			
-
-		
-
 			await _categoryWriteRepository.AddAsync(category);
-			await _categoryWriteRepository.SaveChangeAsync();
 
 			var newFile = await _fileService.UploadAsync(createCategoryDTO.FormFile);
 
@@ -98,10 +92,9 @@ namespace EventEdu.Persistence.Services
 				CreatedDate = DateTime.UtcNow,
 				UpdatedDate = DateTime.UtcNow,
 			};
-
-			//_context.CategoryDetails.Add(categoryDetail);
-			//await _context.SaveChangesAsync();
+		
 			await _categoryDetailWriteRepository.AddAsync(categoryDetail);
+			await _categoryWriteRepository.SaveChangeAsync();//
 			await _categoryDetailWriteRepository.SaveChangeAsync();
 		}
 
@@ -141,36 +134,27 @@ namespace EventEdu.Persistence.Services
 				throw new ValidationException(validationResult.Errors);
 			}
 			var categoryDetail = await _categoryDetailReadRepository.GetAll()
-				.FirstOrDefaultAsync(x => x.Id == categoryId);
-			if (categoryDetail == null)
-			{
-				throw new NotFoundException("Category not found.");
-			}
-			bool isCategoryExist = await _context.CategoryDetails
-				.AnyAsync(x => x.CategoryName == updateCategoryDTO.CategoryName && x.LanguageId == updateCategoryDTO.LanguageId
-				&& x.Id != categoryId);
+				.FirstOrDefaultAsync(x => x.CategoryId == categoryId);
+		
 
-			if (isCategoryExist)
-			{
-				throw new BadRequestException("This category name already exists for the selected language.");
-			}
-
-			//categoryDetail.CategoryName = updateCategoryDTO.CategoryName;
-			//categoryDetail.LanguageId = updateCategoryDTO.LanguageId;
-			//categoryDetail.UpdatedDate = DateTime.UtcNow;
+			
 
 			if (updateCategoryDTO.FormFile != null)
 			{
 				_fileService.Delete(categoryDetail.ImagePath);
 				var newFile = await _fileService.UploadAsync(updateCategoryDTO.FormFile);
 				categoryDetail.ImagePath = newFile;
+				
 
 			}
-			_mapper.Map(updateCategoryDTO, categoryDetail);
-			categoryDetail.UpdatedDate = DateTime.UtcNow;
-		
+			 
+		   
+			categoryDetail.CategoryId=Guid.Parse(updateCategoryDTO.CategoryId);
+			categoryDetail.CategoryName = updateCategoryDTO.CategoryName;
+			categoryDetail.LanguageId = updateCategoryDTO.LanguageId;
 
 			_categoryDetailWriteRepository.Update(categoryDetail);
+
 			await _categoryDetailWriteRepository.SaveChangeAsync();
 		}
 

@@ -16,17 +16,16 @@ namespace EventEdu.Application.DTOs.Event
 		public Guid CategoryId { get; set; }
 		public string Title { get; set; }
 		public string Description { get; set; }
-		public string ImageUrl { get; set; }
+		public string? ImageUrl { get; set; }
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
 
 		[NotMapped]
-		public IFormFile FormFile { get; set; }
+		public IFormFile? FormFile { get; set; }
 
-		public List<SelectListItem> Category { get; set; }
-		public List<SelectListItem> Language { get; set; }
+	
 
-		public List<Guid> SpeakerId { get; set; }
-		public List<Guid> SponsorId { get; set; }
+		public List<Guid>? SpeakerId { get; set; }
+		public List<Guid>? SponsorId { get; set; }
 	}
 }

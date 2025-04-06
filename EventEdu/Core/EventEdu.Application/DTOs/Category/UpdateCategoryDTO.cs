@@ -11,12 +11,12 @@ namespace EventEdu.Application.DTOs.Category
 {
 	public class UpdateCategoryDTO
 	{
-		public string ImagePath { get; set; }
+		public string? ImagePath { get; set; }
 
 		[NotMapped]
-		public IFormFile FormFile { get; set; }
-		public string CategoryId { get; set; }
-		public string CategoryName { get; set; }
+		public IFormFile? FormFile { get; set; }
+		public string? CategoryId { get; set; }
+		public string? CategoryName { get; set; }
 		public ICollection<SelectListItem>? Language { get; set;  }
 		public Guid LanguageId { get; set; }
 	

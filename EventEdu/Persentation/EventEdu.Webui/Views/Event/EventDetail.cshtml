@@ -42,7 +42,7 @@
         <div class="event-img">
             <img src="~/assets/img/@Model.GetEventDTO.ImageUrl" id="infoImage" />
         </div>
-  
+
     </div>
 
 </div>
@@ -54,6 +54,10 @@
 </div>
 
 
+<div>
+     <textarea style="resize:none; width:140px;  " data-id="@Model.Speaker."></textarea>
+</div>
+
 <div class="container-xxl py-5" style="height:100vh">
     <div class="container">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
@@ -63,66 +67,40 @@
         <div class="row g-4">
             @foreach (var speaker in Model.Speaker)
             {
-              
 
 
-                    var detail = Model.SpeakerDetail.FirstOrDefault(sd => sd.SpeakerId == speaker.Id);
 
-                    <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                        <div class="team-item bg-light">
-                            <div class="overflow-hidden">
-                                <img class="img-fluid" src="/assets/img/@speaker.ImageUrl" alt="">
-                            </div>
-                            <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
-                                <div class="bg-light d-flex justify-content-center pt-2 px-1">
-                                    <a class="btn btn-sm-square btn-primary mx-1" href="@speaker.FacebookLink"><i class="fab fa-facebook-f"></i></a>
-                                    <a class="btn btn-sm-square btn-primary mx-1" href="@speaker.TwitterLink"><i class="fab fa-twitter"></i></a>
-                                    <a class="btn btn-sm-square btn-primary mx-1" href="@speaker.InstagramLink"><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="text-center p-4">
-                                @if (detail != null)
-                                {
-                                    <h5 class="mb-0">@detail.FullName</h5>
-                                }
-                                else
-                                {
-                                    <h5 class="mb-0">No name</h5>
-                                }
+                var detail = Model.SpeakerDetail.FirstOrDefault(sd => sd.SpeakerId == speaker.Id);
+
+                <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="team-item bg-light">
+                        <div class="overflow-hidden">
+                            <img class="img-fluid" src="/assets/img/@speaker.ImageUrl" alt="">
+                        </div>
+                        <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
+                            <div class="bg-light d-flex justify-content-center pt-2 px-1">
+                                <a class="btn btn-sm-square btn-primary mx-1" href="@speaker.FacebookLink"><i class="fab fa-facebook-f"></i></a>
+                                <a class="btn btn-sm-square btn-primary mx-1" href="@speaker.TwitterLink"><i class="fab fa-twitter"></i></a>
+                                <a class="btn btn-sm-square btn-primary mx-1" href="@speaker.InstagramLink"><i class="fab fa-instagram"></i></a>
                             </div>
                         </div>
+                        <div class="text-center p-4">
+                            @if (detail != null)
+                            {
+                                <h5 class="mb-0">@detail.FullName</h5>
+                            }
+                            else
+                            {
+                                <h5 class="mb-0">No name</h5>
+                            }
+                        </div>
                     </div>
-                }
+                </div>
+            }
             }
         </div>
     </div>
 </div>
 
-@* <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const buttons = document.querySelectorAll(".about-nav.toggle-btn, .language-nav.toggle-btn");
-        const descriptionText = document.getElementById("descriptionText");
-        const infoImage = document.getElementById("infoImage");
 
-        const eventData = document.getElementById("eventData");
-        const sponsorData = document.getElementById("sponsorData");
 
-        buttons.forEach(button => {
-            button.addEventListener("click", function () {
-                buttons.forEach(btn => btn.classList.remove("active"));
-                this.classList.add("active");
-
-                const target = this.getAttribute("data-target");
-
-                if (target === "sponsor") {
-                    descriptionText.innerHTML = sponsorData.getAttribute("data-description");
-                    infoImage.src = sponsorData.getAttribute("data-image");
-                } else {
-                    descriptionText.innerHTML = eventData.getAttribute("data-description");
-                    infoImage.src = eventData.getAttribute("data-image");
-                }
-            });
-        });
-    });
-
-</script> *@

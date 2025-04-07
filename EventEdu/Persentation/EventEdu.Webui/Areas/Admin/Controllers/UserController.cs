@@ -39,7 +39,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register([FromForm] UserRegisterDTO registerDTO)
+        public async Task<IActionResult> Register( UserRegisterDTO registerDTO)
         {
             if (!ModelState.IsValid)
             {

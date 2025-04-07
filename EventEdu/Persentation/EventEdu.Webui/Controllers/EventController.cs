@@ -34,50 +34,62 @@ public class EventController : Controller
 	public async Task<IActionResult> EventCategory(string categoryName)
 	{
 
-		
-			var language = _contextAccessor.HttpContext.Request.Headers["accept-language"].FirstOrDefault();
-			string isoCode = language?.Split(',').FirstOrDefault(); // ISO kodu götür
 
-			var languages = await _languageService.GetLanguageAsync(isoCode);
-			// Verileri al
-			var events = await _eventService.GetEventCategoryAsync(categoryName, languages.IsoCode);
+		var language = _contextAccessor.HttpContext.Request.Headers["accept-language"].FirstOrDefault();
+		string isoCode = language?.Split(',').FirstOrDefault(); // ISO kodu götür
 
-			// Eğer events null ise, NotFound döndür
-			
-			var eventSponsor= new List<SponsorDetail>();
-			// Event speaker detaylarını hazırlama
-			var eventSpeakerDetails = new List<SpeakerDetail>();
-			foreach (var eve in events)
-			{
-				var speaker = await _speakerService.GetSpeakersEventByIdAsync(eve.Id.ToString());
-				var sponsor = await _sponsorService.GetSponsorsById(eve.Id.ToString());
-				eventSponsor = sponsor;
-				eventSpeakerDetails = speaker;
-			}
+		var languages = await _languageService.GetLanguageAsync(isoCode);
+		// Verileri al
+		var events = await _eventService.GetEventCategoryAsync(categoryName, languages.IsoCode);
 
-			// ViewModel oluşturma
-			var vm = new EventIndex()
-			{
-				Events = events,
-				SpeakerDetail = eventSpeakerDetails,
-				SponsorDetail = eventSponsor
-			};
+		// Eğer events null ise, NotFound döndür
 
-			// Modeli View'a gönder
-			return View(vm);
+		var eventSponsor = new List<SponsorDetail>();
+		// Event speaker detaylarını hazırlama
+		var eventSpeakerDetails = new List<SpeakerDetail>();
+		foreach (var eve in events)
+		{
+			var speaker = await _speakerService.GetSpeakersEventByIdAsync(eve.Id.ToString());
+			var sponsor = await _sponsorService.GetSponsorsById(eve.Id.ToString());
+			eventSponsor = sponsor;
+			eventSpeakerDetails = speaker;
 		}
 
-    public async Task<IActionResult> EventDetail(Guid id, string isoCode)
-    {
-        var eevent = await _eventService.GetEventByIdAndLanguageAsync(id,isoCode);
+		// ViewModel oluşturma
+		var vm = new EventIndex()
+		{
+			Events = events,
+			SpeakerDetail = eventSpeakerDetails,
+			SponsorDetail = eventSponsor
+		};
 
-        if (eevent == null)
-        {
-            return NotFound(); 
-        }
+		// Modeli View'a gönder
+		return View(vm);
+	}
 
-        return View(eevent); 
-    }
+	public async Task<IActionResult> EventDetail(Guid id, string isoCode)
+	{
+		var events = await _eventService.GetEventByIdAndLanguageAsync(id, isoCode);
+
+
+		var speak = await _speakerService.GetSpeakersDByIdAsync(events.Id.ToString());
+
+
+		if (events == null)
+		{
+			return NotFound();
+		}
+
+		var es = new EventSpeakerVM()
+		{
+			GetEventDTO = events,
+			Speaker = speak.Item1,
+			SpeakerDetail = speak.Item2,
+		};
+
+
+		return View(es);
+	}
 
 
 }

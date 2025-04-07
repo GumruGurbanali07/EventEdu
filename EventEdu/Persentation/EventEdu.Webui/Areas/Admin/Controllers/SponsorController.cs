@@ -21,14 +21,16 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
     {
         private readonly ISponsorService _sponsorService;
         private readonly ILanguageService _languageService; 
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
-		public SponsorController(ISponsorService sponsorService, AppDbContext context, IMapper mapper, ILanguageService languageService)
+		public SponsorController(ISponsorService sponsorService, AppDbContext context, IMapper mapper, ILanguageService languageService, IHttpContextAccessor httpContextAccessor)
 		{
 			_sponsorService = sponsorService;
 			_context = context;
 			_mapper = mapper;
 			_languageService = languageService;
+			_httpContextAccessor = httpContextAccessor;
 		}
 
 		public async Task<IActionResult> Index()
@@ -128,7 +130,17 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         {
             try
             {
-                var sponsor = await _sponsorService.GetSponsorById(id, "az-AZ");
+
+				var getLanguage = await _languageService.GetLanguagesAsync();
+				ViewBag.Language = getLanguage.Select(a => new SelectListItem
+				{
+					Text = a.Name,
+					Value = a.Id.ToString()
+				});
+
+				var languages = _httpContextAccessor.HttpContext.Request.Headers["accept-language"].FirstOrDefault().Split(',').FirstOrDefault();
+                var language = await _languageService.GetLanguageAsync(languages);
+                var sponsor = await _sponsorService.GetSponsorById(id, language.IsoCode);
 
                 if (sponsor == null)
                 {
@@ -157,24 +169,25 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditSponsorAsync(Guid id, [FromForm] CreateSponsorDTO updateSponsorDTO)
+        public async Task<IActionResult> EditSponsorAsync(Guid id,  CreateSponsorDTO updateSponsorDTO)
         {
             if (!ModelState.IsValid)
             {
-                return View(updateSponsorDTO);
+
+				var getLanguage = await _languageService.GetLanguagesAsync();
+				ViewBag.Language = getLanguage.Select(a => new SelectListItem
+				{
+					Text = a.Name,
+					Value = a.Id.ToString()
+				});
+				return View(updateSponsorDTO);
             }
 
-            try
-            {
+           
                 await _sponsorService.EditSponsor(id, updateSponsorDTO);
                 TempData["Success"] = "Sponsor updated successfully!";
-                return Redirect("Index");  
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, ex.Message);  
-                return View(updateSponsorDTO);
-            }
+                return RedirectToAction("Index");  
+            
         }
 
     }

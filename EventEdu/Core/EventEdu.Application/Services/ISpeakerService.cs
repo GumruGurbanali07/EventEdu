@@ -8,7 +8,8 @@ namespace EventEdu.Application.Services
 	{
 		Task AddSpeakerWithLanguageAsync(CreateSpeakerDTO createSpeakerDTO);
 
-		Task<(List<Speaker> , SpeakerDetail)> GetSpeakersAllAsync();
+		Task<(List<Speaker> , List<SpeakerDetail>)> GetSpeakersAllAsync();
+		Task<(List<Speaker> , List<SpeakerDetail>)> GetSpeakersDByIdAsync(string eventId);
 		Task<List<SpeakerDetail>> GetSpeakersAsync();	
 		Task<SpeakDetailsVM> GetSpeakersByIdAsync(string id );
 		Task<List<SpeakerDetail>> GetSpeakersEventByIdAsync(string eventId);

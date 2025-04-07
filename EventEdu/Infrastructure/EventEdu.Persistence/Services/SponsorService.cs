@@ -66,12 +66,12 @@ namespace EventEdu.Persistence.Services
 			//}
 
 			var validationResult = await _createSponsorValidator.ValidateAsync(addSponsorDTO);
-			
+
 
 
 			var language = await _context.Languages.FirstOrDefaultAsync(l => l.Id == addSponsorDTO.LanguageId);
 
-		
+
 
 
 			if (!addSponsorDTO.ImageFile.CheckFileType("image"))
@@ -234,85 +234,74 @@ namespace EventEdu.Persistence.Services
 
 		public async Task EditSponsor(Guid id, CreateSponsorDTO updateSponsorDTO)
 		{
-			var sponsor = _sponsorReadRepository.GetAll()
-			.Include(s => s.SponsorsDetail)
-			.FirstOrDefault(s => s.Id == id
-		  );
+			var sponsor = await _sponsorReadRepository.GetAll()
+				.Include(s => s.SponsorsDetail)
+				.FirstOrDefaultAsync(s => s.Id == id);
 
 			if (sponsor == null)
-			{
 				throw new Exception("Sponsor not found.");
-			}
+
 			var sponsorDetail = sponsor.SponsorsDetail
 				.FirstOrDefault(sd => sd.SponsorId == id);
 
 			if (sponsorDetail == null)
-			{
 				throw new Exception("Sponsor detail for the selected language not found.");
-			}
 
-			var validationResult = await _createSponsorValidator.ValidateAsync(updateSponsorDTO);
-			if (!validationResult.IsValid)
-			{
-				throw new ValidationException(validationResult.Errors);
-			}
+		
 
+			// Sponsor məlumatlarının yenilənməsi
 			sponsor.Email = updateSponsorDTO.Email?.Trim() ?? sponsor.Email;
 			sponsor.PhoneNumber = updateSponsorDTO.PhoneNumber?.Trim() ?? sponsor.PhoneNumber;
 			sponsor.Website = updateSponsorDTO.Website?.Trim() ?? sponsor.Website;
-			sponsor.ImagePath = updateSponsorDTO.ImagePath?.Trim() ?? sponsor.ImagePath;
 			sponsor.UpdatedDate = DateTime.UtcNow.AddHours(4);
 
-			sponsorDetail.LanguageId = updateSponsorDTO.LanguageId;
-			sponsorDetail.SponsorName = updateSponsorDTO.SponsorName?.Trim() ?? sponsorDetail.SponsorName;
-			sponsorDetail.SponsorDescription = updateSponsorDTO.SponsorDescription?.Trim() ?? sponsorDetail.SponsorDescription;
-			sponsorDetail.UpdatedDate = DateTime.UtcNow.AddHours(4);
-
+			// Şəkil dəyişdirilərsə
 			if (updateSponsorDTO.ImageFile != null)
 			{
 				if (!updateSponsorDTO.ImageFile.CheckFileType("image"))
-				{
 					throw new Exception("Invalid file type. Please upload an image.");
-				}
 
 				if (!updateSponsorDTO.ImageFile.CheckFileSize(10))
-				{
 					throw new Exception("File size is too large. Maximum allowed size is 10MB.");
-				}
 
-			         _fileService.Delete(sponsor.ImagePath);
-					string newImagePath = await _fileService.UploadAsync(updateSponsorDTO.ImageFile);			 
-
-				
-
+				_fileService.Delete(sponsor.ImagePath);
+				sponsor.ImagePath = await _fileService.UploadAsync(updateSponsorDTO.ImageFile);
 			}
-
+			// Verilənlərin saxlanması
 			_sponsorWriteRepository.Update(sponsor);
+			await _sponsorWriteRepository.SaveChangeAsync();
+			var language = await _languageReadRepository.GetByIdAsync(updateSponsorDTO.LanguageId.ToString());
+			// Sponsor detail məlumatlarının yenilənməsi
+			sponsorDetail.LanguageId = language.Id;
+			sponsorDetail.SponsorName = updateSponsorDTO.SponsorName?.Trim() ?? sponsorDetail.SponsorName;
+			sponsorDetail.SponsorDescription = updateSponsorDTO.SponsorDescription?.Trim() ?? sponsorDetail.SponsorDescription;
+
+	
 			_sponsorDetailWriteRepository.Update(sponsorDetail);
 			await _sponsorDetailWriteRepository.SaveChangeAsync();
-
-
+			
 		}
 
-		public async Task<(List<Sponsor>,SponsorDetail)> GetSponsorAll()
+
+		public async Task<(List<Sponsor>, SponsorDetail)> GetSponsorAll()
 		{
 
 			var languages = _httpContext.HttpContext.Request.Headers["accept-language"].FirstOrDefault()?.Split(',').FirstOrDefault();
 			var language = await _languageReadRepository.GetAll()
-								.FirstOrDefaultAsync(a => a.IsoCode == languages);	
+								.FirstOrDefaultAsync(a => a.IsoCode == languages);
 			var sponsors = await _sponsorReadRepository.GetAll().ToListAsync();
 
 
-			
-				var sponsorDetails = await _sponsorDetailReadRepository.GetAll()
-													.Where(a => a.LanguageId == language.Id ).FirstOrDefaultAsync();
-													
-			
-	             
-			// Bütün SponsorDetail-ləri birdəfəlik gətiririk ki, performans aşağı düşməsin
-			
 
-			
+			var sponsorDetails = await _sponsorDetailReadRepository.GetAll()
+												.Where(a => a.LanguageId == language.Id).FirstOrDefaultAsync();
+
+
+
+			// Bütün SponsorDetail-ləri birdəfəlik gətiririk ki, performans aşağı düşməsin
+
+
+
 			return (sponsors, sponsorDetails);
 		}
 
@@ -320,7 +309,7 @@ namespace EventEdu.Persistence.Services
 		{
 
 			var languages = _httpContext?.HttpContext?.Request?.Headers["accept-language"].FirstOrDefault().Split(',').FirstOrDefault();
-	
+
 			var language = await _languageReadRepository.GetAll().FirstOrDefaultAsync(a => a.IsoCode == languages);
 			var eventSponsor = await _eventSponsorReadRepository.GetAll().FirstOrDefaultAsync(a => a.EventId == Guid.Parse(eventId));
 

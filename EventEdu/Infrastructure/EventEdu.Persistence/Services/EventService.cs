@@ -226,12 +226,12 @@ namespace EventEdu.Persistence.Services
 			var eventEntity = await _eventReadRepository.GetByIdAsync(eventId.ToString());
 			var eventDetails = await _eventDetailReadRepository
 				.GetAll().FirstOrDefaultAsync
-				(a=>a.EventId== eventEntity.Id);
+				(a => a.EventId == eventEntity.Id);
 
 
 
 			var category = await _categoryDetailReadRepository.GetByIdAsync(dto.CategoryId.ToString());
-				
+
 
 			// 2. Entity-nin əsas sahələrini yenilə
 			eventEntity.CategoryId = category.CategoryId;
@@ -240,7 +240,7 @@ namespace EventEdu.Persistence.Services
 
 			if (dto.FormFile != null)
 			{
-				_fileService.Delete(eventEntity.ImageUrl); 
+				_fileService.Delete(eventEntity.ImageUrl);
 				var newImageUrl = await _fileService.UploadAsync(dto.FormFile);
 				eventEntity.ImageUrl = newImageUrl;
 			}
@@ -255,9 +255,13 @@ namespace EventEdu.Persistence.Services
 			_eventDetailWriteRepository.Update(eventDetails);
 			await _eventDetailWriteRepository.SaveChangeAsync();
 
-		
+
 			if (dto.SponsorId != null && dto.SponsorId.Any())
 			{
+				var eventSP = await _eventSponsorReadRepository.GetAll().Where(a => a.EventId == eventEntity.Id).ToListAsync();
+
+				_eventSponsorWriteRepository.RemoveRange(eventSP);
+				await _eventSponsorWriteRepository.SaveChangeAsync();
 				var sponsorEntities = dto.SponsorId.Select(id =>
 				{
 					var sponsor = _sponsorDetailReadRepository.GetAll().FirstOrDefault(s => s.SponsorId == id);
@@ -271,16 +275,19 @@ namespace EventEdu.Persistence.Services
 					};
 				}).ToList();
 
-				_eventSponsorWriteRepository.UpdateRange(sponsorEntities);
+				await _eventSponsorWriteRepository.AddRangeAsync(sponsorEntities);
 				await _eventSponsorWriteRepository.SaveChangeAsync();
 			}
 
-		
+
 			if (dto.SpeakerId != null && dto.SpeakerId.Any())
 			{
+				var eventSK = await _eventSpeakerReadRepository.GetAll().Where(a=>a.EventId== eventEntity.Id).ToListAsync();
+				 _eventSpeakerWriteRepository.RemoveRange(eventSK);
+				await _eventSpeakerWriteRepository.SaveChangeAsync();
 				var speakerEntities = dto.SpeakerId.Select(id =>
 				{
-					var speaker = _speakerDetailReadRepository.GetAll().FirstOrDefault(s => s.SpeakerId== id);
+					var speaker = _speakerDetailReadRepository.GetAll().FirstOrDefault(s => s.SpeakerId == id);
 					if (speaker == null) throw new Exception("Speaker not found.");
 
 					return new EventSpeaker
@@ -291,7 +298,7 @@ namespace EventEdu.Persistence.Services
 					};
 				}).ToList();
 
-				_eventSpeakerWriteRepository.UpdateRange(speakerEntities);
+				await _eventSpeakerWriteRepository.AddRangeAsync(speakerEntities);
 				await _eventSpeakerWriteRepository.SaveChangeAsync();
 			}
 		}
@@ -376,7 +383,7 @@ namespace EventEdu.Persistence.Services
 
 		public async Task<EventDetail> GetEventDetailsById(string id)
 		{
-		
+
 
 			var events = await _eventDetailReadRepository.GetByIdAsync(id);
 
@@ -407,10 +414,10 @@ namespace EventEdu.Persistence.Services
 		public async Task<(List<Guid>, List<Guid>)> GetEventSpeakerById(string eventId)
 		{
 			var eventSpeak = await _eventSpeakerReadRepository.GetAll(
-				).Where(a => a.EventId == Guid.Parse(eventId) ).Select(a=>a.SpeakerId).ToListAsync();
+				).Where(a => a.EventId == Guid.Parse(eventId) && a.IsDeleted==false).Select(a => a.SpeakerId).ToListAsync();
 			var eventSponsor = await _eventSponsorReadRepository.GetAll()
-				.Where(a => a.EventId == Guid.Parse(eventId)).Select(a=>a.SponsorId).ToListAsync();
-			
+				.Where(a => a.EventId == Guid.Parse(eventId) && a.IsDeleted == false).Select(a => a.SponsorId).ToListAsync();
+
 			return (eventSpeak, eventSponsor);
 		}
 	}

@@ -46,6 +46,12 @@ namespace EventEdu.Persistence.Repository
 			return entry.State == EntityState.Deleted;
 		}
 
+		public bool RemoveRange(List<T> model)
+		{
+		   	Table.RemoveRange(model);	
+			return true;
+		}
+
 		public async Task<int> SaveChangeAsync()
 		{
 			return await _context.SaveChangesAsync();

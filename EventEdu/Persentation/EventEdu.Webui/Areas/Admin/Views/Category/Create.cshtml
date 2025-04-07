@@ -1,6 +1,8 @@
 ﻿@using EventEdu.Application.DTOs.Category
 @model CreateCategoryDTO
-
+@{
+    var message = TempData["ErrorMessage"];
+}
 <form asp-area="Admin" asp-controller="Category" asp-action="Create" method="post" enctype="multipart/form-data" >
     <h4 style="margin-left:40px">Add Category</h4>
 
@@ -36,3 +38,24 @@
     </div>
    
 </form>
+
+@if (!string.IsNullOrEmpty(message as string))
+{
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Toastify({
+                text: @Json.Serialize(message),
+                duration: 3000,
+                gravity: "top", // "top" və ya "bottom"
+                position: "right", // "left", "center" və ya "right"
+                style:[
+                background: "linear-gradient(to right, #4CAF50, #81C784)",  // Success (Green) color
+
+                ]
+
+        ,
+            }).showToast();
+        });
+    </script>
+}

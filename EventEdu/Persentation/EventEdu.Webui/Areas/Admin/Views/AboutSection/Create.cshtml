@@ -1,53 +1,44 @@
 ﻿@using EventEdu.Application.DTOs.AboutSection
 @model CreateAboutSectionDTO
 
-<form asp-area="admin" asp-controller="AboutSection" asp-action="EditAboutSection" asp-route-Id="@Model.Id" method="post" enctype="multipart/form-data">
-   <input type="hidden"  value="@Model.Id" />
-    <h4 style="margin-left:40px">Edit About Section</h4>
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <h4 style="margin-left:40px">Add About Section</h4>
 
     <div class="addOrEditCard card">
         <!-- Image Preview -->
         <div class="chosenImage">
-            @if (Model.ImagePath == null || Model.ImagePath.Length == 0)
-            {
-                <img src="~/admin/assets/img/avatars/default.jpg" />
-            }
-            else
-            {
-                <img id="imagePreview" src="@Model.ImagePath" alt="About Section Image" />
-            }
+            <img id="imagePreview" src="~/client/assets/img/teams/team-2.jpg" alt="About Section Image" />
         </div>
 
         <div class="card-body">
             <!-- Language Dropdown -->
             <div class="form-floating form-floating-outline mb-3">
-                <select asp-for="LanguageId" name="LanguageId" asp-items="@ViewBag.Languages" class="form-select" aria-label="Choose a Language">
+                <select asp-for="LanguageId" class="form-select" asp-items="@ViewBag.Languages" aria-label="Choose a Language">
                     <option selected disabled value="">Choose a Language</option>
-                 
+                  
                 </select>
-                <label asp-for="LanguageId">Language</label>
+                <label for="LanguageId">Language</label>
                 <span class="form-text text-danger" asp-validation-for="LanguageId"></span>
             </div>
 
-
             <!-- File Input for Image -->
             <div class="mb-3">
-                <label asp-for="ImageFile" class="form-label">About Section's Image</label>
-                <input class="form-control" type="file"  asp-for="ImageFile" id="ImageFile" accept="image/*" onchange="previewImage(event)">
+                <label for="ImageFile" class="form-label">About Section's Image</label>
+                <input class="form-control" type="file" asp-for="ImageFile" id="ImageFile" accept="image/*" onchange="previewImage(event)">
                 <span class="form-text text-danger" asp-validation-for="ImageFile"></span>
             </div>
 
             <!-- AboutSection Title -->
             <div>
-                <label asp-for="Title" class="form-label">About Section Title</label>
-                <input asp-for="Title" name="Title" class="form-control" placeholder="Enter About Section Title">
+                <label for="AboutSectionDetails_0__Title" class="form-label">About Section Title</label>
+                <input asp-for="Title" class="form-control" placeholder="Enter About Section Title">
                 <span class="form-text text-danger" asp-validation-for="Title"></span>
             </div>
 
             <!-- AboutSection Description -->
             <div>
-                <label asp-for="Description" class="form-label">About Section Description</label>
-                <textarea asp-for="Description" name="Description" class="form-control" placeholder="Enter About Section Description"></textarea>
+                <label for="AboutSectionDetails_0__Description" class="form-label">About Section Description</label>
+                <textarea asp-for="Description" class="form-control" placeholder="Enter About Section Description"></textarea>
                 <span class="form-text text-danger" asp-validation-for="Description"></span>
             </div>
 

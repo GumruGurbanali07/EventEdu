@@ -6,6 +6,7 @@
   data-theme="theme-default" data-assets-path='@((httpContextAccessor.HttpContext?.Request.PathBase ?? "") + "/")'
   data-framework="aspnetcore-mvc"
   data-template='vertical-menu-aspnet-core-mvc-template-free'>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
 <head>
   <meta charset="utf-8" />
@@ -49,7 +50,9 @@
   @RenderSection("VendorScripts", required: false)
 
 
-  
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+
 
   <!-- Main JS-->
     <script src='~/admin/assets/js/main.js'></script>

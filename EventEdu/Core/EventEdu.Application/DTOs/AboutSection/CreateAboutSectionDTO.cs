@@ -11,7 +11,7 @@ namespace EventEdu.Application.DTOs.AboutSection
 {
     public class CreateAboutSectionDTO
     {
-        public Guid Id { get; set; }
+        public Guid id { get; set; }
         public Guid LanguageId { get; set; }
         public string? ImagePath { get; set; }
         public string Title { get; set; }

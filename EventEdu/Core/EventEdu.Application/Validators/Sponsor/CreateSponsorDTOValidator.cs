@@ -32,12 +32,12 @@ namespace EventEdu.Application.Validators.Sponsor
 
 
 			RuleFor(x => x.PhoneNumber)
-                .NotEmpty().WithMessage("Phone Number is required.")
-                .Matches(@"^(\+994\s?0?|0)(10|12|50|51|55|70|77)\s?\d{3}\s?\d{2}\s?\d{2}$")
-                .WithMessage("Invalid phone number format. Examples: +994501234567, 0501234567, 501234567, +994 50 123 45 67, +994 050 123 45 67");
+				.NotEmpty().WithMessage("Phone Number is required.")
+				.Matches(@"^(\+994\s?|0)(10|50|51|55|70|77)\s?\d{3}\s?\d{2}\s?\d{2}$|^(\+994\s?|0)12\s?\d{3}\s?\d{2}\s?\d{2}$")
+				.WithMessage("Invalid phone number format. Examples: +994501234567, 0501234567, 501234567, +994 50 123 45 67, +994 12 493 00 91");
 
 
-            RuleFor(x => x.LanguageId)
+			RuleFor(x => x.LanguageId)
                 .NotEqual(Guid.Empty).WithMessage("Language  is required.");
 
             RuleFor(x => x.ImageFile)

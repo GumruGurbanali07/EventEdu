@@ -11,6 +11,7 @@ namespace EventEdu.Application.Repository
 	{
 		Task<bool> AddAsync(T model);
 
+		bool RemoveRange(List<T> model);
 		Task<bool> AddRangeAsync(List<T> model);
 		Task<bool> Remove(string id);
 		bool Update(T model);

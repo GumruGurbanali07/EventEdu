@@ -240,7 +240,7 @@ namespace EventEdu.Persistence.Services
                 string webRootPath = _environment.WebRootPath;
                 string newImagePath = await _fileService.SaveFilesAsync(updateAboutSectionDTO.ImageFile, webRootPath, "client", "assets", "img", "AboutSectionMedias");
 
-                aboutSection.ImagePath = newImagePath.Trim();
+                aboutSection.ImagePath = newImagePath;
 				_aboutWriteRepository.Update(aboutSection);
                 await _aboutWriteRepository.SaveChangeAsync();
 			}

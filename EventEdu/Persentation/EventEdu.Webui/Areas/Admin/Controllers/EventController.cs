@@ -214,14 +214,14 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 		public async Task<IActionResult> Restore(Guid Id)
             {
 			await _eventService.RestoreEventAsync(Id);
-			return Redirect(nameof(Index));
+			return RedirectToAction(nameof(Index));
             }
 
 		[HttpPost]
 		public async Task<IActionResult> Delete(Guid Id)
             {
 			await _eventService.SoftDeleteEventAsync(Id);
-			return Redirect(nameof(Index));
+			return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -2,7 +2,7 @@
 
 @model AboutIndexVM
 
-@if (Model.AboutSectionDetail != null && Model.AboutSectionDetail!=null){
+@if (Model.AboutSectionDetail != null && Model.AboutSectionDetail!=null && !Model.AboutSection.IsDeleted){
 <div class="container-xxl py-5">
     <div class="container">
         <div class="row g-5">

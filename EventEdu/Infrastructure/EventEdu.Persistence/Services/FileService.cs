@@ -17,6 +17,7 @@ namespace EventEdu.Persistence.Services
 
 		public void Delete(string path)
 		{
+			var fullPath = Path.Combine(_environment.WebRootPath, path);
             if (e::File.Exists(path))
 				e::File.Delete(path);
 		}
@@ -55,10 +56,10 @@ namespace EventEdu.Persistence.Services
 
 			// Get the existing image files to calculate the new number
 			var existingFiles = Directory.GetFiles(imageDirectory, "image-*.png")
-				.Select(p => Path.GetFileNameWithoutExtension(p))         // "image-10"
-				.Select(p => p.Replace("image-", ""))                     // "10"
-				.Where(p => int.TryParse(p, out _))                       // sadece sayılar
-				.Select(int.Parse)                                        // int olarak al
+				.Select(p => Path.GetFileNameWithoutExtension(p))        
+				.Select(p => p.Replace("image-", ""))                     
+				.Where(p => int.TryParse(p, out _))                        
+				.Select(int.Parse)                                        
 				.ToList();
 
 			// Yeni numara belirle

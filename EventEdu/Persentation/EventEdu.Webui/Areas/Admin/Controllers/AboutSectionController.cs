@@ -38,7 +38,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AddAboutSectionAsync()
+        public async Task<IActionResult> Create()
         {
 			var languages = await _languageService.GetLanguagesAsync();
 
@@ -54,7 +54,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAboutSection(CreateAboutSectionDTO addAboutSectionDTO)
+        public async Task<IActionResult> Create(CreateAboutSectionDTO addAboutSectionDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -79,7 +79,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
           
 
         [HttpPost]
-        public async Task<IActionResult> DeleteAboutSection(Guid Id)
+        public async Task<IActionResult> Delete(Guid Id)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RestoreAboutSection(Guid id)
+        public async Task<IActionResult> Restore(Guid id)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditAboutSection(Guid id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             try
             {
@@ -130,6 +130,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 
 				var updateAboutSectionDTO = new CreateAboutSectionDTO
                 {
+                    id=aboutSection.Item2.Id,
                     Title = aboutSection.Item2.Title,
                     Description = aboutSection.Item2.Description,
                     ImagePath = aboutSection.Item1.ImagePath,
@@ -147,7 +148,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditAboutSection(CreateAboutSectionDTO updateAboutSectionDTO)
+        public async Task<IActionResult> Edit(Guid id , CreateAboutSectionDTO updateAboutSectionDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -168,7 +169,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 
             try
             {
-                await _aboutSectionService.EditAboutSection(updateAboutSectionDTO.Id, updateAboutSectionDTO);
+                await _aboutSectionService.EditAboutSection(id, updateAboutSectionDTO);
                 TempData["Success"] = "About Section updated successfully!";
                 return RedirectToAction("Index");
             }

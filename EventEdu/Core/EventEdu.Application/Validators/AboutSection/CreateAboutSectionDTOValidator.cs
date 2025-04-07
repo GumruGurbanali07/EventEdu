@@ -19,7 +19,7 @@ namespace EventEdu.Application.Validators.AboutSection
 
             RuleFor(x => x.Description)
                .NotEmpty().WithMessage("About Section Description is required.")
-                .Length(20, 500).WithMessage("About Section Description must be between 20 and 500 characters.");
+                .Length(20, 10000).WithMessage("About Section Description must be between 20 and 500 characters.");
 
             RuleFor(x => x.LanguageId)
                 .NotEqual(Guid.Empty).WithMessage("Language is required.");

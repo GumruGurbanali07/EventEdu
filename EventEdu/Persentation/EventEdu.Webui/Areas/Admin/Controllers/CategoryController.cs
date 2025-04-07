@@ -112,5 +112,34 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
 			return View(uc);
 		}
 
+		[HttpPost]
+		public async Task<IActionResult> SoftDeleteCategory(Guid Id)
+		{
+			try
+			{
+				await _categoryService.SoftDeleteCategoryAsync(Id);
+
+				return RedirectToAction(nameof(Index));
+
+			}
+			catch (Exception ex)
+			{
+				TempData["Error"] = ex.Message;
+				return View();
+			}
+		}
+		[HttpPost]
+		public async Task<IActionResult> DeleteAboutSection(Guid Id)
+		{
+			try
+			{
+				await _categoryService.RestoreCategoryAsync(Id);
+				return RedirectToAction("Index");
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
+		}
 	}
 }

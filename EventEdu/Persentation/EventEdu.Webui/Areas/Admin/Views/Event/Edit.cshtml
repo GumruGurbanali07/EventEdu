@@ -56,12 +56,14 @@
 
         <div>
             <label asp-for="StartDate" class="form-label"></label>
-            <input asp-for="StartDate" value="@Model.StartDate" class="form-control" placeholder="Enter Category Name">
+            <p>@Model.StartDate</p>
+            <input asp-for="StartDate"  class="form-control" placeholder="Enter Category Name">
             <span class="form-text text-danger" asp-validation-for="StartDate"></span>
         </div>
         <div>
             <label asp-for="EndDate" class="form-label"></label>
-            <input asp-for="EndDate" value="@Model.EndDate" class="form-control" placeholder="Enter Category Name">
+            <p>@Model.EndDate</p>
+            <input asp-for="EndDate"  class="form-control" placeholder="Enter Category Name">
             <span class="form-text text-danger" asp-validation-for="EndDate"></span>
         </div>
         <div class="form-floating form-floating-outline mb-3">
@@ -71,7 +73,8 @@
             <span class="form-text text-danger" asp-validation-for="CategoryId"></span>
         </div>
         <div>
-            <img src="~/assets/img/${ImageUrl}" alt="Alternate Text" />
+            <img src="~/assets/img/@Model.ImageUrl" alt="Alternate Text" />
+            <input type="hidden" name="name" value="@Model.ImageUrl" />
         </div>
         <div>
             <label asp-for="FormFile" class="form-label"></label>

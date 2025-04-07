@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using ValidationException = FluentValidation.ValidationException;
@@ -66,13 +67,13 @@ namespace EventEdu.Persistence.Services
 
 		public async Task AddSpeakerWithLanguageAsync(CreateSpeakerDTO createSpeakerDTO)
 		{
-				
+
 
 
 			var language = await _languageReadRepository.GetByIdAsync(createSpeakerDTO.LanguageId.ToString());
 
 
-			
+
 			var newFile = await _fileService.UploadAsync(createSpeakerDTO.FormFile);
 			var speaker = _mapper.Map<Speaker>(createSpeakerDTO);
 			speaker.ImageUrl = newFile;
@@ -85,12 +86,12 @@ namespace EventEdu.Persistence.Services
 				throw new BadRequestException("This speaker already exists for the selected language.");
 			}
 
-			
+
 
 			await _speakerWriteRepository.AddAsync(speaker);
 			await _speakerWriteRepository.SaveChangeAsync();
 
-		
+
 
 			var speakerDetail = _mapper.Map<SpeakerDetail>(createSpeakerDTO);
 
@@ -98,7 +99,7 @@ namespace EventEdu.Persistence.Services
 			speakerDetail.CreatedDate = DateTime.UtcNow;
 			speakerDetail.UpdatedDate = DateTime.UtcNow;
 
-			
+
 			await _speakerDetailWriteRepository.AddAsync(speakerDetail);
 			await _speakerDetailWriteRepository.SaveChangeAsync();
 		}
@@ -262,21 +263,21 @@ namespace EventEdu.Persistence.Services
 			}
 
 			// Speaker məlumatını yeniləyirik
-			
-			speaker.Id= speakerDetail.SpeakerId; 
-			speaker.FacebookLink=updateSpeakerDTO.FacebookLink;	
-			speaker.InstagramLink=updateSpeakerDTO.InstagramLink;
-			speaker.TwitterLink=updateSpeakerDTO.TwitterLink;
-			speaker.Email=updateSpeakerDTO.Email;
-		
+
+			speaker.Id = speakerDetail.SpeakerId;
+			speaker.FacebookLink = updateSpeakerDTO.FacebookLink;
+			speaker.InstagramLink = updateSpeakerDTO.InstagramLink;
+			speaker.TwitterLink = updateSpeakerDTO.TwitterLink;
+			speaker.Email = updateSpeakerDTO.Email;
+
 			_speakerWriteRepository.Update(speaker);
 			await _speakerWriteRepository.SaveChangeAsync();
 			// SpeakerDetail məlumatını yeniləyirik
 			_mapper.Map(updateSpeakerDTO, speakerDetail);
 			_speakerDetailWriteRepository.Update(speakerDetail);
-			await _speakerDetailWriteRepository.SaveChangeAsync(); // SpeakerDetail repository üçün saxlayırıq
+			await _speakerDetailWriteRepository.SaveChangeAsync();
 
-		
+
 		}
 
 		public async Task SoftDeleteSpeakerAsync(Guid speakerId)
@@ -321,29 +322,32 @@ namespace EventEdu.Persistence.Services
 			}
 			await _speakerWriteRepository.SaveChangeAsync();
 		}
-
-		public async Task<(List<Speaker>, SpeakerDetail)> GetSpeakersAllAsync()
+		public async Task<(List<Speaker>, List<SpeakerDetail>)> GetSpeakersAllAsync()
 		{
-			var language = _contextAccessor.HttpContext.Request.Headers["accept-language"].FirstOrDefault();
-			var isoCode = language.Split(",").FirstOrDefault();
-			var languages = await _languageReadRepository.GetByIsoCodeAsync(isoCode);
-			var speak = await _speakerReadRepository.GetAll()
-				.Include(a => a.EventSpeakers)
-				.Include(a => a.SpeakerDetails)
+			var language = _contextAccessor.HttpContext.Request.Headers["accept-language"].FirstOrDefault().Split(",").FirstOrDefault();
+			
 
-				.ToListAsync();
-			var speaker = new SpeakerDetail();
-			foreach (var sp in speak)
-			{
+			var languageEntity = await _languageReadRepository.GetByIsoCodeAsync(language);
 
-				var speakerDetails = await _speakerDetailReadRepository.GetAll().FirstOrDefaultAsync(a => a.LanguageId == languages.Id && sp.Id == a.SpeakerId);
-				speaker = speakerDetails;
-			}
+			// Bütün speaker-ləri detalları ilə birlikdə al
+			var speakers = await _speakerReadRepository.GetAll()
+			  .Include(a => a.EventSpeakers)
+			  .Include(a => a.SpeakerDetails)
+			  .ToListAsync();
 
 
+			var speakerIds = speakers.Select(s => s.Id).ToList();
 
+			var speakerDetails = await _speakerDetailReadRepository.GetAll()
+			  .Where(a => a.LanguageId == languageEntity.Id && speakerIds.Contains(a.SpeakerId))
+			  .ToListAsync();
 
-			return (speak, speaker);
+			var distinctDetails = speakerDetails
+			  .GroupBy(s => s.SpeakerId)
+			  .Select(g => g.FirstOrDefault())
+			  .ToList();
+
+			return (speakers, distinctDetails);
 		}
 
 		public async Task<SpeakDetailsVM> GetSpeakersByIdAsync(string id)
@@ -354,7 +358,7 @@ namespace EventEdu.Persistence.Services
 
 			var speakerDetail = await _speakerDetailReadRepository
 				.GetAll()
-				.FirstOrDefaultAsync(a => a.SpeakerId == speaker.Id);
+				.FirstOrDefaultAsync(a => a.SpeakerId == speaker.Id && !a.IsDeleted);
 
 			var spVm = new SpeakDetailsVM()
 			{
@@ -367,12 +371,12 @@ namespace EventEdu.Persistence.Services
 
 		public async Task<List<SpeakerDetail>> GetSpeakersEventByIdAsync(string eventId)
 		{
-			var language = _contextAccessor.HttpContext.Request.Headers["accept-language"].FirstOrDefault();
-			var isoCode = language.Split(",").FirstOrDefault();
-			var languages = await _languageReadRepository.GetByIsoCodeAsync(isoCode);
+			var language = _contextAccessor.HttpContext.Request.Headers["accept-language"].FirstOrDefault().Split(",").FirstOrDefault(); ;
+
+			var languages = await _languageReadRepository.GetByIsoCodeAsync(language);
 			var eventSpeaker = await _eventSpeakerReadRepository.GetAll().FirstOrDefaultAsync(a => a.EventId == Guid.Parse(eventId));
 
-			var speaker = await _speakerDetailReadRepository.GetAll().Where(a => a.SpeakerId == eventSpeaker.SpeakerId && a.LanguageId == languages.Id).ToListAsync();
+			var speaker = await _speakerDetailReadRepository.GetAll().Where(a => a.SpeakerId == eventSpeaker.SpeakerId && a.LanguageId == languages.Id && !a.IsDeleted).ToListAsync();
 
 			return speaker;
 
@@ -380,5 +384,28 @@ namespace EventEdu.Persistence.Services
 
 		public async Task<List<SpeakerDetail>> GetSpeakersAsync()
 		=> await _speakerDetailReadRepository.GetAll().ToListAsync();
+
+		public async Task<(List<Speaker>, List<SpeakerDetail>)> GetSpeakersDByIdAsync(string eventId)
+		{
+			var language = _contextAccessor.HttpContext.Request.Headers["accept-language"].FirstOrDefault().Split(",").FirstOrDefault(); ;
+			var languages = await _languageReadRepository.GetByIsoCodeAsync(language);
+			var eventSpeakers = await _eventSpeakerReadRepository.GetAll().Where(a => a.EventId.ToString() == eventId).ToListAsync();
+
+			var speakerIds = eventSpeakers.Select(s => s.SpeakerId).ToList();
+			var speakers = await _speakerReadRepository.GetAll().Where(a => speakerIds.Contains(a.Id))
+		  .Include(a => a.EventSpeakers)
+		  .Include(a => a.SpeakerDetails)
+		  .ToListAsync();
+
+			var speakerDetails = await _speakerDetailReadRepository.GetAll()
+			  .Where(a => a.LanguageId == languages.Id && speakerIds.Contains(a.SpeakerId))
+			  .ToListAsync();
+
+			var distinctDetails = speakerDetails
+		  .GroupBy(s => s.SpeakerId)
+		  .Select(g => g.FirstOrDefault())
+		  .ToList();
+			return (speakers, distinctDetails);
+		}
 	}
 }

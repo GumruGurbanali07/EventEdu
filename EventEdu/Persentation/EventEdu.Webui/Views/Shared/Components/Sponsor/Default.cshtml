@@ -12,14 +12,17 @@
         <div class="owl-carousel testimonial-carousel position-relative">
             @foreach (var sponsor in Model.Sponsors)
             {
-                <div class="testimonial-item text-center">
-                    <img class="border rounded-circle p-2 mx-auto mb-3" src="/assets/img/@sponsor.ImagePath" style="width: 80px; height: 80px;">
+                @if (!sponsor.IsDeleted)
+                {
+                    <div class="testimonial-item text-center">
+                        <img class="border rounded-circle p-2 mx-auto mb-3" src="/assets/img/@sponsor.ImagePath" style="width: 80px; height: 80px;">
                     <h5 class="mb-0">@sponsor.SponsorsDetail.FirstOrDefault().SponsorName</h5>
                     <p>@sponsor.Email</p>
                     <div class="testimonial-text bg-light text-center p-4">
                         <p class="mb-0">@sponsor.SponsorsDetail.FirstOrDefault().SponsorDescription</p>
                     </div>
                 </div>
+                }
             }
         </div>
     </div>

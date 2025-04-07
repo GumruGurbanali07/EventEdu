@@ -6,6 +6,6 @@ namespace EventEdu.Webui.ViewsModels
 	{
 		public List<Speaker> Speakers { get; set; }
 
-		public SpeakerDetail SpeakerDetail { get; set; }
+		public List<SpeakerDetail> SpeakerDetail { get; set; }
 	}
 }

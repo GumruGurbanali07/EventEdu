@@ -1,9 +1,10 @@
-﻿@using EventEdu.Application.DTOs.Event
-@model GetEventDTO
+﻿@using EventEdu.Webui.ViewsModels
+
+@model EventSpeakerVM
 
 <!-- Event Image -->
 <div class="banner event-banner">
-    <img src="~/client/assets/img/teams/team-1.jpg" id="displayedImage" />
+    <img src="/assets/img/@Model.GetEventDTO.ImageUrl" id="displayedImage" />
 </div>
 
 <div class="eventDetail-buttons">
@@ -33,75 +34,71 @@
         </div>
 
         <div class="event-description" id="descriptionText">
-            <span>@Model.Description</span>
+            <span>@Model.GetEventDTO.Description</span>
         </div>
     </div>
     <div class="event-img-wrapper">
         <!-- Asagidaki kommiti acsam data-image i kommente at-->
         <div class="event-img">
-            <img src="~/assets/img/@Model.ImageUrl" id="infoImage" />
+            <img src="~/assets/img/@Model.GetEventDTO.ImageUrl" id="infoImage" />
         </div>
-      @*   @if (Model.Speakers != null && Model.Speakers.Count > 1)
-        {
-            <i class="fa fa-chevron-left img-nav left-arrow" id="prevSpeaker" style="cursor: pointer;"></i>
-        }
-
-        <div class="event-img">
-            @for (int i = 0; i < Model.Speakers.Count; i++)
-            {
-                var speaker = Model.Speakers[i];
-                <img src="@speaker.ImageUrl"
-                     class="infoImage speaker-image @(i == 0 ? "active" : "hidden")"
-                     data-index="@i" />
-            }
-        </div>
-
-        @if (Model.Speakers != null && Model.Speakers.Count > 1)
-        {
-            <i class="fa fa-chevron-right img-nav right-arrow" id="nextSpeaker" style="cursor: pointer;"></i>
-        } *@
+  
     </div>
 
 </div>
 
-<!-- Event Reviews -->
-
-<div class="Events" id="eventContainer">
-    <!-- Event slides will be dynamically controlled -->
-</div> 
 
 <!-- Event Data (Hidden for JS) -->
-<div id="eventData" data-description="@Model.Description"
-     data-image="~/client/assets/img/teams/team-1.jpg"></div>
+<div id="eventData" data-description="@Model.GetEventDTO.Description"></div>
 
-<div id="sponsorData" class="sponsor-section"
-     data-description="This event is proudly sponsored by leading companies...">
-    <!-- Asagidaki kommiti acsam data-image i kommente at-->
-    data-image="~/client/assets/img/sponsors/sponsor-1.jpg">
-
-   @*  @if (Model.Sponsors != null && Model.Sponsors.Count > 1)
-    {
-        <i class="fa fa-chevron-left img-nav left-arrow" id="prevSponsor" style="cursor: pointer;"></i>
-    }
-
-    <div class="sponsor-img-container">
-        @for (int i = 0; i < Model.Sponsors.Count; i++)
-        {
-            var sponsor = Model.Sponsors[i];
-            <img src="@sponsor.ImageUrl"
-                 class="sponsor-image @(i == 0 ? "active" : "hidden")"
-                 data-index="@i" />
-        }
-    </div>
-
-    @if (Model.Sponsors != null && Model.Sponsors.Count > 1)
-    {
-        <i class="fa fa-chevron-right img-nav right-arrow" id="nextSponsor" style="cursor: pointer;"></i>
-    } *@
 </div>
 
 
-<script>
+<div class="container-xxl py-5" style="height:100vh">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">Speakers</h6>
+            <h1 class="mb-5">Expert Speakers</h1>
+        </div>
+        <div class="row g-4">
+            @foreach (var speaker in Model.Speaker)
+            {
+              
+
+
+                    var detail = Model.SpeakerDetail.FirstOrDefault(sd => sd.SpeakerId == speaker.Id);
+
+                    <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="team-item bg-light">
+                            <div class="overflow-hidden">
+                                <img class="img-fluid" src="/assets/img/@speaker.ImageUrl" alt="">
+                            </div>
+                            <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
+                                <div class="bg-light d-flex justify-content-center pt-2 px-1">
+                                    <a class="btn btn-sm-square btn-primary mx-1" href="@speaker.FacebookLink"><i class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-sm-square btn-primary mx-1" href="@speaker.TwitterLink"><i class="fab fa-twitter"></i></a>
+                                    <a class="btn btn-sm-square btn-primary mx-1" href="@speaker.InstagramLink"><i class="fab fa-instagram"></i></a>
+                                </div>
+                            </div>
+                            <div class="text-center p-4">
+                                @if (detail != null)
+                                {
+                                    <h5 class="mb-0">@detail.FullName</h5>
+                                }
+                                else
+                                {
+                                    <h5 class="mb-0">No name</h5>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@* <script>
     document.addEventListener("DOMContentLoaded", function () {
         const buttons = document.querySelectorAll(".about-nav.toggle-btn, .language-nav.toggle-btn");
         const descriptionText = document.getElementById("descriptionText");
@@ -128,61 +125,4 @@
         });
     });
 
-    // document.addEventListener("DOMContentLoaded", function () {
-    //     // ---------- Speaker logic ----------
-    //     let currentSpeakerIndex = 0;
-    //     const speakerImages = document.querySelectorAll(".speaker-image");
-
-    //     function showSpeakerImage(index) {
-    //         speakerImages.forEach(img => {
-    //             img.classList.remove("active");
-    //             img.classList.add("hidden");
-    //         });
-    //         speakerImages[index].classList.add("active");
-    //         speakerImages[index].classList.remove("hidden");
-    //     }
-
-    //     const prevSpeaker = document.getElementById("prevSpeaker");
-    //     const nextSpeaker = document.getElementById("nextSpeaker");
-
-    //     if (prevSpeaker && nextSpeaker && speakerImages.length > 1) {
-    //         prevSpeaker.addEventListener("click", () => {
-    //             currentSpeakerIndex = (currentSpeakerIndex - 1 + speakerImages.length) % speakerImages.length;
-    //             showSpeakerImage(currentSpeakerIndex);
-    //         });
-
-    //         nextSpeaker.addEventListener("click", () => {
-    //             currentSpeakerIndex = (currentSpeakerIndex + 1) % speakerImages.length;
-    //             showSpeakerImage(currentSpeakerIndex);
-    //         });
-    //     }
-
-    //     // ---------- Sponsor logic ----------
-    //     let currentSponsorIndex = 0;
-    //     const sponsorImages = document.querySelectorAll(".sponsor-image");
-
-    //     function showSponsorImage(index) {
-    //         sponsorImages.forEach(img => {
-    //             img.classList.remove("active");
-    //             img.classList.add("hidden");
-    //         });
-    //         sponsorImages[index].classList.add("active");
-    //         sponsorImages[index].classList.remove("hidden");
-    //     }
-
-    //     const prevSponsor = document.getElementById("prevSponsor");
-    //     const nextSponsor = document.getElementById("nextSponsor");
-
-    //     if (prevSponsor && nextSponsor && sponsorImages.length > 1) {
-    //         prevSponsor.addEventListener("click", () => {
-    //             currentSponsorIndex = (currentSponsorIndex - 1 + sponsorImages.length) % sponsorImages.length;
-    //             showSponsorImage(currentSponsorIndex);
-    //         });
-
-    //         nextSponsor.addEventListener("click", () => {
-    //             currentSponsorIndex = (currentSponsorIndex + 1) % sponsorImages.length;
-    //             showSponsorImage(currentSponsorIndex);
-    //         });
-    //     }
-    // });
-</script>
+</script> *@

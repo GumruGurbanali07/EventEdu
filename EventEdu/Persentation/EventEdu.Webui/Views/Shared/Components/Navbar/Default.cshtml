@@ -2,7 +2,7 @@
 @model CategoryLanguageVM
 <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
     <a asp-controller="Home" asp-action="Index" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
-        <h2 class="m-0 text-primary"><i class="fa fa-book me-3"></i>EventSphereADA </h2>
+        <h2 class="m-0 text-primary"><i class="fa fa-book me-3"></i>EventEdu</h2>
     </a>
     <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
@@ -17,14 +17,14 @@
                 <div class="d-flex flex-column">
                     <ul class="dropdown-menu" aria-labelledby="Dropdown">
 
-                        @foreach(var c in Model.CategoryDetails)
+                        @foreach (var c in Model.CategoryDetails)
                         {
                             <li>
                                 <a class="dropdown-item" asp-controller="Event" asp-action="@c.CategoryName">@c.CategoryName</a>
                             </li>
                         }
-                        
-                     
+
+
                     </ul>
                 </div>
 
@@ -38,23 +38,27 @@
             </a>
             <ul class="dropdown-menu mt-4" aria-labelledby="Dropdown">
 
-                @foreach(var ln in Model.Languages){
-                <li>
-                    <a class="dropdown-item" asp-controller="Language" asp-action="Change" asp-route-lang="@ln.IsoCode">
-                       @ln.ImagePath
-                    </a>
-                </li>
+                @foreach (var ln in Model.Languages)
+                {
+                    <li>
+                        <a class="dropdown-item" asp-controller="Language" asp-action="Change" asp-route-lang="@ln.IsoCode">
+                            @ln.ImagePath
+                        </a>
+                    </li>
                 }
-               
-               
+
+
 
             </ul>
         </div>
 
 
         <div class="searchbar">
-            <input placeholder="Search products" type="text">
+            <input id="searchInput" placeholder="Search products" type="text">
             <span id="magnifying-glass"><i class="fa-solid fa-magnifying-glass"></i></span>
+        </div>
+        <div id="searchBody">
+            <!-- Results will be rendered here -->
         </div>
     </div>
 </nav>

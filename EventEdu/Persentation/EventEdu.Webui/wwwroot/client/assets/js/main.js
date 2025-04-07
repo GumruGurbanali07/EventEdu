@@ -90,7 +90,7 @@ const totalSlides = document.querySelectorAll('.slide').length;
 
 function moveSlide(step) {
     index = (index + step + totalSlides) % totalSlides;
-slides.style.transform = `translateX(-${index * 100}%)`;
+    slides.style.transform = `translateX(-${index * 100}%)`;
 }
 
 document.querySelectorAll('.eventSlider-container').forEach(sliderContainer => {

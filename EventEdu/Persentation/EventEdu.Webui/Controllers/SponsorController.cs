@@ -28,7 +28,7 @@ public class SponsorController : Controller
             ImagePath = s.ImagePath,
             Name = s.SponsorName,
             Email = s.Email,
-            Description = s.SponsorDescription,    
+            Description = s.SponsorDescription,
         }).ToList();
 
         return View(sponsorViewModel);
@@ -48,6 +48,6 @@ public class SponsorController : Controller
     {
         var sponsors = await _sponsorService.SearchSponsors(search);
 
-        return PartialView("_SearchPartial", sponsors ?? new List<GetSponsorDTO>()); 
+        return PartialView("_SearchPartial", sponsors ?? new List<GetSponsorDTO>());
     }
 }

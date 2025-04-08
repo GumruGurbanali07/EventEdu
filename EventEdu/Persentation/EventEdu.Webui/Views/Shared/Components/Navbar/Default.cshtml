@@ -1,19 +1,22 @@
 ﻿@using EventEdu.Webui.ViewsModels
 @model CategoryLanguageVM
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer JsonLocalizer
+
 <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
     <a asp-controller="Home" asp-action="Index" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
-        <h2 class="m-0 text-primary"><i class="fa fa-book me-3"></i>EventEdu</h2>
+        <h2 class="m-0 text-primary"><i class="fa fa-book me-3"></i>EventADA</h2>
     </a>
     <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse " id="navbarCollapse">
         <div class="navbar-nav ms-auto p-4 p-lg-0">
-            <a asp-controller="Home" asp-action="Index" class="nav-item nav-link active">Home</a>
-            <a asp-controller="About" asp-action="Index" class="nav-item nav-link">About</a>
-            <a asp-controller="Sponsor" asp-action="Index" class="nav-item nav-link">Sponsors</a>
+            <a asp-controller="Home" asp-action="Index" class="nav-item nav-link active">@JsonLocalizer["Home"]</a>
+            <a asp-controller="About" asp-action="Index" class="nav-item nav-link">@JsonLocalizer["About"]</a>
+            <a asp-controller="Sponsor" asp-action="Index" class="nav-item nav-link">@JsonLocalizer["Sponsors"]</a>
             <div class="nav-item dropdown">
-                <a asp-controller="Event" asp-action="Index" class="nav-link dropdown-toggle d-flex" data-bs-toggle="dropdown">Events</a>
+                <a asp-controller="Event" asp-action="Index" class="nav-link dropdown-toggle d-flex" data-bs-toggle="dropdown">@JsonLocalizer["Events"]</a>
                 <div class="d-flex flex-column">
                     <ul class="dropdown-menu" aria-labelledby="Dropdown">
 

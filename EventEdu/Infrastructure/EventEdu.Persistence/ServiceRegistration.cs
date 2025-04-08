@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 
 namespace EventEdu.Persistence
 {
@@ -77,8 +78,8 @@ namespace EventEdu.Persistence
 			services.AddScoped<IFeedbackService, FeedbackService>();
 			services.AddTransient<IFileService, FileService>();
 
-            //Repositories
-            services.AddSingleton<StringLocalizerService>();
+			//Repositories
+			//services.AddSingleton<IStringLocalizer, JsonStringLocalization>();
 
 
 
@@ -106,8 +107,7 @@ namespace EventEdu.Persistence
 
 			services.AddScoped<IFeedbackReadRepository, FeedBackReadRepository>();
 			services.AddScoped<IFeedbackWriteRepository, FeedBackWriteRepository>();
-			services.AddScoped<IFeedBackDetailReadRepository, FeedBackDetailReadRepository>();
-			services.AddScoped<IFeedBackDetailWriteRepository, FeedBackDetailWriteRepository>();
+		
 
 			
 

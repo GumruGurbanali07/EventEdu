@@ -17,8 +17,6 @@ namespace EventEdu.Application.Validators
 			RuleFor(x => x.EventId)
 				.NotEmpty().WithMessage("EventId is required.");
 
-			RuleFor(x => x.LanguageId)
-				.NotEmpty().WithMessage("LanguageId is required.");
 		}
 	}
 }

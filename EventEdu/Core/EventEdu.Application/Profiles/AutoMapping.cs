@@ -97,12 +97,7 @@ namespace EventEdu.Application.Profiles
             CreateMap<FeedBack,AddFeedBackDTO >().ReverseMap();
             CreateMap<FeedBack, UpdateFeedbackDTO>().ReverseMap();
             CreateMap<FeedBack, GetFeedbackDTO>().ReverseMap();
-            CreateMap<FeedBackDetail, AddFeedBackDTO>().ReverseMap();
-            CreateMap<FeedBackDetail, GetFeedbackDTO>().ReverseMap();
-			CreateMap<UpdateFeedbackDTO, FeedBackDetail>()
-	       .ForMember(dest => dest.Id, opt => opt.Ignore())
-	       .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
-	       .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+          
 
 
 

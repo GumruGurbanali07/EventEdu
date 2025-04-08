@@ -1,18 +1,17 @@
 ﻿using EventEdu.Domain.Entities.Common;
+using System.Globalization;
 
 namespace EventEdu.Domain.Entities
 {
 	public class FeedBack : BaseEntity
 	{
-		public double Rating { get; set; } 
-		public ICollection<FeedBackDetail> FeedBackDetails { get; set; }
-
-		public Guid EventId { get; set; } 
+		public  string FullName { get; set; }	
+		public double TotalRating { get; set; }
+		
+		public int Rating { get; set; }	
+		public string? Comment { get; set; }
+	     
+		public Guid EventId { get; set; }	
 		public Event Event { get; set; }
-
-		public Rating RatingEvenets { get; set; }	
-
-		public Guid SubscriptionId { get; set; }
-		public Subscription Subscription { get; set; }
 	}
 }

@@ -9,10 +9,10 @@ namespace EventEdu.Application.Services
 {
     public interface IFeedbackService
     {
-        Task<GetFeedbackDTO> GetFeedbackAsync();    
+        Task<List<GetFeedbackDTO>> GetFeedbackAsync();    
 
-        Task<bool> AddFeedBackWithLanguage(AddFeedBackDTO addFeedBackDTO, Guid subscriptionId);
-        Task<List<GetFeedbackDTO>> GetFeedbacksByEventAndLanguageAsync(Guid eventId, string isoCode);
+        Task<bool> AddFeedBackWithLanguage(AddFeedBackDTO addFeedBackDTO);
+        Task<List<GetFeedbackDTO>> GetFeedbacksByEventAndLanguageAsync(Guid eventId);
 
 	}
 }

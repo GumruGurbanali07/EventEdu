@@ -6,23 +6,29 @@ using System.Threading.Tasks;
 
 namespace EventEdu.Webui.Controllers
 {
-	
+	[Route("[controller]")]
+	[ApiController]
 	public class FeedbackController : Controller
 	{
 
 		readonly  private IFeedbackService _feedbackService;
 
-		[HttpGet]
-		public async Task<IActionResult> Index()
+		public FeedbackController(IFeedbackService feedbackService)
 		{
-		    var feedBack = await _feedbackService.GetFeedbackAsync();
+			_feedbackService = feedbackService;
+		}
+
+		[HttpGet("{eventId}")]
+		public async Task<IActionResult> Index(Guid eventId)
+		{
+		    var feedBack = await _feedbackService.GetFeedbacksByEventAndLanguageAsync(eventId);
 			return Ok(feedBack);
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Create(Guid subscriptionId, AddFeedBackDTO model)
+		public async Task<IActionResult> Create([FromBody] AddFeedBackDTO model)
 		{
-			await _feedbackService.AddFeedBackWithLanguage( model, subscriptionId);
+			await _feedbackService.AddFeedBackWithLanguage( model);
 
 			return Ok();
 		}

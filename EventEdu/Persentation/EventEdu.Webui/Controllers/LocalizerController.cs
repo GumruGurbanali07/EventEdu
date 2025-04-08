@@ -28,7 +28,7 @@ public class LocalizerController : Controller
 	public async Task<Guid> GetLanguageAsync()
 	{
 		string? culture = Request.Cookies[CookieRequestCultureProvider.DefaultCookieName];
-		string? isoCode = culture?.Substring(culture.LastIndexOf("=") + 1) ?? "en-Us";
+		string? isoCode = culture?.Substring(culture.LastIndexOf("=") + 1) ?? "en-US";
 		LanguageGetDTO? selectedLanguage = await _languageService.GetLanguageAsync(isoCode);
 
 		return selectedLanguage.Id;

@@ -1,5 +1,4 @@
 ﻿@using EventEdu.Webui.ViewsModels
-
 @model EventSpeakerVM
 
 <!-- Event Image -->
@@ -38,69 +37,80 @@
         </div>
     </div>
     <div class="event-img-wrapper">
-        <!-- Asagidaki kommiti acsam data-image i kommente at-->
         <div class="event-img">
             <img src="~/assets/img/@Model.GetEventDTO.ImageUrl" id="infoImage" />
         </div>
-
     </div>
-
 </div>
-
 
 <!-- Event Data (Hidden for JS) -->
-<div id="eventData" data-description="@Model.GetEventDTO.Description"></div>
+<div id="eventData" data-description="@Model.GetEventDTO.Description" data-image="/assets/img/@Model.GetEventDTO.ImageUrl"></div>
+<div id="sponsorData" data-description="Sponsor məlumatı burada olacaq" data-image="/assets/img/default-sponsor.jpg"></div>
 
-</div>
+<!-- Speakers Section -->
+@if (Model.Speaker != null && Model.Speaker.Any(a => a.IsDeleted == false))
+{
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+                <h6 class="section-title bg-white text-center text-primary px-3">Speakers</h6>
+                <h1 class="mb-5">Expert Speakers</h1>
+            </div>
+            <div class="row g-4">
+                @foreach (var speaker in Model.Speaker.Where(s => !s.IsDeleted))
+                {
+                    var detail = Model.SpeakerDetail.FirstOrDefault(sd => sd.SpeakerId == speaker.Id);
 
-
-<div>
-     <textarea style="resize:none; width:140px;  " data-id="@Model.Speaker."></textarea>
-</div>
-
-<div class="container-xxl py-5" style="height:100vh">
-    <div class="container">
-        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h6 class="section-title bg-white text-center text-primary px-3">Speakers</h6>
-            <h1 class="mb-5">Expert Speakers</h1>
-        </div>
-        <div class="row g-4">
-            @foreach (var speaker in Model.Speaker)
-            {
-
-
-
-                var detail = Model.SpeakerDetail.FirstOrDefault(sd => sd.SpeakerId == speaker.Id);
-
-                <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="team-item bg-light">
-                        <div class="overflow-hidden">
-                            <img class="img-fluid" src="/assets/img/@speaker.ImageUrl" alt="">
-                        </div>
-                        <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
-                            <div class="bg-light d-flex justify-content-center pt-2 px-1">
-                                <a class="btn btn-sm-square btn-primary mx-1" href="@speaker.FacebookLink"><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-sm-square btn-primary mx-1" href="@speaker.TwitterLink"><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-sm-square btn-primary mx-1" href="@speaker.InstagramLink"><i class="fab fa-instagram"></i></a>
+                    <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="team-item bg-light">
+                            <div class="overflow-hidden">
+                                <img class="img-fluid" src="/assets/img/@speaker.ImageUrl" alt="">
+                            </div>
+                            <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
+                                <div class="bg-light d-flex justify-content-center pt-2 px-1">
+                                    @if (!string.IsNullOrWhiteSpace(speaker.FacebookLink))
+                                    {
+                                        <a class="btn btn-sm-square btn-primary mx-1" href="@speaker.FacebookLink"><i class="fab fa-facebook-f"></i></a>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(speaker.TwitterLink))
+                                    {
+                                        <a class="btn btn-sm-square btn-primary mx-1" href="@speaker.TwitterLink"><i class="fab fa-twitter"></i></a>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(speaker.InstagramLink))
+                                    {
+                                        <a class="btn btn-sm-square btn-primary mx-1" href="@speaker.InstagramLink"><i class="fab fa-instagram"></i></a>
+                                    }
+                                </div>
+                            </div>
+                            <div class="text-center p-4">
+                                <h5 class="mb-0">@detail?.FullName </h5>
                             </div>
                         </div>
-                        <div class="text-center p-4">
-                            @if (detail != null)
-                            {
-                                <h5 class="mb-0">@detail.FullName</h5>
-                            }
-                            else
-                            {
-                                <h5 class="mb-0">No name</h5>
-                            }
-                        </div>
                     </div>
-                </div>
-            }
-            }
+                }
+            </div>
         </div>
     </div>
+}
+
+<!-- Comment Section -->
+<div class="container">
+    <h2>Qiymətləndir və Rəy yaz</h2>
+
+    <div class="stars" id="starRating">
+        <span class="star" data-value="1">&#9733;</span>
+        <span class="star" data-value="2">&#9733;</span>
+        <span class="star" data-value="3">&#9733;</span>
+        <span class="star" data-value="4">&#9733;</span>
+        <span class="star" data-value="5">&#9733;</span>
+    </div>
+
+    <textarea id="comment" data-id="@Model.GetEventDTO.Id" placeholder="Rəyinizi yazın..."></textarea>
+    <button id="submitBtn">Göndər</button>
+    <div class="output" id="outputBox"></div>
+    <div id="feedbackList"></div>
+
 </div>
 
-
+<!-- JavaScript -->
 

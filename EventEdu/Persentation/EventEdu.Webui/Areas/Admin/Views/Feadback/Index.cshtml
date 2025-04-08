@@ -1,0 +1,79 @@
+﻿@using EventEdu.Domain.Entities
+@model List<FeedBack>
+
+@{
+    ViewData["Title"] = "Event List";
+}
+
+
+<!-- Basic Bootstrap Table -->
+<div class="card">
+    <h5 class="card-header">Category Table</h5>
+    <a asp-controller="Event" asp-action="Create" class="btn btn-primary mb-3">Add New Category</a>
+
+    <div class="table-responsive text-nowrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Language</th>
+
+                    <th>Event Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                @if (Model == null || !Model.Any())
+                {
+                    <tr>
+                        <td colspan="3" class="text-center">Not Found</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var category in Model)
+                    {
+                        <tr class="sponsorRow" style="@(category.IsDeleted ? "background:#d9a7c7; color:#fff;" : "")">
+                            <td>@category.FullName</td>
+
+                            <td>@category.Comment</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                        <i class="ri-more-2-line"></i>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        @if (category.IsDeleted)
+                                        {
+                                            <form asp-controller="Event" asp-action="Restore" asp-route-id="@category.EventId" method="post" onsubmit="return confirm('Are you sure you want to restore this category?');">
+                                                <button type="submit" class="dropdown-item"><i class="ri-arrow-go-back-line me-2"></i> Restore</button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-controller="Event" asp-action="Edit" asp-route-id="@category.Id" method="get">
+                                                <button type="submit" class="dropdown-item"><i class="ri-pencil-line me-2"></i> Edit</button>
+                                            </form>
+                                            <form asp-controller="Event" asp-action="Delete" asp-route-Id="@category.EventId" method="post" onsubmit="return confirm('Are you sure you want to delete this category?');">
+                                                <button type="submit" class="dropdown-item"><i class="ri-delete-bin-6-line me-2"></i> Delete</button>
+                                            </form>
+                                        }
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- CSS for Image Styling -->
+<style>
+    .imgAsAnIcon {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+</style>

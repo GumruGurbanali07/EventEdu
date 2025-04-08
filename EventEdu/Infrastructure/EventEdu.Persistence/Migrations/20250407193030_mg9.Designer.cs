@@ -4,6 +4,7 @@ using EventEdu.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventEdu.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250407193030_mg9")]
+    partial class mg9
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -297,6 +300,9 @@ namespace EventEdu.Persistence.Migrations
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("SubscriptionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<double>("TotalRating")
                         .HasColumnType("float");
 
@@ -308,6 +314,8 @@ namespace EventEdu.Persistence.Migrations
                     b.HasIndex("AppUserId");
 
                     b.HasIndex("EventId");
+
+                    b.HasIndex("SubscriptionId");
 
                     b.ToTable("FeedBacks");
                 });
@@ -1021,7 +1029,15 @@ namespace EventEdu.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("EventEdu.Domain.Entities.Subscription", "Subscription")
+                        .WithMany()
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Event");
+
+                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("EventEdu.Domain.Entities.HeroSectionDetails", b =>

@@ -1,58 +1,74 @@
 [
   {
-    "Key": "BestOnlineCourses",
+    "Key": "Home",
     "LocalizedValue": {
-      "az-AZ": "Ən Yaxşı Onlayn Kurslar",
-      "en-US": "Best Online Courses",
-      "ru-RU": "Лучшие онлайн-курсы"
+      "en-US": "Home",
+      "az-AZ": "Ana Səhifə",
+      "ru-RU": "Главная"
     }
   },
   {
-    "Key": "TheBestOnlineLearningPlatform",
+    "Key": "About",
     "LocalizedValue": {
-      "az-AZ": "Ən yaxşı Onlayn Öyrənmə Platforması",
-      "en-US": "The Best Online Learning Platform",
-      "ru-RU": "Лучшая платформа для онлайн-обучения"
+      "az-AZ": "Haqqımızda",
+      "en-US": "About",
+      "ru-RU": "О нас"
     }
   },
   {
-    "Key": "PhoneNumberInvalidError",
+    "Key": "Sponsors",
     "LocalizedValue": {
-      "az-AZ": "Nömrə yanlışdır",
-      "en-US": "Phone number is invalid",
-      "ru-RU": "Номер телефона недействителен"
+      "az-AZ": "Sponsorlar",
+      "en-US": "Sponsors",
+      "ru-RU": "Спонсоры"
     }
   },
   {
-    "Key": "PhoneNumberLengthError",
+    "Key": "Events",
     "LocalizedValue": {
-      "az-AZ": "Nömrənin uzunluğu 9 olmalıdır",
-      "en-US": "The length of the phone number should be 9",
-      "ru-RU": "Длина номера телефона должна быть 9"
+      "az-AZ": "Tədbirlər",
+      "en-US": "Events",
+      "ru-RU": "Мероприятия"
     }
   },
   {
-    "Key": "PhoneNumberRequiredError",
+    "Key": "Startup",
     "LocalizedValue": {
-      "az-AZ": "Nömrə tələb olunur",
-      "en-US": "Phone number is required",
-      "ru-RU": "Требуется номер телефона"
+      "az-AZ": "Startap",
+      "en-US": "Startup",
+      "ru-RU": "Стартап"
     }
   },
   {
-    "Key": "EmailInvalidError",
+    "Key": "Business",
     "LocalizedValue": {
-      "az-AZ": "Email yanlışdır",
-      "en-US": "Email is invalid",
-      "ru-RU": "Электронная почта недействительна"
+      "az-AZ": "Biznes",
+      "en-US": "Business",
+      "ru-RU": "Бизнес"
     }
   },
   {
-    "Key": "EmailRequiredError",
+    "Key": "Science",
     "LocalizedValue": {
-      "az-AZ": "Email tələb olunur",
-      "en-US": "Email is required",
-      "ru-RU": "Требуется электронная почта"
+      "az-AZ": "Elm",
+      "en-US": "Science",
+      "ru-RU": "Наука"
+    }
+  },
+  {
+    "Key": "Technology",
+    "LocalizedValue": {
+      "az-AZ": "Texnologiya",
+      "en-US": "Technology",
+      "ru-RU": "Технологии"
+    }
+  },
+  {
+    "Key": "Education",
+    "LocalizedValue": {
+      "az-AZ": "Təhsil",
+      "en-US": "Education",
+      "ru-RU": "Образование"
     }
   }
 ]

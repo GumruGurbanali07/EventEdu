@@ -12,7 +12,7 @@ namespace EventEdu.Domain.Entities
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
 		public string Email { get; set; }
-		public ICollection<SubsEvent> SubsEvents { get; set; }
-		public ICollection<FeedBack> FeedBacks { get; set; }
+	
+		public List<SubsEvent> SubsEvents  { get; set; }
 	}
 }

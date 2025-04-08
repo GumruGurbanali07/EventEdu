@@ -60,42 +60,40 @@
             <h1 class="mb-5">Courses Categories</h1>
         </div>
 
-<div class="row g-3">
-    <div class="col-lg-7 col-md-6">
         <div class="row g-3">
-            @foreach (var category in Model.CategoryDetails.Take(3)) // First three categories
+            @for (int i = 0; i < Model.CategoryDetails.Take(4).Count(); i++)
             {
-                        <div class="col-lg-@(category == Model.CategoryDetails.First() ? "12" : "6") col-md-12 wow zoomIn" data-wow-delay="0.1s">
-                    <a class="position-relative d-block overflow-hidden" href="">
-                                <img class="img-fluid" src="@category.ImagePath" alt="@category.CategoryName">
-                        <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin: 1px;">
-                                    <h5 class="m-0">@category.CategoryName</h5>
-                            <small class="text-primary">Count Courses</small>
-                        </div>
-                    </a>
-                </div>
+                var category = Model.CategoryDetails[i];
+
+                if (i < 3) // İlk 3 kateqoriya (sol tərəfdə)
+                {
+                    <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.1s">
+                        <a class="position-relative d-block overflow-hidden" href="">
+                            <img class="img-fluid" src="assets/img/@category.ImagePath" alt="@category.CategoryName">
+                            <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin: 1px;">
+                                <h5 class="m-0">@category.CategoryName</h5>
+                                <small class="text-primary">Courses</small>
+                            </div>
+                        </a>
+                    </div>
+                }
+                else // 4-cü kateqoriya (sağ tərəfdə böyük)
+                {
+                    <div class="col-lg-12 wow zoomIn" data-wow-delay="0.3s" style="min-height: 350px;">
+                        <a class="position-relative d-block h-100 overflow-hidden" href="">
+                            <img class="img-fluid position-absolute w-100 h-100" src="assets/img/@category.ImagePath" alt="@category.CategoryName" style="object-fit: cover;">
+                            <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin: 1px;">
+                                <h5 class="m-0">@category.CategoryName</h5>
+                                <small class="text-primary">Courses</small>
+                            </div>
+                        </a>
+                    </div>
+                }
             }
         </div>
     </div>
-
-    <div class="col-lg-5 col-md-6 wow zoomIn" data-wow-delay="0.7s" style="min-height: 350px;">
-                @if (Model.CategoryDetails.Count > 3)
-        {
-                    var category = Model.CategoryDetails[3]; // Fourth category
-            <a class="position-relative d-block h-100 overflow-hidden" href="">
-                        <img class="img-fluid position-absolute w-100 h-100" src="@category.ImagePath" alt="@category.CategoryName" style="object-fit: cover;">
-                <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin: 1px;">
-                            <h5 class="m-0">@category.CategoryName</h5>
-                            <small class="text-primary">Courses</small>
-                </div>
-            </a>
-        }
-    </div>
 </div>
 
-    </div>
-</div>
-<!-- Categories Start -->
 <!-- Courses Start -->
 <div class="container-xxl py-5">
     <div class="container">
@@ -155,7 +153,6 @@
 <!-- Testimonial Start -->
 @if (!string.IsNullOrEmpty(message as string))
 {
-
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             Toastify({
@@ -163,12 +160,7 @@
                 duration: 3000,
                 gravity: "top", // "top" və ya "bottom"
                 position: "right", // "left", "center" və ya "right"
-                style:[
-                background: "linear-gradient(to right, #4CAF50, #81C784)",  // Success (Green) color
-                
-                ]
-
-        ,
+                backgroundColor: "linear-gradient(to right, #4CAF50, #81C784)"  // Success (Green) color
             }).showToast();
         });
     </script>

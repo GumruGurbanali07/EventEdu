@@ -12,100 +12,117 @@ namespace EventEdu.Application.Services
 	public class FeedbackService :Hub ,  IFeedbackService
 	{
 		private readonly IFeedbackWriteRepository _feedbackWriteRepository;
-		private readonly IFeedBackDetailWriteRepository _feedBackDetailWriteRepository;
-		private readonly IFeedBackDetailReadRepository _feedBackDetailReadRepository;
+		
+		private readonly IEventReadRepository _eventReadRepository;
+		private readonly ISubsEventWriteRepository _subsEventWriteRepository;
 		private readonly ISubsEventReadRepository _subsEventReadRepository;
+		private readonly ISubscriptionReadRepository _subscriptionReadRepository;
 		private readonly ILanguageReadRepository _languageReadRepository;
 		private readonly IFeedbackReadRepository _feedbackReadRepository;
 
 		public FeedbackService(
 			IFeedbackWriteRepository feedbackWriteRepository,
-			IFeedBackDetailWriteRepository feedBackDetailWriteRepository,
+
 			ISubsEventReadRepository subsEventReadRepository,
-			IFeedBackDetailReadRepository feedBackDetailReadRepository,
+			ISubscriptionReadRepository subscriptionReadRepository,
 			IFeedbackReadRepository feedbackReadRepository,
-			ILanguageReadRepository languageReadRepository)
+			ILanguageReadRepository languageReadRepository,
+			IEventReadRepository eventReadRepository,
+			ISubsEventWriteRepository subsEventWriteRepository)
 		{
 			_feedbackWriteRepository = feedbackWriteRepository;
-			_feedBackDetailWriteRepository = feedBackDetailWriteRepository;
+
 			_subsEventReadRepository = subsEventReadRepository;
-			_feedBackDetailReadRepository = feedBackDetailReadRepository;
+			_subscriptionReadRepository = subscriptionReadRepository;
 			_feedbackReadRepository = feedbackReadRepository;
-			_languageReadRepository = languageReadRepository;
+
+			_eventReadRepository = eventReadRepository;
+			_subsEventWriteRepository = subsEventWriteRepository;
 		}
 
-		public async Task<bool> AddFeedBackWithLanguage(AddFeedBackDTO addFeedBackDTO, Guid subscriptionId)
+		public async Task<bool> AddFeedBackWithLanguage(AddFeedBackDTO addFeedBackDTO)
 		{
-			var subsEvent = await _subsEventReadRepository
+			// Tədbirin mövcudluğunu yoxlayırıq
+			var @event = await _eventReadRepository.GetByIdAsync(addFeedBackDTO.EventId.ToString());
+			if (@event == null)
+				return false;
+
+			// Yalnız həmin Event-ə aid olan feedback-ləri gətir
+			var eventFeedbacks = await _feedbackReadRepository
 				.GetAll()
-				.FirstOrDefaultAsync(s => s.EventId == addFeedBackDTO.EventId && s.SubscriptionId == subscriptionId);
+				.Where(f => f.EventId == addFeedBackDTO.EventId)
+				.ToListAsync();
 
-			if (subsEvent == null)
-				return false; 
+		
 
-			var feadback = await _feedbackReadRepository.GetAll().Where(a=>a.Id==subsEvent.EventId).ToListAsync();
-
-			double rating = feadback.Any() ? feadback.Average(f => (int)f.RatingEvenets) : 0;
 			var feedback = new FeedBack
 			{
 				Id = Guid.NewGuid(),
-				Rating = rating,
-				EventId = addFeedBackDTO.EventId,
-				SubscriptionId = subscriptionId, 
-				CreatedDate = DateTime.UtcNow
+				FullName = "ad", // Əgər istifadəçinin adı varsa, onu da DTO-ya əlavə etmək olar
+			
+				Rating = addFeedBackDTO.Rating,
+				Comment = addFeedBackDTO.Comment,
+				EventId = @event.Id,
 			};
 
 			await _feedbackWriteRepository.AddAsync(feedback);
 			await _feedbackWriteRepository.SaveChangeAsync();
 
-			
-			var feedbackDetail = new FeedBackDetail
-			{
-				Id = Guid.NewGuid(),
-				FeedBackId = feedback.Id,
-				LanguageId = addFeedBackDTO.LanguageId,
-				Comment = addFeedBackDTO.Comment,
-				CreatedDate = DateTime.UtcNow
-			};
-
-			await _feedBackDetailWriteRepository.AddAsync(feedbackDetail);
-			await _feedBackDetailWriteRepository.SaveChangeAsync();
-
-			return true; 
+			return true;
 		}
 
-		public Task<GetFeedbackDTO> GetFeedbackAsync()
+
+		public async Task<List<GetFeedbackDTO>> GetFeedbackAsync()
 		{
-			throw new NotImplementedException();
+			var feeadback = await _feedbackReadRepository.GetAll().Select(a=> new GetFeedbackDTO()
+			{
+				Id=a.Id,
+				Rating=a.Rating,
+				Comment=a.Comment,
+				FullName=a.FullName,
+				
+			}).ToListAsync();
+
+			return feeadback;
 		}
 
-		public async Task<List<GetFeedbackDTO>> GetFeedbacksByEventAndLanguageAsync(Guid eventId, string isoCode)
+		public async Task<List<GetFeedbackDTO>> GetFeedbacksByEventAndLanguageAsync(Guid eventId)
 		{
-			// 1. ISO koduna əsasən dili tap
-			var language = await _languageReadRepository.GetByIsoCodeAsync(isoCode);
-			if (language == null)
-			{
-				language = await _languageReadRepository.GetAll().FirstOrDefaultAsync(); // Default language
-			}
+			// Əgər dil filtrinə ehtiyac varsa, ISO kodu ilə tapmaq üçün buraya əlavə etmək olar
 
-			// 2. Bütün FeedbackDetail-ları yığ
-			var feedbackDetailsQuery = _feedBackDetailReadRepository.GetAll();
+			// SubEvent varsa, onu al (lazımlıdırsa istifadə et)
+			var subsevent = await _subsEventReadRepository
+				.GetAll()
+				.FirstOrDefaultAsync(a => a.EventId == eventId && !a.IsDeleted);
 
-			// 3. Event və dilə uyğun Feedback-ləri gətir
+			// Yalnız həmin Event-ə aid olan feedback-ləri gətir
+			var eventFeedbacks = await _feedbackReadRepository
+		.GetAll()
+		.Where(f => f.EventId == eventId)
+		.ToListAsync();
+
+			int totalRatings = eventFeedbacks.Sum(f => (int)f.Rating);
+			int feedbackCount = eventFeedbacks.Count;
+
+			double averageRating = feedbackCount > 0
+				? (double)totalRatings / feedbackCount
+				: 0;
+
+			// Event ID-ə görə aid olan Feedback-ləri al
 			var feedbacks = await _feedbackReadRepository.GetAll()
-				.Where(f => f.EventId == eventId &&
-							feedbackDetailsQuery.Any(fd => fd.FeedBackId == f.Id && fd.LanguageId == language.Id))
+				.Where(f => f.EventId == eventId)
 				.Select(f => new GetFeedbackDTO
 				{
 					Id = f.Id,
-					LanguageId = language.Id,
-					Rating = f.Rating,
-					Comment = feedbackDetailsQuery
-						.Where(fd => fd.FeedBackId == f.Id && fd.LanguageId == language.Id)
-						.Select(fd => fd.Comment)
-						.FirstOrDefault()
+					FullName = f.FullName,
+					Comment = f.Comment,
+					TotalRating = averageRating,
+					Rating = f.Rating 
+					
+					// TotalRating əvəzinə bura Rating yazmaq daha məntiqlidir
 				})
 				.ToListAsync();
+
 			return feedbacks;
 		}
 

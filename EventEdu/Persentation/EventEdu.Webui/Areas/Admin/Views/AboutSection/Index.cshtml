@@ -3,19 +3,19 @@
 @model AboutIndexVM
 
 @{
-    ViewData["Title"] = "About @Model.AboutSection List";
+    ViewData["Title"] = "About Section List";
 }
 
 <div class="card">
-    <h5 class="card-header">About @Model.AboutSection Table</h5>
-    <a href="@Url.Action("AddAbout@Model.AboutSection", "About@Model.AboutSection")" class="btn btn-primary mb-3">Add New About @Model.AboutSection</a>
+    <h5 class="card-header">About Section Table</h5>
+    <a href="@Url.Action("Create", "About", "admin")" class="btn btn-primary mb-3">Add New About Section</a>
 
     <div class="table-responsive text-nowrap">
         <table class="table">
             <thead>
                 <tr>
                     <th>Language</th>
-                    <th>About  Image</th>
+                    <th>About Image</th>
                     <th>Title</th>
                     <th>Description</th>
                     <th>Actions</th>
@@ -24,30 +24,30 @@
             <tbody class="table-border-bottom-0">
                 @if (Model.AboutSection != null )
                 {
-                  
-                        var imagePath = string.IsNullOrEmpty(Model.AboutSection.ImagePath)
-                            ? Url.Content("~/client/assets/img/default-jpg.jpg")
-                            : Url.Content(@Model.AboutSection.ImagePath);
 
-                        var rowStyle = @Model.AboutSection.IsDeleted ? "background:plum; color:#fff;" : "";
-                        <tr class="About@Model.AboutSectionRow" style="@rowStyle">
-                            <td>@@Model.AboutSection.LanguageId</td>
+                    var imagePath = string.IsNullOrEmpty(Model.AboutSection.ImagePath)
+                        ? Url.Content("~/client/assets/img/default-jpg.jpg")
+                    : Url.Content(Model.AboutSection.ImagePath);
+
+                    var rowStyle = Model.AboutSection.IsDeleted ? "background:plum; color:#fff;" : "";
+                        <tr style="@rowStyle">
+                        <td>@Model.AboutSectionDetail.LanguageId</td>
                             <td style="display:flex; gap:5px; align-items:center;">
                                 <div class="imgAsAnIconContent">
                                     <img class="imgAsAnIcon" src="@imagePath" />
                                 </div>
                             </td>
-                            <td>@@Model.AboutSection.Title</td>
-                            <td>@@Model.AboutSection.Description</td>
+                        <td>@Model.AboutSectionDetail.Title</td>
+                            <td>@Model.AboutSectionDetail.Description.Substring(0,30)</td>
                             <td>
                                 <div class="dropdown">
                                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
                                         <i class="ri-more-2-line"></i>
                                     </button>
                                     <div class="dropdown-menu">
-                                        @if (@Model.AboutSection.IsDeleted)
+                                        @if (Model.AboutSectionDetail.IsDeleted)
                                         {
-                                            <form asp-controller="About@Model.AboutSection" asp-action="Restore" asp-route-id="@@Model.AboutSection.Id" method="post" onsubmit="return confirm('Are you sure you want to restore this About @Model.AboutSection?');">
+                                            <form asp-controller="AboutSection" asp-action="Restore" asp-route-id="@Model.AboutSection.Id" method="post" onsubmit="return confirm('Are you sure you want to restore this About Section?');">
                                                 <button type="submit" class="dropdown-item">
                                                     <i class="ri-arrow-up-line me-2"></i> Restore
                                                 </button>
@@ -55,10 +55,11 @@
                                         }
                                         else
                                         {
-                                            <a asp-controller="About@Model.AboutSection" asp-action="Edit" asp-route-id="@@Model.AboutSection.Id" class="dropdown-item">
-                                                <i class="ri-pencil-line me-2"></i> Edit
-                                            </a>
-                                            <form asp-controller="About@Model.AboutSection" asp-action="Delete" asp-route-id="@@Model.AboutSection.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this About @Model.AboutSection?');">
+                                        <a class="dropdown-item" href="/admin/AboutSection/edit/@Model.AboutSection.Id">
+                                            <i class="ri-pencil-line me-2"></i> Edit
+                                        </a>
+
+                                        <form asp-controller="AboutSection" asp-action="Delete" asp-route-id="@Model.AboutSection.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this About Section?');">
                                                 <button type="submit" class="dropdown-item">
                                                     <i class="ri-delete-bin-6-line me-2"></i> Delete
                                                 </button>
@@ -68,12 +69,12 @@
                                 </div>
                             </td>
                         </tr>
-                    }
+                    
                 }
                 else
                 {
                     <tr>
-                        <td colspan="5" class="text-center">No about @Model.AboutSection records found.</td>
+                        <td colspan="5" class="text-center">No About Section records found.</td>
                     </tr>
                 }
             </tbody>

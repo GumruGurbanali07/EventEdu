@@ -1,0 +1,53 @@
+﻿@model List<Subscription>
+
+@{
+    ViewData["Title"] = "Feedback List";
+}
+
+<div class="card">
+    <h5 class="card-header">Feedback Table</h5>
+    <div class="table-responsive text-nowrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Subscriber's Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                @if (Model == null || !Model.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="text-center">Not Found</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var subscription in Model)
+                    {
+                        var subsEvent = subscription.SubsEvents.FirstOrDefault();
+                        var eventTitle = subsEvent?.Event?.EventDetails?.FirstOrDefault()?.Title ?? "No Title";
+
+                        <tr class="sponsorRow" style="@(subscription.IsDeleted ? "background:#d9a7c7; color:#fff;" : "")">
+                            <td>@eventTitle</td>
+                            <td>@subscription.Email</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                        <i class="ri-more-2-line"></i>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <form asp-controller="Subscription" asp-action="Delete" asp-route-id="@subscription.Id" method="post">
+                                            <button type="submit" class="dropdown-item"><i class="ri-delete-bin-6-line me-2"></i> Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

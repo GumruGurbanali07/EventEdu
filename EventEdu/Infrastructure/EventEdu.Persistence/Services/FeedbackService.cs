@@ -72,21 +72,28 @@ namespace EventEdu.Application.Services
 		}
 
 
-		public async Task<List<GetFeedbackDTO>> GetFeedbackAsync()
-		{
-			var feeadback = await _feedbackReadRepository.GetAll().Select(a=> new GetFeedbackDTO()
-			{
-				Id=a.Id,
-				Rating=a.Rating,
-				Comment=a.Comment,
-				FullName=a.FullName,
-				
-			}).ToListAsync();
+        public async Task<List<GetFeedbackDTO>> GetFeedbackAsync()
+        {
+            var feedbacks = await _feedbackReadRepository.GetAll()
+                .Include(f => f.Event)
+                    .ThenInclude(e => e.EventDetails)
+                .Select(f => new GetFeedbackDTO
+                {
+                    Id = f.Id,
+                    EventId = f.EventId,
+                    EventName = f.Event.EventDetails.FirstOrDefault().Title,
+                    Rating = f.Rating,
+                    Comment = f.Comment,
+                    FullName = f.FullName,
+                    IsDeleted = f.IsDeleted,
+                })
+                .ToListAsync();
 
-			return feeadback;
-		}
+            return feedbacks;
+        }
 
-		public async Task<List<GetFeedbackDTO>> GetFeedbacksByEventAndLanguageAsync(Guid eventId)
+
+        public async Task<List<GetFeedbackDTO>> GetFeedbacksByEventAndLanguageAsync(Guid eventId)
 		{
 			// Əgər dil filtrinə ehtiyac varsa, ISO kodu ilə tapmaq üçün buraya əlavə etmək olar
 
@@ -110,14 +117,17 @@ namespace EventEdu.Application.Services
 
 			// Event ID-ə görə aid olan Feedback-ləri al
 			var feedbacks = await _feedbackReadRepository.GetAll()
-				.Where(f => f.EventId == eventId)
+                .Where(f => f.EventId == eventId)
 				.Select(f => new GetFeedbackDTO
 				{
 					Id = f.Id,
-					FullName = f.FullName,
+					EventId = f.EventId,
+                    EventName = f.Event.EventDetails.FirstOrDefault().Title,
+                    FullName = f.FullName,
 					Comment = f.Comment,
 					TotalRating = averageRating,
-					Rating = f.Rating 
+					Rating = f.Rating,
+					IsDeleted = f.IsDeleted,
 					
 					// TotalRating əvəzinə bura Rating yazmaq daha məntiqlidir
 				})

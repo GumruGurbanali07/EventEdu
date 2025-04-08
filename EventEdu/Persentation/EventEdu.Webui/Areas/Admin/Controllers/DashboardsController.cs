@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EventEdu.Webui.Areas.Admin.Controllers;
 
 [Area(nameof(Admin))]
+[Authorize(Roles = "Admin")]
 public class DashboardsController : Controller
 {
     private readonly AppDbContext _context;

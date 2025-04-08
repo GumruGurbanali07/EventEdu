@@ -1,12 +1,14 @@
 ﻿using EventEdu.Application.DTOs.Category;
 using EventEdu.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
 	[Area("Admin")]
-	public class CategoryController : Controller
+    [Authorize(Roles = "Admin")]
+    public class CategoryController : Controller
 	{
 		private readonly ICategoryService _categoryService;
 		private readonly ILanguageService _languageService;

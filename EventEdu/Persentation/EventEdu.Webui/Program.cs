@@ -19,6 +19,7 @@ using System.IO.Compression;
 using EventEdu.Domain.Entities.Identity;
 using EventEdu.Persistence.Context;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,13 +32,44 @@ builder.Services.AddControllersWithViews().AddViewLocalization();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-	options.IdleTimeout = TimeSpan.FromMinutes(30); // Sessiyanın bitmə müddəti
-	options.Cookie.HttpOnly = true;
-	options.Cookie.IsEssential = true;
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Sessiyanın bitmə müddəti
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(
+    options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromDays(7);
+        options.SlidingExpiration = true;
+        options.Cookie.IsEssential = true;
+        options.LoginPath = "/User/Login";
+    });
+
+
 builder.Services.AddLocalization();
 builder.Services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizationFactory>();
 builder.Services.AddAutoMapper(typeof(AutoMapping));
+
+builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+{
+    //options.SignIn.RequireConfirmedAccount = false;
+    //options.User.RequireUniqueEmail = false;
+
+    options.User.RequireUniqueEmail = true;
+
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequiredLength = 6;
+
+    options.Lockout.AllowedForNewUsers = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(1);
+    options.Lockout.MaxFailedAccessAttempts = 300;
+}).AddEntityFrameworkStores<AppDbContext>()
+  .AddDefaultTokenProviders();
 
 
 builder.Services.AddPersistenceServices(builder.Configuration);
@@ -48,37 +80,37 @@ builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 builder.Services.AddSingleton<IStringLocalizer, JsonStringLocalization>(); // Əlavə etdik
 
 
-builder.Services.AddIdentity<AppUser, AppRole>(options =>
-{
-    //options.SignIn.RequireConfirmedAccount = false;
-    //options.User.RequireUniqueEmail = false;
+//builder.Services.AddIdentity<AppUser, AppRole>(options =>
+//{
+//    //options.SignIn.RequireConfirmedAccount = false;
+//    //options.User.RequireUniqueEmail = false;
 
 
-// Add services to the container.
+//    // Add services to the container.
 
-    options.Lockout.AllowedForNewUsers = true;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(1);
-    options.Lockout.MaxFailedAccessAttempts = 300;
-}).AddEntityFrameworkStores<AppDbContext>()
-  .AddDefaultTokenProviders();
+//    options.Lockout.AllowedForNewUsers = true;
+//    options.Password.RequireNonAlphanumeric = false;
+//    options.Password.RequireUppercase = false;
+//    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(1);
+//    options.Lockout.MaxFailedAccessAttempts = 300;
+//}).AddEntityFrameworkStores<AppDbContext>()
+//  .AddDefaultTokenProviders();
 
 builder.Services.AddResponseCompression(option =>
 {
-	option.EnableForHttps = true;
-	option.Providers.Add<BrotliCompressionProvider>();
-	option.Providers.Add<GzipCompressionProvider>();
+    option.EnableForHttps = true;
+    option.Providers.Add<BrotliCompressionProvider>();
+    option.Providers.Add<GzipCompressionProvider>();
 
 });
 builder.Services.AddHttpContextAccessor();
 builder.Services.Configure<BrotliCompressionProviderOptions>(option =>
 {
-	option.Level = CompressionLevel.SmallestSize;
+    option.Level = CompressionLevel.SmallestSize;
 });
 builder.Services.Configure<GzipCompressionProviderOptions>(option =>
 {
-	option.Level = CompressionLevel.SmallestSize;
+    option.Level = CompressionLevel.SmallestSize;
 });
 var app = builder.Build();
 
@@ -106,16 +138,16 @@ app.UseStaticFiles();
 
 var supportedCultures = new[]
 {
-	new CultureInfo("en-US"),
-	new CultureInfo("ru-RU"),
-	new CultureInfo("az-AZ")
+    new CultureInfo("en-US"),
+    new CultureInfo("ru-RU"),
+    new CultureInfo("az-AZ")
 };
 
 app.UseRequestLocalization(new RequestLocalizationOptions
 {
-	DefaultRequestCulture = new RequestCulture("en-US"),
-	SupportedCultures = supportedCultures,
-	SupportedUICultures = supportedCultures
+    DefaultRequestCulture = new RequestCulture("en-US"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
 });
 
 
@@ -123,23 +155,22 @@ app.UseMiddleware<LocalizationMiddleware>();
 
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
-app.UseStaticFiles();
 app.MapStaticAssets();
 
 
-app.MapAreaControllerRoute(
-	name: "areas",
-	areaName: "admin",
-	pattern: "admin/{controller=Dashboards}/{action=Index}/{id?}"
-);
 app.MapControllerRoute(
-	name: "eventCategory",
-	pattern: "event/{categoryName}",
-	defaults: new { controller = "Event", Action = "eventCategory" });
-app.MapDefaultControllerRoute();
-	
+            name: "areas",
+            pattern: "{area:exists}/{controller=User}/{action=Login}/{id?}"
+          );
+
+app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}")
+        .WithStaticAssets();
+
+
 
 
 app.Run();

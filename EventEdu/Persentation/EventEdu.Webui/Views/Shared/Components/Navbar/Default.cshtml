@@ -19,6 +19,25 @@
                 <a asp-controller="Event" asp-action="Index" class="nav-link dropdown-toggle d-flex" data-bs-toggle="dropdown">@JsonLocalizer["Events"]</a>
                 <div class="d-flex flex-column">
                     <ul class="dropdown-menu" aria-labelledby="Dropdown">
+                        <li>
+                            <a class="dropdown-item" asp-controller="Event" asp-action="Technology">Technology</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-controller="Event" asp-action="Business">Business</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-controller="Event" asp-action="Science">Science</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-controller="Event" asp-action="Startup">Startup</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-controller="Event" asp-action="Education">Education</a>
+                        </li>
+                    </ul>
+                </div>
+                @* <div class="d-flex flex-column">
+                    <ul class="dropdown-menu" aria-labelledby="Dropdown">
 
                         @foreach (var c in Model.CategoryDetails)
                         {
@@ -29,7 +48,7 @@
 
 
                     </ul>
-                </div>
+                </div> *@
 
             </div>
         </div>

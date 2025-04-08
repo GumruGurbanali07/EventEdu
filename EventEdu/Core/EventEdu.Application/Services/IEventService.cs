@@ -1,4 +1,5 @@
 ﻿using EventEdu.Application.DTOs.Event;
+using EventEdu.Application.DTOs.Sponsor;
 using EventEdu.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -26,5 +27,6 @@ namespace EventEdu.Application.Services
 		Task UpdateEventAsync(Guid eventId, UpdateEventDTO updateEventDTO);
 		Task SoftDeleteEventAsync(Guid eventId);
 		Task RestoreEventAsync(Guid eventId);
-	}
+        Task<List<GetEventDTO>> SearchEvents(string search);
+    }
 }

@@ -11,7 +11,8 @@ using System.Threading.Tasks;
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
     [Area(nameof(Admin))]
-public class LanguageController : Controller
+    [Authorize(Roles = "Admin")]
+    public class LanguageController : Controller
 {
         readonly private ILanguageService _languageService;
 

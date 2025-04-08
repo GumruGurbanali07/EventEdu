@@ -2,6 +2,7 @@
 using EventEdu.Application.Exceptions;
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
 	[Area(nameof(Admin))]
-
+    [Authorize(Roles = "Admin")]
     public class EventController : Controller
     {
         private readonly IEventService _eventService;

@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
 	[Area("Admin")]
-
-	public class HeroSectionController : Controller
+    [Authorize(Roles = "Admin")]
+    public class HeroSectionController : Controller
 	{
 		private readonly IHeroSectionService _sliderService;
 		private readonly ILanguageService _languageService;

@@ -17,6 +17,7 @@ using static System.Reflection.Metadata.BlobBuilder;
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
     [Area(nameof(Admin))]
+    [Authorize(Roles = "Admin")]
     public class SponsorController : Controller
     {
         private readonly ISponsorService _sponsorService;

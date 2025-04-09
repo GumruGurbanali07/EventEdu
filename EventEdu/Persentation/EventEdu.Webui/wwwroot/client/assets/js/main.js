@@ -456,7 +456,7 @@ if (searchInput) {
     searchInput.addEventListener("keyup", function () {
         console.log(this.value);
 
-        fetch(`/sponsor/search?search=${encodeURIComponent(this.value)}`)
+        fetch(`/event/search?search=${encodeURIComponent(this.value)}`)
             .then(res => res.text())
             .then(data => {
                 if (searchBody) {

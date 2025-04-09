@@ -39,7 +39,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register( UserRegisterDTO registerDTO)
+        public async Task<IActionResult> Register([FromForm] UserRegisterDTO registerDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -69,10 +69,10 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         public IActionResult Login()
 
         {
-            if(Request.Cookies.TryGetValue("RememberMeCredentials", out string rememberMeValue))
+            if (Request.Cookies.TryGetValue("RememberMeCredentials", out string rememberMeValue))
             {
                 var values = rememberMeValue.Split('|');
-                if(values.Length == 3)
+                if (values.Length == 3)
                 {
                     ViewBag.RememberMeEmail = values[0];
                     ViewBag.RememberMePassword = values[1];
@@ -179,16 +179,43 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-
                 var user = await _userManager.FindByEmailAsync(userChangePasswordDTO.Email);
                 if (user != null)
                 {
                     var result = await _userManager.RemovePasswordAsync(user);
                     if (result.Succeeded)
                     {
-
                         result = await _userManager.AddPasswordAsync(user, userChangePasswordDTO.NewPassword);
-                        return RedirectToAction("Login", "User");
+                        if (result.Succeeded)
+                        {
+                            // ✅ Update session
+                            HttpContext.Session.SetString("RememberMeEmail", userChangePasswordDTO.Email);
+                            HttpContext.Session.SetString("RememberMePassword", userChangePasswordDTO.NewPassword);
+
+                            // ✅ Update cookie if it exists
+                            if (Request.Cookies.TryGetValue("RememberMeCredentials", out string existingCookie))
+                            {
+                                Response.Cookies.Append("RememberMeCredentials",
+                                    $"{userChangePasswordDTO.Email}|{userChangePasswordDTO.NewPassword}|",
+                                    new CookieOptions
+                                    {
+                                        HttpOnly = true,
+                                        Expires = DateTime.UtcNow.AddYears(1),
+                                        Secure = true,
+                                        SameSite = SameSiteMode.None,
+                                    });
+                            }
+
+                            return RedirectToAction("Login", "User");
+                        }
+                        else
+                        {
+                            foreach (var error in result.Errors)
+                            {
+                                ModelState.AddModelError("", error.Description);
+                            }
+                            return View(userChangePasswordDTO);
+                        }
                     }
                     else
                     {
@@ -211,6 +238,7 @@ namespace EventEdu.Webui.Areas.Admin.Controllers
                 return View(userChangePasswordDTO);
             }
         }
+
 
         [HttpGet]
         public async Task<IActionResult> LogOut()

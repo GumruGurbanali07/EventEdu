@@ -318,29 +318,6 @@ namespace EventEdu.Persistence.Services
 			return sponsor;
 		}
 
-        public async Task<List<GetSponsorDTO>> SearchSponsors(string search)
-        {
-            if (string.IsNullOrWhiteSpace(search))
-            {
-                return new List<GetSponsorDTO>();
-            }
-
-            var sponsors = await _sponsorReadRepository.GetAll()
-                .Where(s => !s.IsDeleted &&
-                            s.SponsorsDetail.Any(sd =>
-                                sd.SponsorName.ToLower().Contains(search.ToLower()) ||
-                                sd.SponsorDescription.ToLower().Contains(search.ToLower())))
-                .Select(s => new GetSponsorDTO
-                {
-                    SponsorName = s.SponsorsDetail.FirstOrDefault().SponsorName,
-                    ImagePath = s.ImagePath
-                })
-                .ToListAsync();
-            return sponsors.GroupBy(s => s.SponsorName)
-                           .Select(g => g.First())
-                           .ToList();
-        }
-
 
 		public async Task<List<SponsorDetail>> GetSponsorDetails()
 		{

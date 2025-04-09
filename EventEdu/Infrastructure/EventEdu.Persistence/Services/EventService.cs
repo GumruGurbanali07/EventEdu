@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EventEdu.Application.DTOs.Event;
+using EventEdu.Application.DTOs.Sponsor;
 using EventEdu.Application.Exceptions;
 using EventEdu.Application.Repositor;
 using EventEdu.Application.Repository;
@@ -420,5 +421,28 @@ namespace EventEdu.Persistence.Services
 
 			return (eventSpeak, eventSponsor);
 		}
-	}
+
+        public async Task<List<GetEventDTO>> SearchEvents(string search)
+        {
+            if (string.IsNullOrWhiteSpace(search))
+            {
+                return new List<GetEventDTO>();
+            }
+
+            var events = await _eventReadRepository.GetAll()
+                .Where(e => !e.IsDeleted && e.EventDetails.FirstOrDefault().Title.Contains(search))
+                .Select(e => new GetEventDTO
+                {
+                    Title = e.EventDetails.FirstOrDefault().Title,
+                    ImageUrl = e.ImageUrl
+                })
+                .ToListAsync();
+
+            return events
+                .GroupBy(s => s.Title)
+                .Select(g => g.First())
+                .ToList();
+        }
+
+    }
 }

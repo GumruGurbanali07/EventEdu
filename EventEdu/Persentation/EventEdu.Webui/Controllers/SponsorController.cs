@@ -44,10 +44,4 @@ public class SponsorController : Controller
         return View(sponsor);
     }
 
-    public async Task<IActionResult> Search(string search)
-    {
-        var sponsors = await _sponsorService.SearchSponsors(search);
-
-        return PartialView("_SearchPartial", sponsors ?? new List<GetSponsorDTO>());
-    }
 }

@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using EventEdu.Application.DTOs.Feedback;
 using EventEdu.Application.DTOs.PersonalData;
 using EventEdu.Domain.Entities.Identity;
+using EventEdu.Application.DTOs.User;
 
 namespace EventEdu.Application.Profiles
 {
@@ -92,6 +93,16 @@ namespace EventEdu.Application.Profiles
 		    .ForMember(dest => dest.Id, opt => opt.Ignore())
 			.ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
 			.ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+            //UserAdmin
+            // Mapping from UserRegisterDTO to AppUser
+            CreateMap<UserRegisterDTO, AppUser>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email)) // Set UserName to Email
+                .ForMember(dest => dest.EmailConfirmed, opt => opt.Ignore()) // Identity handles this
+                .ForMember(dest => dest.NormalizedEmail, opt => opt.Ignore()) // Identity normalizes automatically
+                .ForMember(dest => dest.NormalizedUserName, opt => opt.Ignore()) // Identity normalizes automatically
+                .ForMember(dest => dest.RefreshToken, opt => opt.Ignore()) // Ensure RefreshToken is handled separately
+                .ForMember(dest => dest.Id, opt => opt.Ignore()); // Id is generated automatically
 
             //Feedback
             CreateMap<FeedBack,AddFeedBackDTO >().ReverseMap();

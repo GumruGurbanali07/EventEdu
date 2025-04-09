@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EventEdu.Webui.Areas.Admin.Controllers
 {
     [Area("Admin")]
-
+    [Authorize(Roles = "Admin")]
     public class AboutSectionController : Controller
     {
         private readonly IAboutSectionService _aboutSectionService;

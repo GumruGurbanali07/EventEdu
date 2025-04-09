@@ -1,4 +1,5 @@
 ﻿using EventEdu.Application.DTOs.Event;
+using EventEdu.Application.DTOs.Sponsor;
 using EventEdu.Application.Exceptions;
 using EventEdu.Application.Services;
 using EventEdu.Domain.Entities;
@@ -91,6 +92,85 @@ public class EventController : Controller
 		return View(es);
 	}
 
+    public IActionResult Index()
+    {
+        return View();
+    }
+
+    public async Task<IActionResult> Startup()
+    {
+        var events = await _eventService.GetEventAll();
+        var startupEvents = events 
+     .Where(e => e.Category != null
+              && e.Category.CategoryDetail.FirstOrDefault().CategoryName == "Startup"
+              && e.CategoryId == e.Category.Id)
+     .ToList();
+
+
+        return View(startupEvents);
+    }
+
+
+
+    public async Task<IActionResult> Business()
+    {
+        var events = await _eventService.GetEventAll();
+        var businessEvents = events
+              .Where(e => e.Category?.CategoryDetail?.FirstOrDefault()?.CategoryName == "Business")
+            .ToList();
+
+
+
+
+        return View(businessEvents);
+    }
+
+    public async Task<IActionResult> Science()
+    {
+        var events = await _eventService.GetEventAll();
+        var scienceEvents = events
+             .Where(e => e.Category?.CategoryDetail?.FirstOrDefault()?.CategoryName == "Science")
+            .ToList();
+
+
+
+
+        return View(scienceEvents);
+    }
+
+    public async Task<IActionResult> Technology()
+    {
+        var events = await _eventService.GetEventAll();
+        var technologyEvents = events
+              .Where(e => e.Category?.CategoryDetail?.FirstOrDefault()?.CategoryName == "Technology")
+            .ToList();
+
+
+
+
+        return View(technologyEvents);
+    }
+
+    public async Task<IActionResult> Education()
+    {
+        var events = await _eventService.GetEventAll();
+        var educationEvents = events
+              .Where(e => e.Category?.CategoryDetail?.FirstOrDefault()?.CategoryName == "Education")
+            .ToList();
+
+
+
+
+        return View(educationEvents);
+    }
+
+
+    public async Task<IActionResult> Search(string search)
+    {
+        var events = await _eventService.SearchEvents(search);
+
+        return PartialView("_SearchPartial", events ?? new List<GetEventDTO>());
+    }
 
 	public IActionResult Index()
 	{

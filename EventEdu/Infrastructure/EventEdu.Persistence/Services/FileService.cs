@@ -81,7 +81,6 @@ namespace EventEdu.Persistence.Services
 			{
 				await image.SaveAsync(imagePath, new PngEncoder());
 			}
-
 			// Clean up the temporary file
 			File.Delete(tempPath);
 

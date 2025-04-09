@@ -112,15 +112,9 @@ namespace EventEdu.Persistence.Services
 
 			// Use the stored query in the LINQ query
 			var categories = await _categoryReadRepository.GetAll()
-
-				
+								
 				.ToListAsync();
-
-
-
-
-
-			return (categories, categoryDetail);
+						return (categories, categoryDetail);
 
 
 		}

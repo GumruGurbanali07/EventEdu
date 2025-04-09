@@ -92,7 +92,42 @@ public class EventController : Controller
 	}
 
 
+	public IActionResult Index()
+	{
+		return View();
+	}
+
+	//public IActionResult EventDetail()
+	//{
+	//	return View();
+	//}
+
+	public IActionResult Technology()
+	{
+		return View();
+	}
+
+	public IActionResult Startup()
+	{
+		return View();
+	}
+
+	public IActionResult Business()
+	{
+		return View();
+	}
+
+	public IActionResult Science()
+	{
+		return View();
+	}
+
+	public IActionResult Education()
+	{
+		return View();
+	}
 }
+
 
 
 
